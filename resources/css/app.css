@@ -1,0 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: "Outfit", ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Make form fields visible even before focus */
+input, select, textarea {
+  @apply border border-gray-300 rounded-lg px-3 py-2 w-full bg-white text-gray-800 placeholder-gray-400;
+}
+
+/* Highlight when focused */
+input:focus, select:focus, textarea:focus {
+  @apply ring-2 ring-sky-500 border-sky-500 outline-none;
+}
