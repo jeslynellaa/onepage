@@ -15,6 +15,14 @@ class Document extends Model
         return $this->hasMany(ProcedureSteps::class, 'document_id');
     }
 
+    public function logs() {
+        return $this->hasMany(ActivityLog::class, 'document_id');
+    }
+
+    public function dirf() {
+        return $this->hasOne(Dirf::class, 'document_id');
+    }
+
     protected static function booted()
     {
         static::deleting(function ($document) {
