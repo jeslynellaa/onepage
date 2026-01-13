@@ -24,7 +24,7 @@ class SectionsTableSeeder extends Seeder
             ['manual' => 'System Procedures', 'section_number' => '08', 'title' => 'Human Resource Management', 'description' => ''],
             ['manual' => 'System Procedures', 'section_number' => '09', 'title' => 'Financial Resource Management', 'description' => ''],
             ['manual' => 'System Procedures', 'section_number' => '10', 'title' => 'Documented Information Management', 'description' => ''],
-            ['manual' => 'System Procedures', 'section_number' => '11', 'title' => 'Continual Improvement', 'description' => ''],
+            ['manual' => 'System Procedures', 'section_number' => '11', 'title' => 'Continual Improvement', 'description' => '']
         ]);
     }
 }
