@@ -14,3 +14,105 @@ input, select, textarea {
 input:focus, select:focus, textarea:focus {
   @apply ring-2 ring-sky-500 border-sky-500 outline-none;
 }
+
+/* This styles the datatable rendered search bar */
+.dt-search{
+  max-width: 300px;
+  display: flex;
+  align-items: center;
+}
+
+/* This styles the datatable rendered table length (Show rows) */
+.dt-length label{
+  width: 50%;
+  display: flex;
+  align-items: center;
+  margin-left: 0px !important;
+}
+select.dt-input{
+  width: auto;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+/* Pagination buttons styling */
+div.dt-paging .dt-paging-button {
+    display: inline-block !important;
+    padding: 8px 12px !important;
+    margin: 0 5px !important;
+    background-color: #fff !important;
+    border: 1px solid #ddd !important;
+    border-radius: 5px !important;
+    color: #333 !important;
+    font-weight: 500 !important;
+    cursor: pointer !important;
+    text-align: center !important;
+    min-width: 40px !important; /* Consistent button sizing */
+}
+
+div.dt-paging .dt-paging-button:hover {
+    background: #000 !important;
+    color: #FFF !important;
+}
+
+/* Current/Active page button */
+div.dt-paging .dt-paging-button.current {
+    color: #000 !important;
+    border: 1.5px solid #000 !important;
+    background: #fff !important;
+    font-weight: bold !important;
+    border-radius: 5px !important;
+}
+
+/* Disabled buttons (Previous/Next/First/Last) */
+div.dt-paging .dt-paging-button.disabled {
+    color: #ddd !important;
+    background-color: #f0f0f0 !important;
+    cursor: not-allowed !important;
+    border: none !important;
+    visibility: hidden !important; /* Hide disabled buttons without collapsing layout */
+}
+
+/* Hover effect on pagination buttons */
+div.dt-paging .dt-paging-button:hover:not(.disabled):not(.current){
+    background-color: #000 !important; /* Black background */
+    color: #fff !important; /* White text */
+}
+
+/* First/Previous and Next/Last buttons */
+div.dt-paging .dt-paging-button.first, 
+div.dt-paging .dt-paging-button.previous, 
+div.dt-paging .dt-paging-button.next, 
+div.dt-paging .dt-paging-button.last {
+    padding: 8px 12px !important;
+    border-radius: 5px !important;
+}
+
+input#dt-search-0.dt-input{
+    padding-left: 15px;
+    border-radius: 20px;
+}
+
+input#my-search.dt-input{
+    padding-left: 15px;
+    border-radius: 20px;
+}
+
+.dt-length > label{
+    margin-left: 5px;
+}
+
+.dt-type-numeric .dt-column-header,
+.dt-type-date .dt-column-header{
+  flex-direction: row !important;
+}
+
+.loader {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3498db;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  animation: spin 1s linear infinite;
+  margin: 10px auto;
+}
