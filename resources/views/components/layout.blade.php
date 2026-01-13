@@ -14,6 +14,8 @@
     <script src="https://kit.fontawesome.com/cd50bed0a1.js" crossorigin="anonymous"></script>
     <!-- icon -->
     <link rel="icon" type="image/png" href="{{ asset('onepage-blue.png') }}">
+    {{-- Datatables link --}}
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.3.4/css/dataTables.dataTables.css" />
 
     <style>
       .text-xs {
@@ -116,7 +118,7 @@
 
         <h4 class="text-gray font-semibold text-lg leading-tight m-0">
           @auth
-            {{ $greeting }}, {{ auth()->user()->first_name }}!
+            {{ $greeting }}, {{ auth()->user()->first_name }}! (<span class="uppercase">{{ auth()->user()->role }}</span>)
           @else
             {{ $greeting }}!
           @endauth
@@ -148,15 +150,30 @@
           </div>
         @endif
 
-        @if (session()->has('failure'))
+        @if (session()->has('error'))
           <div class="max-w-4xl mx-auto px-4">
             <div class="bg-red-100 border border-red-300 text-red-800 text-center px-4 py-3 rounded-2xl mb-2">
               {{ session('failure') }}
             </div>
           </div>
         @endif
+        @if ($errors->any())
+          <div class="max-w-4xl mx-auto px-4">
+            <div class="bg-red-100 border border-red-300 text-red-800 px-4 py-3 rounded-2xl mb-2">
+              <ul class="list-disc list-inside text-left">
+                @foreach ($errors->all() as $error)
+                  <li>{{ $error }}</li>
+                @endforeach
+              </ul>
+            </div>
+          </div>
+        @endif
 
         {{ $slot }}
+
+        <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+        <script src="https://cdn.datatables.net/2.3.4/js/dataTables.js"></script>
+        {{ $scripts ?? '' }}
       </section>
 
       <!-- Footer -->
