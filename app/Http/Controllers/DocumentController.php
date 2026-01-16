@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Dirf;
+use App\Models\Section;
 use App\Models\Document;
 use App\Models\ActivityLog;
 use Illuminate\Support\Str;
@@ -25,7 +26,7 @@ class DocumentController extends Controller
 
     public function system_procedures() {
         $documents = Document::all();
-        $sections = DB::table('sections')->get()->toArray();
+        $sections = Section::with(['processOwner', 'reviewer', 'approver'])->get();
         $totalCount = 0;
         foreach($sections as $section){
             $sectionCount = $documents->where('section_number', $section->section_number)

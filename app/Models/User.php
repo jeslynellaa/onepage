@@ -45,4 +45,22 @@ class User extends Authenticatable
     public function logs() {
         return $this->hasMany(ActivityLog::class, 'user_id');
     }
+    
+    public function fullname()
+    {
+        $middle = $this->middle_name ? ' ' . $this->middle_name : '';
+        return "{$this->last_name}, {$this->first_name}{$middle}";
+    }
+    
+    public function ownedSections() {
+        return $this->hasMany(Section::class, 'process_owner_id');
+    }
+
+    public function reviewedSections() {
+        return $this->hasMany(Section::class, 'reviewer_id');
+    }
+
+    public function approvedSections() {
+        return $this->hasMany(Section::class, 'approver_id');
+    }
 }
