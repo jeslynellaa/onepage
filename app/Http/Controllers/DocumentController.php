@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Dirf;
 use App\Models\Document;
-
 use App\Models\ActivityLog;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -37,37 +36,6 @@ class DocumentController extends Controller
             $totalCount += $sectionCount;
         }
         return view('document.system_procedures.index', compact('documents', 'sections', 'totalCount'));
-    }
-
-    public function getDocuments() {
-        $query = Document::query();
-
-        return DataTables::of($query)
-            ->addColumn('actions', function($row) {
-                $viewUrl = route('document.system_procedures.view_pdf', $row->id);
-                $editUrl = route('document.system_procedures.edit', $row->id);
-                $deleteUrl = route('document.system_procedures.destroy', $row->id);
-
-                return '
-                    <div class="flex items-center space-x-2">
-                        <a href="'.$viewUrl.'" class="text-gray-600 hover:text-sky-700">
-                            <i class="fa-solid fa-eye"></i>
-                        </a>
-                        <a href="'.$editUrl.'" class="text-gray-600 hover:text-sky-700">
-                            <i class="fa-solid fa-pen"></i>
-                        </a>
-                        <form action="'.$deleteUrl.'" method="POST" onsubmit="return confirm(\'Are you sure you want to delete this document?\');" style="display:inline;">
-                            '.csrf_field().'
-                            '.method_field('DELETE').'
-                            <button type="submit" class="text-gray-600 hover:text-sky-700 cursor-pointer transition-colors duration-300">
-                                <i class="fa-solid fa-trash"></i>
-                            </button>
-                        </form>
-                    </div>
-                ';
-            })
-            ->rawColumns(['actions']) // allow HTML
-            ->make(true);
     }
 
     public function sp_create() {
