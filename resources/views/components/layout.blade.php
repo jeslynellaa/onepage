@@ -8,6 +8,7 @@
 
     {{-- Vite compiled CSS & JS (Tailwind, Alpine, etc.) --}}
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @stack('scripts')
     <script src="//unpkg.com/alpinejs" defer></script>
 
     {{-- Font Awesome --}}
