@@ -8,6 +8,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Section extends Model
 {
     use HasFactory;
+
+    public function documents() {
+        return $this->hasMany(Document::class);
+    }
     
     public function processOwner() {
         return $this->belongsTo(User::class, 'process_owner_id');

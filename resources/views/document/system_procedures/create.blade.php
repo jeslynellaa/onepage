@@ -28,20 +28,20 @@
                     </div>
 
                     <div class="md:col-span-2">
-                        <label for="section_number" class="block text-xs font-bold uppercase mb-1">Section No.</label>
-                        <select name="section_number" id="section_number" value="{{ old('section_number') }}" class="w-full rounded-md border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm p-2">
+                        <label for="section_id" class="block text-xs font-bold uppercase mb-1">Section No.</label>
+                        <select name="section_id" id="section_id" value="{{ old('section_id') }}" class="w-full rounded-md border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm p-2">
                             <option disabled selected>-- Select --</option>
-                            <option value="01" {{ selected('01', old('section_number')) }}>01 Business Planning</option>
-                            <option value="02" {{ selected('02', old('section_number')) }}>02 Business Development</option>
-                            <option value="03" {{ selected('03', old('section_number')) }}>03 Project Planning and Implementation</option>
-                            <option value="04" {{ selected('04', old('section_number')) }}>04 Project Evaluation</option>
-                            <option value="05" {{ selected('05', old('section_number')) }}>05 Project Completion</option>
-                            <option value="06" {{ selected('06', old('section_number')) }}>06 Asset Management</option>
-                            <option value="07" {{ selected('07', old('section_number')) }}>07 Maintenance</option>
-                            <option value="08" {{ selected('08', old('section_number')) }}>08 Human Resource Management</option>
-                            <option value="09" {{ selected('09', old('section_number')) }}>09 Financial Resource Management</option>
-                            <option value="10" {{ selected('10', old('section_number')) }}>10 Documented Information Management</option>
-                            <option value="11" {{ selected('11', old('section_number')) }}>11 Continual Improvement</option>
+                            <option value="1" {{ selected('1', old('section_id')) }}>01 Business Planning</option>
+                            <option value="2" {{ selected('2', old('section_id')) }}>02 Business Development</option>
+                            <option value="3" {{ selected('3', old('section_id')) }}>03 Project Planning and Implementation</option>
+                            <option value="4" {{ selected('4', old('section_id')) }}>04 Project Evaluation</option>
+                            <option value="5" {{ selected('5', old('section_id')) }}>05 Project Completion</option>
+                            <option value="6" {{ selected('6', old('section_id')) }}>06 Asset Management</option>
+                            <option value="7" {{ selected('7', old('section_id')) }}>07 Maintenance</option>
+                            <option value="8" {{ selected('8', old('section_id')) }}>08 Human Resource Management</option>
+                            <option value="9" {{ selected('9', old('section_id')) }}>09 Financial Resource Management</option>
+                            <option value="10" {{ selected('10', old('section_id')) }}>10 Documented Information Management</option>
+                            <option value="11" {{ selected('11', old('section_id')) }}>11 Continual Improvement</option>
                         </select>
                     </div>
 

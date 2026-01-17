@@ -22,6 +22,10 @@ class Document extends Model
     public function dirf() {
         return $this->hasOne(Dirf::class, 'document_id');
     }
+    
+    public function section() {
+        return $this->belongsTo(Section::class);
+    }
 
     protected static function booted()
     {

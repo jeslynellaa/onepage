@@ -32,21 +32,21 @@
                     </div>
 
                     <div class="md:col-span-3">
-                        <label for="section_number" class="block text-xs font-bold uppercase mb-1">Section No.</label>
+                        <label for="section_id" class="block text-xs font-bold uppercase mb-1">Section No.</label>
                             
-                        <select name="section_number" id="section_number" value="{{ $doc->section_number }}" class="w-full rounded-md border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm p-2">
+                        <select name="section_id" id="section_id" value="{{ $doc->section_id }}" class="w-full rounded-md border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm p-2">
                             <option disabled>-- Select --</option>
-                            <option value="01" @if($doc->section_number === '01') echo selected @else echo disabled @endif>01 Business Planning</option>
-                            <option value="02" @if($doc->section_number === '02') echo selected @else echo disabled @endif>02 Business Development</option>
-                            <option value="03" @if($doc->section_number === '03') echo selected @else echo disabled @endif>03 Project Planning and Implementation</option>
-                            <option value="04" @if($doc->section_number === '04') echo selected @else echo disabled @endif>04 Project Evaluation</option>
-                            <option value="05" @if($doc->section_number === '05') echo selected @else echo disabled @endif>05 Project Completion</option>
-                            <option value="06" @if($doc->section_number === '06') echo selected @else echo disabled @endif>06 Asset Management</option>
-                            <option value="07" @if($doc->section_number === '07') echo selected @else echo disabled @endif>07 Maintenance</option>
-                            <option value="08" @if($doc->section_number === '08') echo selected @else echo disabled @endif>08 Human Resource Management</option>
-                            <option value="09" @if($doc->section_number === '09') echo selected @else echo disabled @endif>09 Financial Resource Management</option>
-                            <option value="10" @if($doc->section_number === '10') echo selected @else echo disabled @endif>10 Documented Information Management</option>
-                            <option value="11" @if($doc->section_number === '11') echo selected @else echo disabled @endif>11 Continual Improvement</option>
+                            <option value="1" @if($doc->section_id == '1') echo selected @else echo disabled @endif>01 Business Planning</option>
+                            <option value="2" @if($doc->section_id == '2') echo selected @else echo disabled @endif>02 Business Development</option>
+                            <option value="3" @if($doc->section_id == '3') echo selected @else echo disabled @endif>03 Project Planning and Implementation</option>
+                            <option value="4" @if($doc->section_id == '4') echo selected @else echo disabled @endif>04 Project Evaluation</option>
+                            <option value="5" @if($doc->section_id == '5') echo selected @else echo disabled @endif>05 Project Completion</option>
+                            <option value="6" @if($doc->section_id == '6') echo selected @else echo disabled @endif>06 Asset Management</option>
+                            <option value="7" @if($doc->section_id == '7') echo selected @else echo disabled @endif>07 Maintenance</option>
+                            <option value="8" @if($doc->section_id == '8') echo selected @else echo disabled @endif>08 Human Resource Management</option>
+                            <option value="9" @if($doc->section_id == '9') echo selected @else echo disabled @endif>09 Financial Resource Management</option>
+                            <option value="10" @if($doc->section_id == '10') echo selected @else echo disabled @endif>10 Documented Information Management</option>
+                            <option value="11" @if($doc->section_id == '11') echo selected @else echo disabled @endif>11 Continual Improvement</option>
                         </select>
                     </div>
 
