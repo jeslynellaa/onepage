@@ -1,9 +1,13 @@
 <?php
 
+use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\SectionsController;
 
 Route::get('/', [HomeController::class, 'index'])->name('dashboard')->middleware('auth');
 
@@ -42,3 +46,7 @@ Route::get('/documents/sytem-procedures/section/{code}/revision-history', [Docum
 Route::get('/documents/system-procedures/{doc}/dirf/edit', [DocumentController::class, 'dirf_edit'])->name('document.system_procedures.dirf_edit');
 Route::put('/documents/system-procedures/{doc}/dirf/update', [DocumentController::class, 'dirf_update'])->name('document.system_procedures.dirf_update');
 Route::get('/documents/system-procedures/{doc}/dirf', [DocumentController::class, 'dirf_generate'])->name('document.system_procedures.dirf_generate');
+
+Route::get('/users/search', [UserController::class, 'search']);
+
+Route::put('/document/system-procedures/{section}', [SectionsController::class, 'update'])->name('document.system_procedures_section.update');

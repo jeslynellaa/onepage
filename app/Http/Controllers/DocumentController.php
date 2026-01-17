@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Dirf;
+use App\Models\User;
 use App\Models\Section;
 use App\Models\Document;
 use App\Models\ActivityLog;
@@ -27,16 +28,25 @@ class DocumentController extends Controller
     public function system_procedures() {
         $documents = Document::all();
         $sections = Section::with(['processOwner', 'reviewer', 'approver'])->get();
+        $user_list = User::all();
+        $users = User::orderBy('last_name', 'ASC')
+            ->get(['id', 'first_name', 'middle_name', 'last_name']);
+        $user_list = $users->map(function ($user) {
+            return [
+                'id' => $user->id,
+                'name' => $user->last_name . ', ' . $user->given_name . ' ' . $user->middle_name
+            ];
+        })->toArray();
         $totalCount = 0;
         foreach($sections as $section){
-            $sectionCount = $documents->where('section_number', $section->section_number)
+            $sectionCount = $documents->where('section_id', $section->id)
                 ->sortByDesc('created_at')   // or revision_number
                 ->unique('code')
                 ->count();
             $section->count = $sectionCount;
             $totalCount += $sectionCount;
         }
-        return view('document.system_procedures.index', compact('documents', 'sections', 'totalCount'));
+        return view('document.system_procedures.index', compact('documents', 'sections', 'totalCount', 'user_list'));
     }
 
     public function sp_create() {
@@ -47,7 +57,7 @@ class DocumentController extends Controller
         $incomingFields = $request->validate([
             'title' => 'required',
             'code' => 'required',
-            'section_number' => 'required',
+            'section_id' => 'required',
             'revision_number' => 'nullable',
             'effective_date' => 'nullable|date',
             'objective' => 'required',
@@ -126,8 +136,17 @@ class DocumentController extends Controller
     public function sp_view(Document $doc)
     {
         // Load steps and their related documents
-        $doc->load(['steps.interfaces']);
+        $doc->load([
+            'steps.interfaces',
+            'section.processOwner',
+            'section.reviewer',
+            'section.approver',
+        ]);
         $steps = $doc->steps;
+
+        $submitted = $doc->logs->firstWhere('action', 'submitted for review');
+        $passed = $doc->logs->firstWhere('action', 'review passed');
+        $approved = $doc->logs->firstWhere('action', 'approved');
 
         // Flatten all interfaces into one collection
         $allInterfaces = $doc->steps->flatMap(function ($step) {
@@ -148,7 +167,7 @@ class DocumentController extends Controller
             ->values();
 
         // 1️⃣ Load your Blade view into Dompdf
-        $pdf = Pdf::loadView('pdf.system_procedure', compact('doc', 'steps', 'uniqueInputs', 'uniqueOutputs', 'connector'))
+        $pdf = Pdf::loadView('pdf.system_procedure', compact('doc', 'steps', 'uniqueInputs', 'uniqueOutputs', 'connector', 'submitted', 'passed', 'approved'))
                 ->setPaper('A4', 'portrait');
 
         // 2️⃣ Force rendering so Dompdf can calculate pages
@@ -171,7 +190,7 @@ class DocumentController extends Controller
             $size = 11;
 
             // adjust these coordinates to fit your footer area (x, y)
-            $canvas->text(455, 138, "Page $pageNumber of $pageCount", $font, $size);
+            $canvas->text(455, 111, "Page $pageNumber of $pageCount", $font, $size);
         });
 
         // 5️⃣ Stream or download
@@ -216,7 +235,7 @@ class DocumentController extends Controller
         $incomingFields = $request->validate([
             'title' => 'required',
             'code' => 'required',
-            'section_number' => 'required',
+            'section_id' => 'required',
             'revision_number' => 'nullable',
             'effective_date' => 'nullable|date',
             'objective' => 'required',
@@ -465,7 +484,7 @@ class DocumentController extends Controller
     {
         $sectionId = $request->input('sectionId');
 
-        $items = Document::where('section_number', $sectionId)
+        $items = Document::where('section_id', $sectionId)
             ->orderBy('code')
             ->orderByDesc('created_at')
             ->get()
