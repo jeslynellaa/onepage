@@ -180,7 +180,7 @@
                 <tr>
                     <td rowspan="5" style="font-size:14pt; text-align:center"><strong>FCU SOLUTIONS INC</strong></td>
                     <td class="label_cell">Section No.:</td>
-                    <td class="data_cell">{{ $doc->section_number }}</td>
+                    <td class="data_cell">{{ $doc->section->section_number }}</td>
                 </tr>
                 <tr>
                     <td class="label_cell">Revision No.:</td>
@@ -367,22 +367,44 @@
                 </tr>
                 <tr>
                     <td style="height: 60px; vertical-align: bottom;">
-                        Name <br>
+                        <p style="font-family: cursive">e-signed</p>
+                        <strong>{{ $doc->section->processOwner->fullname() }}</strong> <br>
                         Position
                     </td>
                     <td style="height: 60px; vertical-align: bottom;">
-                        Staff Reviewer<br>
+                        <strong>{{ $doc->section->reviewer->fullname() }}</strong><br>
                         Reviewer
                     </td>
                     <td style="height: 60px; vertical-align: bottom;">
-                        Staff Approver<br>
+                        <strong>{{ $doc->section->approver->fullname() }}</strong><br>
                         Approver
                     </td>
                 </tr>
                 <tr>
-                    <td>Date:</td>
-                    <td>Date:</td>
-                    <td>Date:</td>
+                    <td>
+                        Date:
+                        @if($submitted)
+                            {{ $submitted->performed_at->format('F j, Y') }}
+                        @else
+                            -
+                        @endif
+                    </td>
+                    <td>
+                        Date:
+                        @if($passed)
+                            {{ $passed->performed_at->format('F j, Y') }}
+                        @else
+                            -
+                        @endif
+                    </td>
+                    <td>
+                        Date:
+                        @if($approved)
+                            {{ $approved->performed_at->format('F j, Y') }}
+                        @else
+                            -
+                        @endif
+                    </td>
                 </tr>
             </tbody>
         </table>
