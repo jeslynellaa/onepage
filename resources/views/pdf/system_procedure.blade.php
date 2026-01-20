@@ -366,16 +366,30 @@
                     <td>Approved By:</td>
                 </tr>
                 <tr>
-                    <td style="height: 60px; vertical-align: bottom;">
-                        <p style="font-family: cursive">e-signed</p>
+                    <td style="height: 75px; vertical-align: bottom;">
+                        @if($submitted)
+                            <img src="{{ public_path('storage/' . $doc->section->processOwner->signature_path) }}"
+                                style="height: 35px;" >
+                            <span style="font-style: italic;">(e-signed)</span><br>
+                        @endif
                         <strong>{{ $doc->section->processOwner->fullname() }}</strong> <br>
                         Position
                     </td>
-                    <td style="height: 60px; vertical-align: bottom;">
+                    <td style="height: 75px; vertical-align: bottom;">
+                        @if($passed)
+                            <img src="{{ public_path('storage/' . $doc->section->reviewer->signature_path) }}"
+                                style="height: 35px;" >
+                            <span style="font-style: italic;">(e-signed)</span><br>
+                        @endif
                         <strong>{{ $doc->section->reviewer->fullname() }}</strong><br>
                         Reviewer
                     </td>
-                    <td style="height: 60px; vertical-align: bottom;">
+                    <td style="height: 75px; vertical-align: bottom;">
+                        @if($approved)
+                            <img src="{{ public_path('storage/' . $doc->section->approver->signature_path) }}"
+                                style="height: 35px;" >
+                            <span style="font-style: italic;">(e-signed)</span><br>
+                        @endif
                         <strong>{{ $doc->section->approver->fullname() }}</strong><br>
                         Approver
                     </td>
