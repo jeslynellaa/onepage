@@ -50,3 +50,6 @@ Route::get('/documents/system-procedures/{doc}/dirf', [DocumentController::class
 Route::get('/users/search', [UserController::class, 'search']);
 
 Route::put('/document/system-procedures/{section}', [SectionsController::class, 'update'])->name('document.system_procedures_section.update');
+
+Route::get('/profie/{user}/edit', [UserController::class, 'profile'])->name('profile.edit');
+Route::put('/profile/{user}', [UserController::class, 'update'])->name('profile.update');
