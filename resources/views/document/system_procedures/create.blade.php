@@ -57,6 +57,12 @@
                             class="w-full rounded-md border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm p-2" />
                     </div>
 
+                    <div class="md:col-span-12">
+                        <label for="justification" class="block text-xs font-bold uppercase mb-1">Justification/ Objective</label>
+                        <input required type="text" id="justification" name="justification" placeholder="Explain why document is created or modified"
+                            class="w-full rounded-md border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm p-2" />
+                    </div>
+
                     {{-- <div class="md:col-span-3">
                         <label for="effective_date" class="block text-xs font-bold uppercase mb-1">Effective Date</label>
                         <input type="date" id="effective_date" name="effective_date" value="{{ old('effective_date') }}"

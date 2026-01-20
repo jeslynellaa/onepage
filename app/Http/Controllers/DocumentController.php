@@ -61,6 +61,7 @@ class DocumentController extends Controller
             'revision_number' => 'nullable',
             'effective_date' => 'nullable|date',
             'objective' => 'required',
+            'justification' => 'required',
             'scope' => 'required',
             'type' => 'required',
         ]);
@@ -239,6 +240,7 @@ class DocumentController extends Controller
             'revision_number' => 'nullable',
             'effective_date' => 'nullable|date',
             'objective' => 'required',
+            'justification' => 'nullable',
             'scope' => 'required',
             'type' => 'required',
         ]);
