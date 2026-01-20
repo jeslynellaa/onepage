@@ -368,7 +368,7 @@
                 <tr>
                     <td style="height: 75px; vertical-align: bottom;">
                         @if($submitted)
-                            <img src="{{ public_path('storage/' . $doc->section->processOwner->signature_path) }}"
+                            <img src="{{ $owner_sign }}"
                                 style="height: 35px;" >
                             <span style="font-style: italic;">(e-signed)</span><br>
                         @endif
@@ -377,7 +377,7 @@
                     </td>
                     <td style="height: 75px; vertical-align: bottom;">
                         @if($passed)
-                            <img src="{{ public_path('storage/' . $doc->section->reviewer->signature_path) }}"
+                            <img src="{{ $reviewer_sign }}"
                                 style="height: 35px;" >
                             <span style="font-style: italic;">(e-signed)</span><br>
                         @endif
@@ -386,7 +386,7 @@
                     </td>
                     <td style="height: 75px; vertical-align: bottom;">
                         @if($approved)
-                            <img src="{{ public_path('storage/' . $doc->section->approver->signature_path) }}"
+                            <img src="{{ $approver_sign }}"
                                 style="height: 35px;" >
                             <span style="font-style: italic;">(e-signed)</span><br>
                         @endif

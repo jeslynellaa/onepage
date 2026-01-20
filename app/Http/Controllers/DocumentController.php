@@ -13,6 +13,7 @@ use App\Models\StepDocuments;
 use App\Models\ProcedureSteps;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use League\HTMLToMarkdown\HtmlConverter;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -149,6 +150,16 @@ class DocumentController extends Controller
         $passed = $doc->logs->firstWhere('action', 'review passed');
         $approved = $doc->logs->firstWhere('action', 'approved');
 
+        if (app()->environment('production')) {
+            $owner_sign = Storage::disk('public')->path($doc->section->processOwner->signature_path);
+            $reviewer_sign = Storage::disk('public')->path($doc->section->reviewer->signature_path);
+            $approver_sign = Storage::disk('public')->path($doc->section->approver->signature_path);
+        } else {
+            $owner_sign = public_path('storage/' . $doc->section->processOwner->signature_path);
+            $reviewer_sign = public_path('storage/' . $doc->section->reviewer->signature_path);
+            $approver_sign = public_path('storage/' . $doc->section->approver->signature_path);
+        }
+
         // Flatten all interfaces into one collection
         $allInterfaces = $doc->steps->flatMap(function ($step) {
             return $step->interfaces;
@@ -168,7 +179,7 @@ class DocumentController extends Controller
             ->values();
 
         // 1️⃣ Load your Blade view into Dompdf
-        $pdf = Pdf::loadView('pdf.system_procedure', compact('doc', 'steps', 'uniqueInputs', 'uniqueOutputs', 'connector', 'submitted', 'passed', 'approved'))
+        $pdf = Pdf::loadView('pdf.system_procedure', compact('doc', 'steps', 'uniqueInputs', 'uniqueOutputs', 'connector', 'submitted', 'passed', 'approved', 'owner_sign', 'reviewer_sign', 'approver_sign'))
                 ->setPaper('A4', 'portrait');
 
         // 2️⃣ Force rendering so Dompdf can calculate pages
