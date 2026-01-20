@@ -299,7 +299,7 @@
                                 <td class="py-2 text-center">
                                     ${details.revision_number ?? "N/A"}
                                     ${
-                                        window.canViewRevisionHistory
+                                        details.can.viewRevisionHistory
                                             ? `<a href="${details.revHistoryUrl}"
                                                 class="ml-1 text-gray-600 hover:text-sky-700"
                                                 title="View Revision History">
@@ -313,21 +313,23 @@
                                     <a href="${details.viewUrl}" class="text-gray-600 hover:text-sky-700">
                                         <i class="fa-solid fa-eye"></i>
                                     </a>`;
-                        if(details.status !== 'For Review' && details.status !== 'For Approval' ){
+                        if(details.status !== 'For Review' && details.status !== 'For Approval' && details.can.edit){
                             itemsTable += `
                                 <a href="${details.editUrl}" class="text-gray-600 hover:text-sky-700">
                                     <i class="fa-solid fa-pen"></i>
                                 </a>`;
                         }
-                        itemsTable += `
-                                <form action="${details.deleteUrl}" method="POST" onsubmit="return confirm(\'Are you sure you want to delete this document?\');" style="display:inline;">
-                                    <input type="hidden" name="_token" value="${data.csrf}">
-                                    <input type="hidden" name="_method" value="DELETE">
-                                    <button type="submit" class="text-gray-600 hover:text-sky-700 cursor-pointer transition-colors duration-300">
-                                        <i class="fa-solid fa-trash"></i>
-                                    </button>
-                                </form>`;
-                        if(details.status === 'Draft' && window.canSend){
+                        if(details.can.delete){
+                            itemsTable += `
+                                    <form action="${details.deleteUrl}" method="POST" onsubmit="return confirm(\'Are you sure you want to delete this document?\');" style="display:inline;">
+                                        <input type="hidden" name="_token" value="${data.csrf}">
+                                        <input type="hidden" name="_method" value="DELETE">
+                                        <button type="submit" class="text-gray-600 hover:text-sky-700 cursor-pointer transition-colors duration-300">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </form>`;
+                        }
+                        if(details.status === 'Draft' && details.can.edit){
                             itemsTable += `
                             <span class="text-gray-400">|</span>
                             <form action="${details.sendForReviewUrl}" method="POST" onsubmit="return confirm(\'Are you sure you want to send this document for review? You will not be able to make changes.\');" class="inline">
@@ -339,7 +341,7 @@
                                 </button>
                             </form>
                             `;
-                        }else if(details.status === 'For Review' && window.canReview){
+                        }else if(details.can.review){
                             itemsTable += `
                             <span class="text-gray-400">|</span>
                             <form action="${details.reviewDecisionUrl}" method="POST" onsubmit="return confirm(\'Are you sure you want to send this document for approval? You will not be able to make changes.\');" class="inline">
@@ -361,7 +363,7 @@
                                 </button>
                             </form>
                             `;
-                        }else if(details.status === 'For Approval' && window.canApprove){
+                        }else if(details.can.approve){
                             itemsTable += `
                             <span class="text-gray-400">|</span>
                             <form action="${details.approveDecisionUrl}" method="POST" onsubmit="return confirm(\'Are you sure you want to approve this document? You will not be able to make changes and this will mark the document as Active.\');" class="inline">
