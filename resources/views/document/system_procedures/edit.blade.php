@@ -56,7 +56,7 @@
                             class="w-full rounded-md border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm p-2" />
                     </div>
 
-                    <div class="md:col-span-12">
+                    <div class="col-span-full">
                         <label for="justification" class="block text-xs font-bold uppercase mb-1">Justification/ Objective</label>
                         <input type="text" id="justification" name="justification" placeholder="Explain why document is created or modified" value="{{ old('justification') ?? $doc->justification}}"
                             class="w-full rounded-md border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm p-2" />
