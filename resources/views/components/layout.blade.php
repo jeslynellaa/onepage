@@ -4,6 +4,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <title>OnePage</title>
 
     {{-- Vite compiled CSS & JS (Tailwind, Alpine, etc.) --}}
@@ -126,7 +128,9 @@
         </h4>
         <div class="text-sm leading-none mt-0"> {{ date('M. d, Y - l h:ia') }} </div>
       </div>
-      <div class="flex justify-end items-center px-5 h-full w-1/2">
+      @auth
+      <div class="flex justify-end items-center px-5 h-full w-1/2 gap-2">
+        <a href="{{route('profile.edit', auth()->user()->id)}}" class="text-lg cursor-pointer transition-colors duration-200 text-gray-600 hover:underline"><i class="fa-solid fa-user" title="Profile"></i></a>
         <form method="POST" action="{{ route('logout') }}">
           @csrf
           <button type="submit" class="text-lg cursor-pointer transition-colors duration-200 text-gray-600 hover:underline" title="Logout">
@@ -134,6 +138,7 @@
           </button>
         </form>
       </div>
+      @endauth
     </header>
 
     <!-- Main content area -->
