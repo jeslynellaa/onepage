@@ -121,7 +121,7 @@
 
         <h4 class="text-gray font-semibold text-lg leading-tight m-0">
           @auth
-            {{ $greeting }}, {{ auth()->user()->first_name }}! (<span class="uppercase">{{ auth()->user()->role }}</span>)
+            {{ $greeting }}, {{ auth()->user()->first_name }}! (<span class="uppercase">{{ auth()->user()->company->name }}</span>)
           @else
             {{ $greeting }}!
           @endauth
