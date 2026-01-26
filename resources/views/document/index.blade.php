@@ -15,7 +15,7 @@
                     </div>
                     <div class="flex-1">
                         <h3 class="text-xl font-semibold text-gray-800 m-0 p-0">System Procedures</h3>
-                        <p class="p-0 text-sm">Last activity on {{$lastActivity}}</p>
+                        <p class="p-0 text-sm">{{ $lastActivity ? "Last activity on " . $lastActivity : "No Activity"}}</p>
                         <span class="bg-green-200 rounded-md px-3 text-sm">Active</span>
                     </div>
                 </a>

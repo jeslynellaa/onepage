@@ -20,8 +20,10 @@ use Yajra\DataTables\Facades\DataTables;
 class DocumentController extends Controller
 {
     public function index() {
-        $lastActivity = ActivityLog::latest('performed_at')
-            ->value('performed_at')->format('d M Y');
+        $lastActivity = optional(
+            ActivityLog::latest('performed_at')->value('performed_at')
+        )->format('d M Y');
+
             
         return view('document.index', compact('lastActivity'));
     }
