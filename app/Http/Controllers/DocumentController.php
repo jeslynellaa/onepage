@@ -156,7 +156,7 @@ class DocumentController extends Controller
             $owner_sign = Storage::disk('public')->path($doc->section->processOwner->signature_path);
             $reviewer_sign = Storage::disk('public')->path($doc->section->reviewer->signature_path);
             $approver_sign = Storage::disk('public')->path($doc->section->approver->signature_path);
-            $connector = Storage::disk('public')->path('img/flowchart-connector.png');
+            $connector = public_path('img/flowchart-connector.png');
         } else {
             $owner_sign = public_path('storage/' . $doc->section->processOwner->signature_path);
             $reviewer_sign = public_path('storage/' . $doc->section->reviewer->signature_path);
