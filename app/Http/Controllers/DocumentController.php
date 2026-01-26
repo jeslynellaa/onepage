@@ -156,10 +156,12 @@ class DocumentController extends Controller
             $owner_sign = Storage::disk('public')->path($doc->section->processOwner->signature_path);
             $reviewer_sign = Storage::disk('public')->path($doc->section->reviewer->signature_path);
             $approver_sign = Storage::disk('public')->path($doc->section->approver->signature_path);
+            $connector = Storage::disk('public')->path('img/flowchart-connector.png');
         } else {
             $owner_sign = public_path('storage/' . $doc->section->processOwner->signature_path);
             $reviewer_sign = public_path('storage/' . $doc->section->reviewer->signature_path);
             $approver_sign = public_path('storage/' . $doc->section->approver->signature_path);
+            $connector = realpath(base_path()).'\public\img\flowchart-connector.png';
         }
 
         // Flatten all interfaces into one collection
