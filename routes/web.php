@@ -1,7 +1,9 @@
 <?php
 
 use App\Models\User;
+use App\Mail\SendTestEmail;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
@@ -53,3 +55,8 @@ Route::put('/document/system-procedures/{section}', [SectionsController::class, 
 
 Route::get('/profie/{user}/edit', [UserController::class, 'profile'])->name('profile.edit');
 Route::put('/profile/{user}', [UserController::class, 'update'])->name('profile.update');
+
+Route::get('send-mail', function() {
+    $message = "This is a test email for OnePage by FCU Solutions.";
+    Mail::to('jeslynella@gmail.com')->send(new SendTestEmail($message));
+});
