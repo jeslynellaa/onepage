@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ClientController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\SectionsController;
 
@@ -60,3 +62,9 @@ Route::get('send-mail', function() {
     $message = "This is a test email for OnePage by FCU Solutions.";
     Mail::to('jeslynella@gmail.com')->send(new SendTestEmail($message));
 });
+
+// ADMIN ROUTES
+Route::get('/admin', [AdminController::class, 'index'])->name('admin');
+
+Route::get('/admin/clients/onboard', [ClientController::class, 'create'])->name('client.create');
+Route::post('/admin/clients/onboard', [ClientController::class, 'store'])->name('client.store');

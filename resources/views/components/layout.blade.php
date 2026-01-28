@@ -98,6 +98,22 @@
           <div x-show="collapsed && showTooltip" class="fixed left-13 ml-3 px-2 py-1 text-sm bg-gray-800 text-white rounded shadow-lg whitespace-nowrap z-[9999]">Settings</div>
         </a>
 
+        <!-- ADMIN -->
+        <a href="{{ route('admin') }}" x-data="{ showTooltip: false }"
+          @mouseenter="showTooltip = true" 
+          @mouseleave="showTooltip = false" 
+          class="relative flex h-10 items-center px-4 py-2 rounded-lg transition-colors duration-300 
+            {{ request()->routeIs('admin') 
+              ? 'bg-white/40 text-[#042236]' 
+              : 'text-white hover:text-white hover:border hover:border-white' 
+          }}"
+            :class="collapsed ? 'justify-center w-10' : 'w-full'"
+        >
+          <i class="fa-solid fa-user-tie"></i>
+          <span x-show="!collapsed" class="ml-3">Admin</span>
+          <div x-show="collapsed && showTooltip" class="fixed left-13 ml-3 px-2 py-1 text-sm bg-gray-800 text-white rounded shadow-lg whitespace-nowrap z-[9999]">Admin</div>
+        </a>
+
       </nav>
     </aside>
     @endauth
