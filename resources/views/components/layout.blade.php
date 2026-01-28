@@ -120,10 +120,10 @@
 
     <!-- Header -->
     <header 
-      class="fixed top-0 left-0 bg-gray-100 z-10 h-14 flex items-center justify-between transition-all duration-300 w-full"
+      class="fixed top-0 left-0 bg-gray-100 z-10 h-14 flex items-center justify-end transition-all duration-300 w-full"
       :class="collapsed ? 'pl-16' : 'pl-56'"
     >
-      <div class="flex flex-col justify-center px-5 h-full w-1/2">
+      <div class="hidden lg:flex flex-col justify-center px-5 h-full w-3/4">
         @php
           $hour = now()->format('H');
           if ($hour < 12) {
