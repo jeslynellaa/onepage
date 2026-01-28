@@ -1,11 +1,11 @@
 <x-layout>
     <div class="mx-auto w-full px-5 py-1">
         <h1 class="font-semibold text-gray-800">
-            <a href="{{ route('admin') }}">Admin </a> > Clients > Onboard New
+            <a href="{{ route('admin.index') }}">Admin </a> > Clients > Onboard New
         </h1>
 
         <div class="shadow-md rounded-xl bg-white p-5 mt-2">
-            <form id="companyForm" method="POST" action="{{ route('client.store') }}" enctype="multipart/form-data" class="space-y-6">
+            <form id="companyForm" method="POST" action="{{ route('admin.client.store') }}" enctype="multipart/form-data" class="space-y-6">
                 @csrf
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">

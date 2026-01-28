@@ -64,7 +64,7 @@ Route::get('send-mail', function() {
 });
 
 // ADMIN ROUTES
-Route::get('/admin', [AdminController::class, 'index'])->name('admin');
+Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
 
-Route::get('/admin/clients/onboard', [ClientController::class, 'create'])->name('client.create');
-Route::post('/admin/clients/onboard', [ClientController::class, 'store'])->name('client.store');
+Route::get('/admin/clients/onboard', [ClientController::class, 'create'])->name('admin.client.create');
+Route::post('/admin/clients/onboard', [ClientController::class, 'store'])->name('admin.client.store');

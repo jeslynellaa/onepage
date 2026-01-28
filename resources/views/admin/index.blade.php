@@ -70,7 +70,7 @@
                 <div class="flex justify-between">
                     <span class="font-semibold">OnePage Client List</span>
                     <div>
-                        <a href="{{ route('client.create')}}" class="hover:bg-blue-600 hover:text-white duration-300 bg-blue-300 px-3 py-2 rounded-lg cursor-pointer">Onboard New</a>
+                        <a href="{{ route('admin.client.create')}}" class="hover:bg-blue-600 hover:text-white duration-300 bg-blue-300 px-3 py-2 rounded-lg cursor-pointer">Onboard New</a>
                     </div>
                 </div>
                 <table class="w-full mt-2 border-separate border-spacing-0 w-full">

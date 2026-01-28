@@ -99,11 +99,11 @@
         </a>
 
         <!-- ADMIN -->
-        <a href="{{ route('admin') }}" x-data="{ showTooltip: false }"
+        <a href="{{ route('admin.index') }}" x-data="{ showTooltip: false }"
           @mouseenter="showTooltip = true" 
           @mouseleave="showTooltip = false" 
           class="relative flex h-10 items-center px-4 py-2 rounded-lg transition-colors duration-300 
-            {{ request()->routeIs('admin') 
+            {{ request()->routeIs('admin.*') 
               ? 'bg-white/40 text-[#042236]' 
               : 'text-white hover:text-white hover:border hover:border-white' 
           }}"
