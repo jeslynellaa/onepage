@@ -90,9 +90,12 @@
                             <td>{{ $client->name }}</td>
                             <td>{{ $client->subcription_plan ?? "-" }}</td>
                             <td>{{ $client->subscription_ends_at ?? "-"}}</td>
-                            <td>
-                                <a href="" class="" title="View Client Record">
+                            <td class="flex gap-4">
+                                <a href="{{route('admin.client.view', $client->id)}}" class="" title="View Client Record">
                                     <i class="fa-solid fa-eye"></i>
+                                </a>
+                                <a href="{{route('admin.client.edit', $client->id)}}" class="" title="View Client Record">
+                                    <i class="fa-solid fa-pen"></i>
                                 </a>
                             </td>
                         </tr>

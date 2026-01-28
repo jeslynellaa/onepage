@@ -68,3 +68,6 @@ Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
 
 Route::get('/admin/clients/onboard', [ClientController::class, 'create'])->name('admin.client.create');
 Route::post('/admin/clients/onboard', [ClientController::class, 'store'])->name('admin.client.store');
+Route::get('/admin/clients/{client}/view', [ClientController::class, 'view'])->name('admin.client.view');
+Route::get('/admin/clients/{client}/edit', [ClientController::class, 'edit'])->name('admin.client.edit');
+Route::put('/admin/clients/{client}', [ClientController::class, 'update'])->name('admin.client.update');
