@@ -134,9 +134,9 @@ class ClientController extends Controller
         try {
             Mail::to($invitation->email)->send(new InvitationMail($invitation));
 
-            // $invitation->update([
-            //     'sent_out' => true,
-            // ]);
+            $invitation->update([
+                'sent_out' => true,
+            ]);
 
             return response()->json([
                 'success' => true,

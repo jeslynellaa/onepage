@@ -173,7 +173,7 @@
                         <td>{{$invitation->email}}</td>
                         <td class="capitalize">{{$invitation->role}}</td>
                         <td x-data="{ sending: false }">
-                            <button type="button" @click="sendInvite()" :disabled="sending" class="text-blue-500 hover:text-blue-700 cursor-pointer duration-300">
+                            <button type="button" @click="sendInvite()" :disabled="sending" class="text-blue-500 hover:text-blue-700 cursor-pointer duration-300" {{ $invitation->sent_out ? 'disabled' : ''}}>
                                 <i class="fa-solid fa-envelope" :class="{ 'opacity-50': sending }"></i>
                             </button>
 
