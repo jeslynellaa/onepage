@@ -175,8 +175,6 @@ class DocumentController extends Controller
             return $step->interfaces;
         });
 
-        $connector = realpath(base_path()).'\public\img\flowchart-connector.png';
-
         // Separate and deduplicate by type and title
         $uniqueInputs = $allInterfaces
             ->where('type', 'input')
