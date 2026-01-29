@@ -50,7 +50,7 @@ class ClientController extends Controller
     public function view(Company $client)
     {
         $userAccounts = User::where('company_id', $client->id)->get();
-        $invitations = Invitation::where('company_id', $client->id)->get();
+        $invitations = Invitation::where('company_id', $client->id)->where('sent_out', false)->get();
 
         return view('clients.view', compact('client', 'userAccounts', 'invitations'));
     }
