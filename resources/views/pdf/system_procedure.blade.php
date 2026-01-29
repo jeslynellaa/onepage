@@ -381,7 +381,7 @@
                                 style="height: 35px;" >
                             <span style="font-style: italic;">(e-signed)</span><br>
                         @else
-                            :<
+                        
                         @endif
                         <strong>{{ $doc->section->reviewer->fullname() }}</strong><br>
                         Reviewer
@@ -392,7 +392,7 @@
                                 style="height: 35px;" >
                             <span style="font-style: italic;">(e-signed)</span><br>
                         @else
-                            :<
+                        
                         @endif
                         <strong>{{ $doc->section->approver->fullname() }}</strong><br>
                         Approver
