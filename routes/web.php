@@ -71,3 +71,6 @@ Route::post('/admin/clients/onboard', [ClientController::class, 'store'])->name(
 Route::get('/admin/clients/{client}/view', [ClientController::class, 'view'])->name('admin.client.view');
 Route::get('/admin/clients/{client}/edit', [ClientController::class, 'edit'])->name('admin.client.edit');
 Route::put('/admin/clients/{client}', [ClientController::class, 'update'])->name('admin.client.update');
+
+Route::post('/admin/clients/{client}/invite', [ClientController::class, 'invite'])->name('admin.client.invite');
+Route::post('/invitations/{invitation}/send', [ClientController::class, 'send'])->name('admin.client.send-invite');
