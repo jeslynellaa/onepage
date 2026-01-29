@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
+use App\Models\Invitation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
@@ -14,9 +15,17 @@ class AuthController extends Controller
         return view('auth.login');
     }
 
-    public function showRegister()
+    public function showRegister(Request $request)
     {
-        return view('auth.register');
+        $token = $request->query('token');
+
+        $invitation = Invitation::where('token', $token)->first();
+
+        if (!$invitation || $invitation->isUsed() || $invitation->isExpired()) {
+            abort(403, "This registration link is invalid, already used, or expired. Contact your company's admin for help.");
+        }
+
+        return view('auth.register', ['invitation' => $invitation]);
     }
 
     public function login(Request $request)
