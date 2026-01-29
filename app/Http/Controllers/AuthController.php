@@ -52,15 +52,28 @@ class AuthController extends Controller
             'username' => 'required|unique:users|string|max:255',
             'email' => 'required|email|unique:users',
             'password' => 'required|confirmed|min:6',
+            'role' => 'required|string|max:255',
+            'company_id' => 'required',
         ]);
+
+        // Find the invitation
+        $invitation = Invitation::where('token', $request->token)->first();
+
+        // Check if the invitation is already used or expired
+        if ($invitation->isUsed() || $invitation->isExpired()) {
+            return back()->withErrors(['token' => 'This registration link is invalid, already used, or expired.']);
+        }
 
         // Encrypt the password with hash
         $validated['password'] = Hash::make($request->password);
 
         $user = User::create(array_merge($validated, [
-            'role' => 'user',
             'active' => true
         ]));
+
+        // Mark invitation as used
+        $invitation->used_at = now();
+        $invitation->save();
 
         Auth::login($user);
         return redirect('dashboard');

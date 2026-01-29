@@ -4,6 +4,8 @@
             @csrf
             <h2 class="text-2xl font-semibold mb-4 text-center">Register</h2>
             <input type="hidden" name="token" value="{{ request('token') }}">
+            <input type="hidden" name="role" value="{{ $invitation->role }}">
+            <input type="hidden" name="company_id" value="{{ $invitation->company_id }}">
             <input type="text" name="first_name" placeholder="Given Name" class="w-full border rounded px-3 py-2 mb-3" required>
 
             <div class="flex gap-3">
