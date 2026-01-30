@@ -53,7 +53,7 @@
 
                     <div class="md:col-span-2">
                         <label for="revision_number" class="block text-xs font-bold uppercase mb-1">Revision No.</label>
-                        <input readonly type="text" id="revision_number" name="revision_number" value="0"
+                        <input readonly type="text" id="revision_number" name="revision_number"
                             class="w-full rounded-md border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm p-2" />
                     </div>
 
@@ -136,6 +136,7 @@
                                 </div>
                             @endfor
                         </div>
+                        <button type="button" class="add-interface-btn mt-2 flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800" data-type="input">➕ Add Interface</button>
                     </div>
 
                     <div>
@@ -159,6 +160,7 @@
                                 </div>
                             @endfor
                         </div>
+                        <button type="button" class="add-interface-btn mt-2 flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800" data-type="output">➕ Add Interface</button>
                     </div>
                 </div>
 
@@ -369,5 +371,21 @@
             
             document.getElementById('procedure-steps-form').scrollIntoView({ behavior: 'smooth' });
         }
+        
+        document.addEventListener('click', function (e) {
+            const btn = e.target.closest('.add-interface-btn');
+            if (!btn) return;
+
+            const type = btn.dataset.type;
+            const wrapper = type === 'input' ? document.getElementById('interfaces-inputs-wrapper') : document.getElementById('interfaces-outputs-wrapper');
+            const index = wrapper.children.length + 1;
+
+            const row = document.createElement('div');
+            row.className = 'flex gap-2';
+
+            row.innerHTML = '<select class="interface-' + (type === 'input' ? 'input' : 'output') + '-category w-1/3 rounded-md border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm p-2"><option value="">Select category</option><option value="Form">Form</option><option value="Procedure">System Procedure</option><option value="MS Manual">MS Manual</option><option value="Support Document">Support Document</option><option value="Work Instruction">Work Instruction</option><option value="Document">Document</option></select><input type="text" class="interface-' + (type === 'input' ? 'input' : 'output') + '-name w-2/3 rounded-md border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm p-2" placeholder="' + (type === 'input' ? 'Reference' : 'Output') + ' #' + index + '">';
+
+            wrapper.appendChild(row);
+        });
     </script>
 </x-layout>
