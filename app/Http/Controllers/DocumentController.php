@@ -73,7 +73,6 @@ class DocumentController extends Controller
 
         // Ensure it's an array with at least one entry
         if (!is_array($procedureSteps) || count($procedureSteps) === 0) {
-            dd(session()->all());
             return back()->withErrors([
                 'procedure_steps_json' => 'At least one prcodeure step is required.'
             ])->withInput();
@@ -132,7 +131,7 @@ class DocumentController extends Controller
             return redirect()->back()->with("success","New Document Created Successfully!");
         } catch (\Throwable $e) {
             DB::rollBack();
-            dd(session()->all(), $e->getMessage());
+            // dd(session()->all(), $e->getMessage());
             return back()->withErrors(['error' => 'Something went wrong. Please try again. '.$e])->withInput();
         }
     }
