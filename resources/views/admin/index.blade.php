@@ -18,7 +18,7 @@
         </div>
 
         <!-- Content Row -->
-        <div class="grid grid-cols-1 grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
+        <div class="grid sm:grid-cols-1 xl:grid-cols-4 gap-6">
             <div class="bg-white rounded-2xl shadow p-5 flex items-center justify-between">
                 <div>
                     <div class="text-sm font-semibold text-gray-600">
