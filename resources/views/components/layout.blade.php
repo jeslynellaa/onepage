@@ -196,6 +196,26 @@
         <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
         <script src="https://cdn.datatables.net/2.3.4/js/dataTables.js"></script>
         {{ $scripts ?? '' }}
+        @auth
+        @if(!(request()->routeIs('login') || request()->routeIs('register')))
+          <script>
+            setInterval(() => {
+                fetch('/auth-check', { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                    .then(res => {
+                        if (res.status === 401) {
+                            window.location.href = '/login';
+                        }
+                    });
+            }, 60000);
+
+            window.addEventListener('pageshow', event => {
+              if (event.persisted) {
+                  window.location.href = '/login';
+              }
+            });
+          </script>
+        @endif
+        @endauth
       </section>
 
       <!-- Footer -->
