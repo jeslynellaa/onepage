@@ -1,12 +1,12 @@
 <x-layout>
-    <div class="mx-auto w-full px-5 py-1">
+    <div class="mx-auto px-5 pt-1">
         <!-- Header -->
         <div class="flex justify-between items-center mb-4">
             <h1 class="font-semibold text-gray-800">Dashboard</h1>
         </div>
 
         <!-- Content Row -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
+        <div class="grid grid-cols-2 xl:grid-cols-4 gap-6">
             <div class="bg-white rounded-2xl shadow p-5 flex items-center justify-between">
                 <div>
                     <div class="text-sm font-semibold text-gray-600">
@@ -16,7 +16,7 @@
                         {{$activeCount}}
                     </div>
                 </div>
-                <i class="fas fa-file text-3xl text-gray-400"></i>
+                <i class="fas fa-file text-3xl text-[#74c365]"></i>
             </div>
 
             <div class="bg-white rounded-2xl shadow p-5 flex items-center justify-between">
@@ -28,7 +28,7 @@
                         {{$draftCount}}
                     </div>
                 </div>
-                <i class="fas fa-pen text-3xl text-gray-400"></i>
+                <i class="fas fa-pen text-3xl text-[#74c365]"></i>
             </div>
 
             <div class="bg-white rounded-2xl shadow p-5 flex items-center justify-between">
@@ -40,7 +40,7 @@
                         {{$reviewCount}}
                     </div>
                 </div>
-                <i class="fas fa-glasses text-3xl text-gray-400"></i>
+                <i class="fas fa-glasses text-3xl text-[#74c365]"></i>
             </div>
 
             <div class="bg-white rounded-2xl shadow p-5 flex items-center justify-between">
@@ -52,65 +52,77 @@
                         {{$approvalCount}}
                     </div>
                 </div>
-                <i class="fas fa-circle-check text-3xl text-gray-400"></i>
+                <i class="fas fa-circle-check text-3xl text-[#74c365]"></i>
             </div>
 
         </div>
-        <div class="flex gap-5">
-            <div class="overflow-x-auto bg-white rounded-2xl shadow-lg px-5 py-2 mt-3 w-3/4 max-h-100">
-                <table class="w-full border border-gray-200 text-sm text-left text-gray-700">
-                    <thead>
-                        <tr class="border border-gray-200">
-                            <th class="p-2">Date</th>
-                            <th class="p-2">Action</th>
-                            <th class="p-2">Description</th>
-                            <th class="p-2">Performed By</th>
-                            <th class="p-2">View</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($logs as $log)
-                            <tr>
-                                <td class="p-2">{{ $log->performed_at->format('d M Y - g:i A') }}</td>
-                                <td class="p-2">{{strtoupper($log->action)}}</td>
-                                <td class="p-2">{{$log->description}}</td>
-                                <td class="p-2">{{$log->user->first_name}} {{$log->user->last_name}}</td>
-                                <td class="p-2"></td>
+
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-6 my-6">
+            <div class="md:col-span-8 bg-white rounded-2xl shadow-md p-5 max-h-100 flex flex-col">
+                <div class="flex justify-between border-b border-gray-300 items-center mb-2 pt-1 pb-3">
+                    <div class="font-semibold">Activity Log</div>
+                    <div>
+                        <a href="#" class="cursor-pointer duration-300 text-[#001f3f] bg-blue-200 rounded-xl py-2 px-3 hover:text-white hover:bg-[#1e488f]">View all</a>
+                    </div>
+                </div>
+                <div class="overflow-y-auto max-h-96">
+                    <table class="w-full text-sm text-left text-gray-700">
+                        <thead>
+                            <tr class="">
+                                <th class="p-2 sticky top-0 bg-white z-10">Date</th>
+                                <th class="p-2 sticky top-0 bg-white z-10">Action</th>
+                                <th class="p-2 sticky top-0 bg-white z-10">Description</th>
+                                <th class="p-2 sticky top-0 bg-white z-10">Performed By</th>
                             </tr>
-                        @empty
-                            <tr>
-                                <td colspan="5" class="text-center p-2">No Logs Available</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            @forelse ($logs as $log)
+                                <tr>
+                                    <td class="p-2">{{ $log->performed_at->format('d M Y - g:i A') }}</td>
+                                    <td class="p-2">{{strtoupper($log->action)}}</td>
+                                    <td class="p-2">{{$log->description}}</td>
+                                    <td class="p-2">{{$log->user->first_name}} {{$log->user->last_name}}</td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="5" class="text-center p-2">No Logs Available</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
             </div>
-            <div class="overflow-x-auto bg-white rounded-2xl shadow-lg px-5 py-2 mt-3 w-1/4 max-h-100">
-                <span>Action Requests</span>
-                <table class="w-full border border-gray-200 text-sm text-left text-gray-700">
-                    <thead>
-                        <tr class="border border-gray-200">
-                            <th class="p-2">Date</th>
-                            <th class="p-2">Document</th>
-                            <th class="p-2">View</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($logs as $log)
-                            <tr>
-                                <td class="p-2">{{ $log->performed_at->format('d M Y - g:i A') }}</td>
-                                <td class="p-2">{{strtoupper($log->action)}}</td>
-                                <td class="p-2">{{$log->description}}</td>
+            <div class="md:col-span-4 bg-white rounded-2xl shadow-md p-5 max-h-100 flex flex-col">
+                <div class="flex justify-between border-b border-gray-300 items-center mb-2 pt-1 pb-3">
+                    <div class="font-semibold">Action Requests</div>
+                    <div>
+                    </div>
+                </div>
+                <div class="overflow-y-auto max-h-96">
+                    <table class="w-full text-sm text-left text-gray-700">
+                        <thead>
+                            <tr class="">
+                                <th class="p-2 sticky top-0 bg-white z-10">Date</th>
+                                <th class="p-2 sticky top-0 bg-white z-10">Document</th>
+                                <th class="p-2 sticky top-0 bg-white z-10">View</th>
                             </tr>
-                        @empty
-                            <tr>
-                                <td colspan="5" class="text-center p-2">No Logs Available</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            @forelse ($logs as $log)
+                                <tr>
+                                    <td class="p-2">{{ $log->performed_at->format('d M Y - g:i A') }}</td>
+                                    <td class="p-2">{{strtoupper($log->action)}}</td>
+                                    <td class="p-2">{{$log->description}}</td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="5" class="text-center p-2">No Logs Available</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
-
     </div>
 </x-layout>

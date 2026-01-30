@@ -30,12 +30,12 @@
     </style>
   </head>
 
-  <body x-data="{ collapsed: true, mobileOpen: false }" class="flex bg-gray-100 min-h-screen">
+  <body x-data="{ collapsed: true, mobileOpen: false }" class="flex bg-gray-100">
     @auth
     <!-- Sidebar -->
     <aside 
       :class="collapsed ? 'w-16 rounded-tr-3xl rounded-br-3xl' : 'w-56'" 
-      class="fixed top-0 left-0 h-screen bg-gradient-to-b from-[#87ceeb] to-[#0054b4] text-white transition-all duration-300 shadow-md flex flex-col z-20 overflow-y-auto">
+      class="fixed top-0 left-0 h-screen bg-gradient-to-tr from-[#3de3b1] to-[#575df9] text-white transition-all duration-300 shadow-md flex flex-col z-20 overflow-y-auto">
       <!-- Sidebar Header -->
       <div class="flex mx-auto w-10/12 items-center justify-between px-4 py-3 border-b border-gray-300 text-center h-14">
         <h2 x-show="!collapsed" class="text-xl font-semibold text-white">OnePage</h2>
@@ -49,14 +49,15 @@
       </div>
 
       <!-- Nav Links -->
-      <nav class="mt-4 flex-1 justify-items-center space-y-1 w-11/12 mx-auto">
+      <nav class="mt-4 flex flex-col items-center flex-1 space-y-1 w-11/12 mx-auto">
+
         <!-- DASHBOARD -->
         <a href="{{ route('dashboard') }}" x-data="{ showTooltip: false }"
           @mouseenter="showTooltip = true" 
           @mouseleave="showTooltip = false" 
-          class="relative flex h-10 items-center px-4 py-2 rounded-lg transition-colors duration-300 
+          class="relative flex h-10 items-center px-4 py-2 rounded-2xl transition-colors duration-300 
             {{ request()->routeIs('dashboard')
-            ? 'bg-white/40 text-[#042236]'
+            ? 'bg-gradient-to-br from-white/15 to-white/60 text-[#001f3f]'
             : 'text-white hover:text-white hover:border hover:border-white'
           }}"
             :class="collapsed ? 'justify-center w-10' : 'w-full'"
@@ -70,9 +71,9 @@
         <a href="{{ route('document.index') }}" x-data="{ showTooltip: false }"
           @mouseenter="showTooltip = true" 
           @mouseleave="showTooltip = false"
-          class="relative flex h-10 items-center px-4 py-2 rounded-lg transition-colors duration-300 
+          class="relative flex h-10 items-center px-4 py-2 rounded-2xl transition-colors duration-300 
             {{ request()->routeIs('document.*') 
-              ? 'bg-white/40 text-[#042236]' 
+              ? 'bg-gradient-to-br from-white/15 to-white/60 text-[#001f3f]' 
               : 'text-white hover:text-white hover:border hover:border-white' 
           }}"
             :class="collapsed ? 'justify-center w-10' : 'w-full'"
@@ -86,9 +87,9 @@
         <a href="#" x-data="{ showTooltip: false }"
           @mouseenter="showTooltip = true" 
           @mouseleave="showTooltip = false" 
-          class="relative flex h-10 items-center px-4 py-2 rounded-lg transition-colors duration-300 
+          class="relative flex h-10 items-center px-4 py-2 rounded-2xl transition-colors duration-300 
             {{ request()->routeIs('settings') 
-              ? 'bg-white/40 text-[#042236]' 
+              ? 'bg-gradient-to-br from-white/15 to-white/60 text-[#001f3f]' 
               : 'text-white hover:text-white hover:border hover:border-white' 
           }}"
             :class="collapsed ? 'justify-center w-10' : 'w-full'"
@@ -102,9 +103,9 @@
         <a href="{{ route('admin.index') }}" x-data="{ showTooltip: false }"
           @mouseenter="showTooltip = true" 
           @mouseleave="showTooltip = false" 
-          class="relative flex h-10 items-center px-4 py-2 rounded-lg transition-colors duration-300 
+          class="relative flex h-10 items-center px-4 py-2 rounded-2xl transition-colors duration-300 
             {{ request()->routeIs('admin.*') 
-              ? 'bg-white/40 text-[#042236]' 
+              ? 'bg-gradient-to-br from-white/15 to-white/60 text-[#001f3f]' 
               : 'text-white hover:text-white hover:border hover:border-white' 
           }}"
             :class="collapsed ? 'justify-center w-10' : 'w-full'"
@@ -158,10 +159,10 @@
     </header>
 
     <!-- Main content area -->
-    <main class="flex-1 min-h-screen transition-all duration-300" :class="collapsed ? 'ml-16' : 'ml-56'">
+    <main class="flex-1 transition-all duration-300" :class="collapsed ? 'ml-16' : 'ml-56'">
 
       <!-- Page Content -->
-      <section class="mt-14 min-h-full flex-grow py-3">
+      <section class="pt-14 min-h-full flex-grow pt-3">
 
         <!-- Flash Messages -->
         @if (session()->has('success'))
