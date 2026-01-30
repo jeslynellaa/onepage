@@ -6,53 +6,53 @@
         </div>
 
         <!-- Content Row -->
-        <div class="grid grid-cols-1 xl:grid-cols-4 gap-6">
-            <div class="bg-white rounded-2xl shadow p-5 flex items-center justify-between">
-                <div>
+        <div class="grid grid-cols-2 xl:grid-cols-4 gap-4">
+            <div class="bg-white rounded-2xl shadow p-5 flex items-center justify-between flex-col-reverse sm:flex-row">
+                <div class="flex flex-col-reverse sm:flex-col">
                     <div class="text-sm font-semibold text-gray-600">
                         Active Documents
                     </div>
-                    <div class="text-2xl font-bold text-gray-900">
+                    <div class="text-2xl font-bold text-gray-900 text-center sm:text-left">
                         {{$activeCount}}
                     </div>
                 </div>
-                <i class="fas fa-file text-3xl text-[#74c365]"></i>
+                <i class="fas fa-file text-lg sm:text-3xl text-[#74c365]"></i>
             </div>
 
-            <div class="bg-white rounded-2xl shadow p-5 flex items-center justify-between">
-                <div>
+            <div class="bg-white rounded-2xl shadow p-5 flex items-center justify-between flex-col-reverse sm:flex-row">
+                <div class="flex flex-col-reverse sm:flex-col">
                     <div class="text-sm font-semibold text-gray-600">
                         Draft Documents
                     </div>
-                    <div class="text-2xl font-bold text-gray-900">
+                    <div class="text-2xl font-bold text-gray-900 text-center sm:text-left">
                         {{$draftCount}}
                     </div>
                 </div>
-                <i class="fas fa-pen text-3xl text-[#74c365]"></i>
+                <i class="fas fa-pen text-lg sm:text-3xl text-[#74c365]"></i>
             </div>
 
-            <div class="bg-white rounded-2xl shadow p-5 flex items-center justify-between">
-                <div>
+            <div class="bg-white rounded-2xl shadow p-5 flex items-center justify-between flex-col-reverse sm:flex-row">
+                <div class="flex flex-col-reverse sm:flex-col">
                     <div class="text-sm font-semibold text-gray-600">
                         For Review
                     </div>
-                    <div class="text-2xl font-bold text-gray-900">
+                    <div class="text-2xl font-bold text-gray-900 text-center sm:text-left">
                         {{$reviewCount}}
                     </div>
                 </div>
-                <i class="fas fa-glasses text-3xl text-[#74c365]"></i>
+                <i class="fas fa-glasses text-lg sm:text-3xl text-[#74c365]"></i>
             </div>
 
-            <div class="bg-white rounded-2xl shadow p-5 flex items-center justify-between">
-                <div>
+            <div class="bg-white rounded-2xl shadow p-5 flex items-center justify-between flex-col-reverse sm:flex-row">
+                <div class="flex flex-col-reverse sm:flex-col">
                     <div class="text-sm font-semibold text-gray-600">
                         Pending Approval
                     </div>
-                    <div class="text-2xl font-bold text-gray-900">
+                    <div class="text-2xl font-bold text-gray-900 text-center sm:text-left">
                         {{$approvalCount}}
                     </div>
                 </div>
-                <i class="fas fa-circle-check text-3xl text-[#74c365]"></i>
+                <i class="fas fa-circle-check text-lg sm:text-3xl text-[#74c365]"></i>
             </div>
 
         </div>
