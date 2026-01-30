@@ -172,38 +172,39 @@
                         <td>{{$key+1}}</td>
                         <td>{{$invitation->email}}</td>
                         <td class="capitalize">{{$invitation->role}}</td>
-                        <td x-data="{ sending: false }">
+                        <td x-data="{
+                            sending: false, 
+                            sendInvite() { 
+                                this.sending = true;
+
+                                fetch('{{ route('admin.client.send-invite', $invitation->id) }}', {
+                                    method: 'POST',
+                                    headers: {
+                                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                        'Accept': 'application/json'
+                                    }
+                                })
+                                .then(res => res.json())
+                                .then(data => {
+                                    this.sending = false;
+                                    
+                                    if(data.success){
+                                        alert('Invitation email sent!');
+                                        location.reload();
+                                    } else {
+                                       alert(data.message ?? 'Something went wrong.');
+                                    } 
+                                })
+                                .catch(() => {
+                                    this.sending = false;
+                                    alert('Failed to send invitation.');
+                                });
+                            }
+                        }
+                        ">
                             <button type="button" @click="sendInvite()" :disabled="sending" class="text-blue-500 hover:text-blue-700 cursor-pointer duration-300">
                                 <i class="fa-solid fa-envelope" :class="{ 'opacity-50': sending }"></i>
                             </button>
-
-                            <script>
-                                function sendInvite() {
-                                    this.sending = true;
-
-                                    fetch("{{ route('admin.client.send-invite', $invitation->id) }}", {
-                                        method: 'POST',
-                                        headers: {
-                                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                                            'Accept': 'application/json',
-                                        }
-                                    })
-                                    .then(res => res.json())
-                                    .then(data => {
-                                        this.sending = false;
-
-                                        if (data.success) {
-                                            alert('Invitation email sent!');
-                                        } else {
-                                            alert(data.message ?? 'Something went wrong.');
-                                        }
-                                    })
-                                    .catch(() => {
-                                        this.sending = false;
-                                        alert('Failed to send invitation.');
-                                    });
-                                }
-                            </script>
                         </td>
                     </tr>
                     @empty
