@@ -66,7 +66,7 @@
 
                 <div class="col-span-full">
                     <label for="justification" class="block text-xs font-bold uppercase mb-1">Justification/ Objective</label>
-                    <input required type="text" id="justification" name="justification" placeholder="Explain why document is created or modified"
+                    <input required type="text" id="justification" name="justification" placeholder="Explain why document is created or modified" value="{{ old('justification') }}"
                         class="w-full rounded-md border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm p-2" />
                 </div>
                 
@@ -108,10 +108,15 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <!-- Notes -->
-                    <div>
+                    {{-- <div>
                         <label for="note" class="block text-xs font-bold uppercase mb-1">Include a Note (optional)</label>
                         <textarea id="note" name="note[]" rows="10"
                             class="w-full rounded-md border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm p-2"></textarea>
+                    </div> --}}
+                    <div class="relative w-full h-60 rounded-md">
+                        <label class="block text-xs font-bold uppercase mb-1">Include a Note (optional)</label>
+                        <div id="note-editor" class="ql-container ql-snow h-4/6!"></div>
+                        <input type="hidden" name="note" id="note">
                     </div>
 
                     <!-- Interfaces -->
@@ -199,7 +204,23 @@
         </div>
     </div>
 
+    <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
     <script>
+        let quill; // declare globally so all functions can access it
+
+        document.addEventListener('DOMContentLoaded', () => {
+            quill = new Quill('#note-editor', {
+                theme: 'snow',
+                modules: {
+                    toolbar: [
+                        ['bold', 'italic', 'underline'],
+                        [{ list: 'ordered' }, { list: 'bullet' }]
+                    ]
+                }
+            });
+        });
+
         // HANDLE EXPENSE DETAILS FUNCTIONALITY
         let steps = [];
         let editingIndex = null;
@@ -221,6 +242,7 @@
         });
 
         function addStep() {
+            document.getElementById('note').value = quill.root.innerHTML;
             const inputs = [];
             const outputs = [];
 
@@ -313,6 +335,7 @@
 
         function clearStepsForm() {
             document.getElementById('procedure-steps-form').reset();
+            quill.setContents([]);
         }
 
         function removeStep(index) {
@@ -335,7 +358,7 @@
             $('#responsibility').val(selectedStep.responsibility);
             $('#activities').val(selectedStep.activities);
             $('#note').val(selectedStep.note);
-            
+            quill.root.innerHTML = selectedStep.note || '';
 
             // Populate INTERFACE INPUTS
             const inputRows = document.querySelectorAll('#interfaces-inputs-wrapper .flex');
