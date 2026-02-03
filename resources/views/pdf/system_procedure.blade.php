@@ -65,8 +65,9 @@
         #process_table thead tr{
             font-weight: 700;
             font-size: 10pt;
-            background-color: lightblue;
             text-align: center;
+            color: {{ $text_color }};
+            background-color: {{ $color}};
         }
         #title-row{
             font-weight: 700;
@@ -178,7 +179,11 @@
                     <td colspan="3">SYSTEM PROCEDURES MANUAL</td>
                 </tr>
                 <tr>
-                    <td rowspan="5" style="font-size:14pt; text-align:center"><strong>FCU SOLUTIONS INC</strong></td>
+                    <td rowspan="5" style="font-size:14pt; text-align:center">
+                        <div style="width:100%; height: 90px; text-align:center; vertical-align: center">
+                            <img src="{{ $logo }}" style="height: 100%;" >
+                        </div>
+                    </td>
                     <td class="label_cell">Section No.:</td>
                     <td class="data_cell">{{ $doc->section->section_number }}</td>
                 </tr>

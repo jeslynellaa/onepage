@@ -150,8 +150,13 @@ class DocumentController extends Controller
         $submitted = $doc->logs->firstWhere('action', 'submitted for review');
         $passed = $doc->logs->firstWhere('action', 'review passed');
         $approved = $doc->logs->firstWhere('action', 'approved');
+        $color = $doc->company->hex_code;
+        $text_color = $this->getTextColorForBackground($color);
 
         if (app()->environment('production')) {
+            $logo = $doc->company->logo_path
+                ? Storage::disk('public')->path($doc->company->logo_path)
+                : null;
             $owner_sign = $doc->section->processOwner->signature_path
                 ? Storage::disk('public')->path($doc->section->processOwner->signature_path)
                 : null;
@@ -163,6 +168,7 @@ class DocumentController extends Controller
                 : null;
             $connector = public_path('img/flowchart-connector.png');
         } else {
+            $logo = public_path('storage/' . $doc->company->logo_path);
             $owner_sign = public_path('storage/' . $doc->section->processOwner->signature_path);
             $reviewer_sign = public_path('storage/' . $doc->section->reviewer->signature_path);
             $approver_sign = public_path('storage/' . $doc->section->approver->signature_path);
@@ -186,7 +192,7 @@ class DocumentController extends Controller
             ->values();
 
         // 1️⃣ Load your Blade view into Dompdf
-        $pdf = Pdf::loadView('pdf.system_procedure', compact('doc', 'steps', 'uniqueInputs', 'uniqueOutputs', 'connector', 'submitted', 'passed', 'approved', 'owner_sign', 'reviewer_sign', 'approver_sign'))
+        $pdf = Pdf::loadView('pdf.system_procedure', compact('doc', 'steps', 'uniqueInputs', 'uniqueOutputs', 'connector', 'submitted', 'passed', 'approved', 'owner_sign', 'reviewer_sign', 'approver_sign', 'logo', 'color', 'text_color'))
                 ->setPaper('A4', 'portrait');
 
         // 2️⃣ Force rendering so Dompdf can calculate pages
@@ -215,6 +221,24 @@ class DocumentController extends Controller
         // 5️⃣ Stream or download
         return $pdf->stream();
     }
+
+    private function getTextColorForBackground($hex) {
+        $hex = ltrim($hex, '#');
+
+        // Support shorthand hex (#fff)
+        if (strlen($hex) === 3) {
+            $hex = $hex[0].$hex[0].$hex[1].$hex[1].$hex[2].$hex[2];
+        }
+
+        $r = hexdec(substr($hex, 0, 2));
+        $g = hexdec(substr($hex, 2, 2));
+        $b = hexdec(substr($hex, 4, 2));
+
+        $brightness = ($r * 299 + $g * 587 + $b * 114) / 1000;
+
+        return $brightness < 128 ? '#ffffff' : '#000000';
+    }
+
 
     public function sp_edit(Document $doc) {
         $converter = new HtmlConverter();
