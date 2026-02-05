@@ -10,8 +10,8 @@
             overflow: hidden;
         }
     </style>
-    <div class="flex justify-center flex-col sm:flex-row bg-gray-100 h-250 sm:h-screen">
-        <div class="w-full h-1/2 sm:w-9/16 sm:h-screen flex flex-col justify-center py-10">
+    <div class="flex justify-center flex-col md:flex-row bg-gray-100 h-250 md:h-screen">
+        <div class="w-full h-1/2 md:w-9/16 md:h-screen flex flex-col justify-center py-10">
             <div class="justify-center mx-auto w-4/6 min-w-16 flex gap-3 flex-col">
                 <a href="" class="text-[#0047AB] hover:text-blue-500 pl-1 duration-300 w-36">
                     <i class="fa-solid fa-arrow-left mr-3"></i>Back to Home
@@ -58,7 +58,7 @@
                 </form>
             </div>
         </div>
-        <div class="w-full h-1/2 sm:w-7/16 sm:h-screen bg-gradient-to-tl from-[#3de3b1] to-[#575df9] text-white p-12 flex justify-center">
+        <div class="w-full h-1/2 md:w-7/16 md:h-screen bg-gradient-to-tl from-[#3de3b1] to-[#575df9] text-white p-12 flex justify-center">
             <div class="h-full flex flex-col justify-center">
                 <div class="gap-2 flex justify-center items-center rounded-lg w-40 py-1 px-3 mb-3 bg-white/75 text-[#0047AB]">
                     <i class="fa-regular fa-circle-question"></i>
