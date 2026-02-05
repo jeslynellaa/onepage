@@ -638,4 +638,90 @@ class DocumentController extends Controller
             'dirf' => $dirf
         ]);
     }
+
+    public function showCommentForm(Document $doc)
+    {
+        return view('document.system_procedures.comments', compact('doc'));
+    }
+
+    public function preview(Document $doc)
+    {
+        // Load steps and their related documents
+        $doc->load([
+            'steps.interfaces',
+            'section.processOwner',
+            'section.reviewer',
+            'section.approver',
+        ]);
+        $steps = $doc->steps;
+
+        $submitted = $doc->logs->firstWhere('action', 'submitted for review');
+        $passed = $doc->logs->firstWhere('action', 'review passed');
+        $approved = $doc->logs->firstWhere('action', 'approved');
+
+        if (app()->environment('production')) {
+            $owner_sign = $doc->section->processOwner->signature_path
+                ? Storage::disk('public')->path($doc->section->processOwner->signature_path)
+                : null;
+            $reviewer_sign = $doc->section->reviewer->signature_path
+                ? Storage::disk('public')->path($doc->section->reviewer->signature_path)
+                : null;
+            $approver_sign = $doc->section->approver->signature_path
+                ? Storage::disk('public')->path($doc->section->approver->signature_path)
+                : null;
+            $connector = public_path('img/flowchart-connector.png');
+        } else {
+            $owner_sign = public_path('storage/' . $doc->section->processOwner->signature_path);
+            $reviewer_sign = public_path('storage/' . $doc->section->reviewer->signature_path);
+            $approver_sign = public_path('storage/' . $doc->section->approver->signature_path);
+            $connector = realpath(base_path()).'\public\img\flowchart-connector.png';
+        }
+
+        // Flatten all interfaces into one collection
+        $allInterfaces = $doc->steps->flatMap(function ($step) {
+            return $step->interfaces;
+        });
+
+        // Separate and deduplicate by type and title
+        $uniqueInputs = $allInterfaces
+            ->where('type', 'input')
+            ->unique('title')
+            ->values();
+
+        $uniqueOutputs = $allInterfaces
+            ->where('type', 'output')
+            ->unique('title')
+            ->values();
+
+        // 1️⃣ Load your Blade view into Dompdf
+        $pdf = Pdf::loadView('pdf.system_procedure', compact('doc', 'steps', 'uniqueInputs', 'uniqueOutputs', 'connector', 'submitted', 'passed', 'approved', 'owner_sign', 'reviewer_sign', 'approver_sign'))
+                ->setPaper('A4', 'portrait');
+
+        // 2️⃣ Force rendering so Dompdf can calculate pages
+        $pdf->output();
+
+        // 3️⃣ Access the underlying Dompdf instance
+        $dompdf = $pdf->getDomPDF();
+        $canvas = $dompdf->getCanvas();
+
+        // 4️⃣ Get total page count and store in the database
+        $totalPages = $canvas->get_page_count();
+        $doc->update([
+            'pages' => $totalPages
+        ]);
+
+        // 4️⃣ Add automatic page numbering
+        $canvas->page_script(function ($pageNumber, $pageCount, $canvas, $fontMetrics) {
+            $text = "Page $pageNumber of $pageCount";
+            $font = $fontMetrics->get_font("Helvetica", "normal");
+            $size = 11;
+
+            // adjust these coordinates to fit your footer area (x, y)
+            $canvas->text(455, 111, "Page $pageNumber of $pageCount", $font, $size);
+        });
+
+        return response($pdf->output(), 200)
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', 'inline; filename="invoice.pdf"');
+    }
 }

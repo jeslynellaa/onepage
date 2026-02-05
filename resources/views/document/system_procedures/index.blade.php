@@ -362,6 +362,9 @@
                                     <i class="fa-solid fa-xmark"></i>
                                 </button>
                             </form>
+                            <a href="/documents/system-procedures/${details.id}/comment" class="text-gray-600 hover:text-blue-700 cursor-pointer" title="Leave Comments and Send Back">
+                                <i class="fa-solid fa-comment"></i>
+                            </a>
                             `;
                         }else if(details.can.approve){
                             itemsTable += `

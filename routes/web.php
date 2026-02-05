@@ -55,6 +55,8 @@ Route::middleware(['auth', 'nocache'])->group(function () {
     Route::get('/documents/system-procedures/{doc}/dirf/edit', [DocumentController::class, 'dirf_edit'])->name('document.system_procedures.dirf_edit');
     Route::put('/documents/system-procedures/{doc}/dirf/update', [DocumentController::class, 'dirf_update'])->name('document.system_procedures.dirf_update');
     Route::get('/documents/system-procedures/{doc}/dirf', [DocumentController::class, 'dirf_generate'])->name('document.system_procedures.dirf_generate');
+    Route::get('/documents/system-procedures/{doc}/comment', [DocumentController::class, 'showCommentForm'])->name('document.system_procedures.showComment');
+    Route::get('/documents/system-procedures/{doc}/preview', [DocumentController::class, 'preview'])->name('document.system_procedures.sp_preview');
 
     Route::get('/users/search', [UserController::class, 'search']);
 
