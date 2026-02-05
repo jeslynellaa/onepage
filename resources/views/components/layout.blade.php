@@ -117,7 +117,6 @@
 
       </nav>
     </aside>
-    @endauth
 
     <!-- Header -->
     <header 
@@ -157,12 +156,14 @@
       </div>
       @endauth
     </header>
+    @endauth
 
     <!-- Main content area -->
-    <main class="flex-1 transition-all duration-300" :class="collapsed ? 'ml-16' : 'ml-56'">
+    <main class="flex-1 transition-all duration-300 {{ request()->routeIs('login', 'register') ? 'ml-0' : '' }}" :class="!{{ request()->routeIs('login', 'register') ? 'true' : 'false' }} ? (collapsed ? 'ml-16' : 'ml-56') : ''">
+
 
       <!-- Page Content -->
-      <section class="pt-14 min-h-full flex-grow pt-3">
+      <section class="{{!(request()->routeIs('login')) ? 'pt-14' : ''}} min-h-full flex-grow">
 
         <!-- Flash Messages -->
         @if (session()->has('success'))
