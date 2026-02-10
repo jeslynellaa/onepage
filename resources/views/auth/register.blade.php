@@ -1,7 +1,7 @@
 <x-layout>
     <div class="h-130 w-150 bg-blue-300 absolute rounded-full -top-70 -left-40 blur-3xl"></div>
     <div class="h-170 w-170 bg-green-200 absolute rounded-full -bottom-70 -right-50 blur-3xl"></div>
-    <div class="flex flex-col lg:flex-row justify-center h-screen lg:h-140 lg:gap-6 items-center relative px-10 lg:px-20 -top-10 lg:top-0">
+    <div class="flex flex-col lg:flex-row justify-center lg:gap-6 items-center relative p-10 lg:px-20 mb-5">
         <div class="p-6 w-full lg:w-1/2 lg:h-1/2 justify-center items-center flex flex-col">
             <img src="{{asset('/onepage-name.png')}}" alt="OnePage Logo" class="w-50 lg:w-full">
             <div class="lg:text-lg font-semibold text-gray-600 text-right lg:w-full ">
@@ -50,7 +50,40 @@
                         </button>
                     </div>
                 </div>
-                
+                <div x-data="{ open: false }">
+                    <div class="mt-4">
+                        <label class="flex items-start text-sm text-gray-600">
+                            <input type="checkbox" name="privacy_consent" required class="!w-16 mt-1 rounded border-gray-300 text-blue-600 !ring-transparent !focus:ring-transparent">
+                            <span>I have read and agree to the <button type="button" @click="open = true" class="text-blue-600 hover:underline">Privacy Policy</button> and consent to the collection and processing of my personal data for account creation and platform use.</span>
+                        </label>
+                    </div>
+                    <div x-show="open" x-transition.opacity class="fixed inset-0 bg-black/50 z-40" @click="open = false"></div>
+                    {{-- PRIVACY STATEMENT MODAL --}}
+                    <div x-show="open" x-transition class="fixed inset-0 z-50 flex items-center justify-center p-4">
+                        <div x-show="open" x-transition class="fixed inset-0 z-50 flex items-center justify-center p-4">
+                            <div @click.stop class="bg-white w-full max-w-2xl rounded-2xl shadow-xl flex flex-col max-h-[85vh]">
+                                <div class="flex items-center justify-between px-6 py-4 border-b">
+                                    <h3 class="text-lg font-semibold text-gray-800">Privacy Policy</h3>
+                                    <button type="button" @click="open = false" class="text-gray-400 hover:text-gray-600 text-xl leading-none">&times;</button>
+                                </div>
+                                <div class="px-6 py-4 overflow-y-auto text-sm text-gray-700 space-y-4">
+                                    <p>OnePage (“we”, “us”, or “our”) respects your right to data privacy and is committed to protecting your personal data in accordance with the Philippine Data Privacy Act of 2012 (RA 10173).</p>
+                                    <p><strong>Information We Collect</strong><br>We collect personal information such as your name, email address, company details, and login credentials when you register and use the platform.</p>
+                                    <p><strong>Purpose of Collection</strong><br>Your personal data is processed solely for account creation, authentication, access to platform features, and system-related communications.</p>
+                                    <p><strong>Data Sharing</strong><br>Your data is accessible only to authorized personnel and trusted service providers necessary to operate the platform.</p>
+                                    <p><strong>Data Retention</strong><br>We retain personal data only for as long as necessary to fulfill its purpose or as required by law.</p>
+                                    <p><strong>Data Protection</strong><br>We implement reasonable organizational, physical, and technical security measures to protect your data.</p>
+                                    <p><strong>Your Rights</strong><br>You have the right to access, correct, withdraw consent, and request deletion of your personal data, subject to applicable laws.</p>
+                                    <p>If you have questions, contact us at <strong>onepagefcu@gmail.com</strong>.</p>
+                                </div>
+                                <div class="px-6 py-4 border-t flex justify-end">
+                                    <button type="button" @click="open = false" class="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <button type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 mt-4 rounded">
                     Register
                 </button>
