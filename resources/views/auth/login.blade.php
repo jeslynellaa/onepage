@@ -44,7 +44,7 @@
                             <div class="flex items-center justify-center rounded-tl-lg rounded-bl-lg border-gray-400 border-t border-l border-b w-9">
                                 <i class="fa-solid fa-lock text-gray-600"></i>
                             </div>
-                            <input type="password" name="password" class="h-8 w-full border !border-gray-400 !border-l-0 !border-r-0 !rounded-none px-3 py-2 mb-3 outline-none focus:ring-0 focus:border-blue-500" required>
+                            <input type="password" id="password" name="password" class="h-8 w-full border !border-gray-400 !border-l-0 !border-r-0 !rounded-none px-3 py-2 mb-3 outline-none focus:ring-0 focus:border-blue-500" required>
                             <button type="button" id="togglePassword" class="border border-l-0 border-gray-400 rounded-r-lg px-2 flex items-center justify-center cursor-pointer">
                                 <i id="eyeIcon" class="fa-regular fa-eye text-gray-600"></i>
                             </button>
@@ -102,4 +102,21 @@
             </div>
         </div>
     </div>
+    <script>
+    document.getElementById('togglePassword').addEventListener('click', function () {
+        const input = document.getElementById('password');
+        const icon = document.getElementById('eyeIcon');
+
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        } else {
+            input.type = 'password';
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
+    });
+    </script>
+
 </x-layout>
