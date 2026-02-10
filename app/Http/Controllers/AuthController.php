@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Company;
 use App\Models\Invitation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -25,7 +26,9 @@ class AuthController extends Controller
             abort(403, "This registration link is invalid, already used, or expired. Contact your company's admin for help.");
         }
 
-        return view('auth.register', ['invitation' => $invitation]);
+        $company = Company::find($invitation->company_id);
+
+        return view('auth.register', ['invitation' => $invitation], compact('company'));
     }
 
     public function login(Request $request)

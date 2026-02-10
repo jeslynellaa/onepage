@@ -163,7 +163,7 @@
 
 
       <!-- Page Content -->
-      <section class="{{!(request()->routeIs('login')) ? 'pt-14' : ''}} min-h-full flex-grow">
+      <section class="{{!(request()->routeIs('login')) ? 'pt-14' : ''}} min-h-full flex-grow relative overflow-hidden">
 
         <!-- Flash Messages -->
         @if (session()->has('success'))
