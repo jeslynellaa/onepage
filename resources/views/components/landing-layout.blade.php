@@ -47,9 +47,9 @@
         </div>
         <div class="hidden lg:w-3/6 h-full lg:block">
           <div class="flex flex-row justify-around items-center h-full">
-            <a href="" class="cursor-pointer duration-300 hover:text-[#0047ab]">Features</a>
-            <a href="" class="cursor-pointer duration-300 hover:text-[#0047ab]">Benefits</a>
-            <a href="" class="cursor-pointer duration-300 hover:text-[#0047ab]">About</a>
+            <a href="#features-section" class="cursor-pointer duration-300 hover:text-[#0047ab]">Features</a>
+            <a href="#benefits-section" class="cursor-pointer duration-300 hover:text-[#0047ab]">Benefits</a>
+            <a href="#about-section" class="cursor-pointer duration-300 hover:text-[#0047ab]">About</a>
             <a href="" class="cursor-pointer duration-300 hover:text-[#0047ab]">Contact</a>
             <a href="" class="cursor-pointer duration-300 hover:text-[#0047ab]">Pricing</a>
           </div>

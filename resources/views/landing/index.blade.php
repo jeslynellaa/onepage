@@ -187,7 +187,7 @@
                 </div>
             </div>
         </div>
-        <div id="other-features-section" class="bg-gray-100 p-20">
+        <div id="benefits-section" class="bg-gray-100 p-20">
             <div class="flex flex-col lg:flex-row justify-between">
                 <div class="p-5 bg-white rounded-3xl h-110 shadow-2xl justify-center items-center mx-auto flex">
                     <img src="{{ asset('img/group-working.png') }}" alt="group working" class="rounded-2xl h-full">
@@ -227,7 +227,9 @@
         </div>
         <div class="px-20 py-10">
             <div id="about-section" class="text-center">
-                <p class="text-2xl font-bold">About FCU Solutions Inc.</p>
+                <p class="text-2xl font-bold">
+                    About <a href="https://www.fcusolutions.org/" class="hover:text-blue-700">FCU Solutions Inc.</a>
+                </p>
                 <p class="text-lg lg:text-xl font-medium md:px-12 lg:px-45 mt-3">OnePage is developed by FCU Solutions Inc., a trusted consultancy with over two decades of experience in management systems and organizational development.</p>
 
                 <div class="grid grid-cols-6 lg:grid-cols-12 gap-2 mt-3">
