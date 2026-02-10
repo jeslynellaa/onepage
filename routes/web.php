@@ -15,6 +15,7 @@ use App\Http\Controllers\SectionsController;
 
 
 Route::middleware('guest')->group(function () {
+    Route::get('/', [HomeController::class, 'welcome'])->name('welcome');
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
     Route::post('/login', [AuthController::class, 'login']);
     Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
@@ -28,8 +29,8 @@ Route::get('/auth-check', function () {
 Route::middleware(['auth', 'nocache'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-    Route::get('/', [HomeController::class, 'index'])->name('dashboard')->middleware('auth');
-    Route::get('/dashboard', function () {return redirect('/');})->middleware('auth');
+    Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard')->middleware('auth');
+    // Route::get('/dashboard', function () {return redirect('/');})->middleware('auth');
 
     // ===== Document Routes =====
     Route::get('/documents', [DocumentController::class, 'index'])->name('document.index');

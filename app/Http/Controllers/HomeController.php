@@ -8,6 +8,11 @@ use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
+    public function welcome()
+    {
+        return view('landing.index');
+    }
+
     public function index() {
         $activeCount = Document::where('status', "Active")->count();
         $draftCount = Document::where('status', "Draft")->count();

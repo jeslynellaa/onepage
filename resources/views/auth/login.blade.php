@@ -13,7 +13,7 @@
     <div class="flex justify-center flex-col lg:flex-row bg-gray-100 h-250 lg:h-screen">
         <div class="w-full h-1/2 lg:w-9/16 lg:h-screen flex flex-col justify-center py-10">
             <div class="justify-center mx-auto w-3/4 min-w-min max-w-md flex gap-3 flex-col">
-                <a href="" class="text-[#0047AB] hover:text-blue-500 pl-1 duration-300 w-36">
+                <a href="{{ route('welcome') }}" class="text-[#0047AB] hover:text-blue-500 pl-1 duration-300 w-36">
                     <i class="fa-solid fa-arrow-left mr-3"></i>Back to Home
                 </a>
                 <form method="POST" action="/login" class="bg-white p-6 rounded-3xl shadow-xl">
