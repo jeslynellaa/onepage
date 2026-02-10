@@ -28,7 +28,7 @@
             <div class="relative bg-gradient-to-b from-blue-400 to-blue-600 rounded-t-[7rem] rounded-b-3xl flex flex-col text-center px-20 py-12 overflow-hidden">
                 <!-- background image layer -->
                 <div class="absolute inset-0 bg-cover bg-center"
-                     style="background-image: url('/img/bg-line.PNG');
+                     style="background-image: url('/img/bg-line.png');
                             background-size: contain;
                             background-position: center;
                             background-repeat: no-repeat;"
@@ -232,7 +232,7 @@
 
                 <div class="grid grid-cols-6 lg:grid-cols-12 gap-2 mt-3">
                     <div class="relative shadow-lg bg-blue-500 lg:col-span-3 col-span-3 rounded-tl-[3rem] text-white overflow-hidden flex justify-center items-center lg:min-h-34">
-                        <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('/img/lines.PNG'); background-size: cover;background-position: center; background-repeat: no-repeat;"></div>
+                        <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('/img/lines.png'); background-size: cover;background-position: center; background-repeat: no-repeat;"></div>
 
                         <div class="relative flex flex-row justify-center items-center [text-shadow:0_2px_6px_rgba(0,0,0,0.75)] gap-3 text-left">
                             <div class="text-3xl lg:text-[52pt] font-extrabold flex py-0">
