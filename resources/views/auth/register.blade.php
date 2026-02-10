@@ -3,7 +3,7 @@
     <div class="h-170 w-170 bg-green-200 absolute rounded-full -bottom-70 -right-50 blur-3xl"></div>
     <div class="flex flex-col lg:flex-row justify-center h-screen lg:h-140 lg:gap-6 items-center relative px-10 lg:px-20 -top-10 lg:top-0">
         <div class="p-6 w-full lg:w-1/2 lg:h-1/2 justify-center items-center flex flex-col">
-            <img src="{{asset('/onepage-name.PNG')}}" alt="OnePage Logo" class="w-50 lg:w-full">
+            <img src="{{asset('/onepage-name.png')}}" alt="OnePage Logo" class="w-50 lg:w-full">
             <div class="lg:text-lg font-semibold text-gray-600 text-right lg:w-full ">
                 <span class="border border-blue-500 px-5 rounded-full bg-green-100/50">by FCU Solutions Inc.</span>
             </div>
