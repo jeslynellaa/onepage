@@ -22,7 +22,7 @@
                 <div class="grid grid-cols-2 gap-3 mt-4">
                     <input type="text" name="first_name" placeholder="Given Name" class="col-span-2 rounded px-3" required>
 
-                    <input type="text" name="middle_name" placeholder="Middle Name" class="px-2 border rounded" required>
+                    <input type="text" name="middle_name" placeholder="Middle Name" class="px-2 border rounded">
 
                     <input type="text" name="last_name" placeholder="Last Name" class="px-2 border rounded" required>
 
