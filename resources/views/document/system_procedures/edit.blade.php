@@ -60,7 +60,9 @@
 
                 <div class="col-span-full">
                     <label for="justification" class="block text-xs font-bold uppercase mb-1">Justification/ Objective</label>
-                    <input type="text" id="justification" name="justification" placeholder="Explain why document is created or modified" value="{{ old('justification') ?? $doc->justification}}"
+                    <input type="text" id="justification" name="justification" placeholder="Explain why document is created or modified" value="{{ isset($doc) && $doc->status !== 'Active'
+                        ? old('justification', $doc->justification)
+                        : old('justification') }}" 
                         class="w-full rounded-md border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm p-2" />
                 </div>
                 
@@ -102,10 +104,10 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <!-- Notes -->
-                    <div>
-                        <label for="note" class="block text-xs font-bold uppercase mb-1">Include a Note (optional)</label>
-                        <textarea id="note" name="note[]" rows="10"
-                            class="w-full rounded-md border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm p-2"></textarea>
+                    <div class="relative w-full h-60 rounded-md">
+                        <label class="block text-xs font-bold uppercase mb-1">Include a Note (optional)</label>
+                        <div id="note-editor" class="ql-container ql-snow h-4/6!"></div>
+                        <input type="hidden" name="note" id="note">
                     </div>
 
                     <!-- Interfaces -->
@@ -130,6 +132,7 @@
                                 </div>
                             @endfor
                         </div>
+                        <button type="button" class="add-interface-btn mt-2 flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800" data-type="input">➕ Add Interface</button>
                     </div>
 
                     <div>
@@ -153,6 +156,7 @@
                                 </div>
                             @endfor
                         </div>
+                        <button type="button" class="add-interface-btn mt-2 flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800" data-type="output">➕ Add Interface</button>
                     </div>
                 </div>
 
@@ -191,8 +195,23 @@
         </div>
     </div>
 
+    <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
     <script>
         let steps = [];
+        let quill; // declare globally so all functions can access it
+
+        document.addEventListener('DOMContentLoaded', () => {
+            quill = new Quill('#note-editor', {
+                theme: 'snow',
+                modules: {
+                    toolbar: [
+                        ['bold', 'italic', 'underline'],
+                        [{ list: 'ordered' }, { list: 'bullet' }]
+                    ]
+                }
+            });
+        });
 
         @if (old('procedure_steps_json'))
             // Validation failed — restore user-edited steps
@@ -222,6 +241,7 @@
         });
 
         function addStep() {
+            document.getElementById('note').value = quill.root.innerHTML;
             const inputs = [];
             const outputs = [];
 
@@ -313,6 +333,7 @@
 
         function clearStepsForm() {
             document.getElementById('procedure-steps-form').reset();
+            quill.setContents([]);
         }
 
         function removeStep(index) {
@@ -335,7 +356,7 @@
             $('#responsibility').val(selectedStep.responsibility);
             $('#activities').val(selectedStep.activities);
             $('#note').val(selectedStep.note);
-            
+            quill.root.innerHTML = selectedStep.note || '';
 
             // Populate INTERFACE INPUTS
             const inputRows = document.querySelectorAll('#interfaces-inputs-wrapper .flex');
@@ -371,5 +392,21 @@
             
             document.getElementById('procedure-steps-form').scrollIntoView({ behavior: 'smooth' });
         }
+        
+        document.addEventListener('click', function (e) {
+            const btn = e.target.closest('.add-interface-btn');
+            if (!btn) return;
+
+            const type = btn.dataset.type;
+            const wrapper = type === 'input' ? document.getElementById('interfaces-inputs-wrapper') : document.getElementById('interfaces-outputs-wrapper');
+            const index = wrapper.children.length + 1;
+
+            const row = document.createElement('div');
+            row.className = 'flex gap-2';
+
+            row.innerHTML = '<select class="interface-' + (type === 'input' ? 'input' : 'output') + '-category w-1/3 rounded-md border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm p-2"><option value="">Select category</option><option value="Form">Form</option><option value="Procedure">System Procedure</option><option value="MS Manual">MS Manual</option><option value="Support Document">Support Document</option><option value="Work Instruction">Work Instruction</option><option value="Document">Document</option></select><input type="text" class="interface-' + (type === 'input' ? 'input' : 'output') + '-name w-2/3 rounded-md border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm p-2" placeholder="' + (type === 'input' ? 'Reference' : 'Output') + ' #' + index + '">';
+
+            wrapper.appendChild(row);
+        });
     </script>
 </x-layout>
