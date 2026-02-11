@@ -38,6 +38,7 @@ class DocumentPolicy
     public function update(User $user, Document $document): bool
     {
         return
+            $document->status != 'Active' ||
             $user->id === $document->section->process_owner_id ||
             $user->role === 'Document Controller';
     }
