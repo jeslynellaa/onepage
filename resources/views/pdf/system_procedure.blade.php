@@ -155,10 +155,6 @@
             font-size:14pt;
             padding-top: 5px;
         }
-        ul li{
-            padding: 0 !important;
-            margin: 0 !important;
-        }
         
         .signatory {
             position: absolute;
@@ -169,6 +165,92 @@
         @page :last {
             margin-bottom: 100px;
         }
+
+ol,
+ul{
+  counter-reset: list-1 list-2 list-3 list-4 list-5 list-6 list-7 list-8 list-9;
+}
+ol,
+ul {
+  padding-left: 1.5em;
+}
+ol > li,
+ul > li {
+  list-style-type: none;
+}
+
+ol,
+ul {
+    list-style: none;
+}
+li {
+    list-style: none;
+    position: relative;
+    padding-left: 2.5em; /* space for number */
+}
+
+li::before {
+    position: absolute;
+    left: 0;
+    width: 2em;
+    text-align: right;
+}
+
+        
+ol li {
+  counter-reset: list-1 list-2 list-3 list-4 list-5 list-6 list-7 list-8 list-9;
+  counter-increment: list-0;
+}
+ol li:before {
+  content: counter(list-0, decimal) '. ';
+}
+ol li.ql-indent-1 {
+  counter-increment: list-1;
+}
+ol li.ql-indent-1:before {
+  content: counter(list-1, lower-alpha) '. ';
+}
+ol li.ql-indent-1 {
+    margin-left: 1.5rem;
+  counter-reset: list-2 list-3 list-4 list-5 list-6 list-7 list-8 list-9;
+}
+ol li.ql-indent-2 {
+    margin-left: 2.5rem;
+  counter-increment: list-2;
+}
+ol li.ql-indent-2:before {
+  content: counter(list-2, lower-roman) '. ';
+}
+ol li.ql-indent-2 {
+  counter-reset: list-3 list-4 list-5 list-6 list-7 list-8 list-9;
+}
+ol li.ql-indent-3 {
+  counter-increment: list-3;
+}
+ol li.ql-indent-3:before {
+  content: counter(list-3, decimal) '. ';
+}
+ol li.ql-indent-3 {
+  counter-reset: list-4 list-5 list-6 list-7 list-8 list-9;
+}
+ol li.ql-indent-4 {
+  counter-increment: list-4;
+}
+ol li.ql-indent-4:before {
+  content: counter(list-4, lower-alpha) '. ';
+}
+ol li.ql-indent-4 {
+  counter-reset: list-5 list-6 list-7 list-8 list-9;
+}
+ol li.ql-indent-5 {
+  counter-increment: list-5;
+}
+ol li.ql-indent-5:before {
+  content: counter(list-5, lower-roman) '. ';
+}
+ol li.ql-indent-5 {
+  counter-reset: list-6 list-7 list-8 list-9;
+}
     </style>
 </head>
 <body>
