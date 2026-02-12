@@ -570,30 +570,6 @@ class DocumentController extends Controller
                 ];
             }),
         ]);
-
-        // return response()->json([
-        //     'csrf' => csrf_token(),
-        //     'items' => $items->map(function ($doc) {
-        //         return [
-        //             'id' => $doc->id,
-        //             'title' => $doc->title,
-        //             'code' => $doc->code,
-        //             'pages' => $doc->pages,
-        //             'status' => $doc->status,
-        //             'revision_number' => $doc->revision_number,
-        //             'effective_date' => $doc->effective_date,
-
-        //             'viewUrl' => route('document.system_procedures.view_pdf', $doc->id),
-        //             'editUrl' => route('document.system_procedures.edit', $doc->id),
-        //             'deleteUrl' => route('document.system_procedures.destroy', $doc->id),
-        //             'revHistoryUrl' => route('document.system_procedures.rev_history', $doc->code),
-        //             'sendForReviewUrl' => route('document.system_procedures.forReview', $doc->id),
-        //             'reviewDecisionUrl' => route('document.system_procedures.reviewPassOrFail', $doc->id),
-        //             'approveDecisionUrl' => route('document.system_procedures.approveOrNot', $doc->id),
-        //             'dirfUrl' => route('document.system_procedures.dirf_edit', $doc->id),
-        //         ];
-        //     })
-        // ]);
     }
     
     public function sp_document_history($code)
