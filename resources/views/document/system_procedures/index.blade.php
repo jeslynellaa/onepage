@@ -402,7 +402,7 @@
             }
 
             function formatDate(dateString) {
-                if (!dateString) return '-';
+                if (!dateString) return 'N/A';
                 
                 const date = new Date(dateString);
                 const day = date.getDate();
