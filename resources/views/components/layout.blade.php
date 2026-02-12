@@ -100,6 +100,7 @@
         </a>
 
         <!-- ADMIN -->
+        @can('enter-admin')
         <a href="{{ route('admin.index') }}" x-data="{ showTooltip: false }"
           @mouseenter="showTooltip = true" 
           @mouseleave="showTooltip = false" 
@@ -114,7 +115,7 @@
           <span x-show="!collapsed" class="ml-3">Admin</span>
           <div x-show="collapsed && showTooltip" class="fixed left-13 ml-3 px-2 py-1 text-sm bg-gray-800 text-white rounded shadow-lg whitespace-nowrap z-[9999]">Admin</div>
         </a>
-
+        @endcan
       </nav>
     </aside>
 
