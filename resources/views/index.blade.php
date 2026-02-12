@@ -62,7 +62,7 @@
                 <div class="flex justify-between border-b border-gray-300 items-center mb-2 pt-1 pb-3">
                     <div class="font-semibold">Activity Log</div>
                     <div>
-                        <a href="#" class="cursor-pointer duration-300 text-[#001f3f] bg-blue-200 rounded-xl py-2 px-3 hover:text-white hover:bg-[#1e488f]">View all</a>
+                        <a href="{{route('activity.index')}}" class="cursor-pointer duration-300 text-[#001f3f] bg-blue-200 rounded-xl py-2 px-3 hover:text-white hover:bg-[#1e488f]">View all</a>
                     </div>
                 </div>
                 <div class="overflow-y-auto max-h-96">

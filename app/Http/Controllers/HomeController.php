@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use App\Models\Document;
 use App\Models\ActivityLog;
 use Illuminate\Http\Request;
@@ -28,5 +29,12 @@ class HomeController extends Controller
         $forApproval = Document::where('status', "For Review")->get();
         
         return view('index', compact('activeCount', 'draftCount', 'reviewCount', 'approvalCount', 'logs', 'forReview', 'forApproval'));
+    }
+
+    public function showLogs()
+    {
+        $logs = ActivityLog::orderBy('performed_at')->get();
+        // dd($logs);
+        return view('activity.index', compact('logs'));
     }
 }

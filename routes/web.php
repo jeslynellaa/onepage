@@ -78,6 +78,8 @@ Route::middleware(['auth', 'nocache'])->group(function () {
 
     Route::post('/admin/clients/{client}/invite', [ClientController::class, 'invite'])->name('admin.client.invite');
     Route::post('/invitations/{invitation}/send', [ClientController::class, 'send'])->name('admin.client.send-invite');
+
+    Route::get('/activity-logs', [HomeController::class, 'showLogs'])->name('activity.index');
 });
 
 
