@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use App\Models\Dirf;
 use App\Models\User;
 use App\Models\Section;
@@ -92,7 +93,7 @@ class DocumentController extends Controller
                     'document_id' => $newDocument->id,
                     'responsibility' => $step['responsibility'],
                     'activities' => $step['activities'],
-                    'note' => !empty($step['note']) ? Str::markdown($step['note']) : null,
+                    'note' => !(empty($step['note']) || $step['note'] == '') ? Str::markdown($step['note']) : null,
                 ]);
 
                 // --- Save inputs (references)
@@ -317,7 +318,7 @@ class DocumentController extends Controller
                     'document_id' => $doc->id,
                     'responsibility' => $step['responsibility'],
                     'activities' => $step['activities'],
-                    'note' => !empty($step['note']) ? Str::markdown($step['note']) : null,
+                    'note' => !(empty($step['note']) || $step['note'] == '') ? Str::markdown($step['note']) : null,
                 ]);
 
                 // --- Save inputs (references)

@@ -241,7 +241,12 @@
         });
 
         function addStep() {
-            document.getElementById('note').value = quill.root.innerHTML;
+            let noteHtml = quill.getText().trim() === '' 
+                ? null 
+                : quill.root.innerHTML;
+
+            document.getElementById('note').value = noteHtml;
+
             const inputs = [];
             const outputs = [];
 
@@ -266,7 +271,7 @@
             const step = {
                 responsibility: document.getElementById('responsibility').value,
                 activities: document.getElementById('activities').value,
-                note: document.getElementById('note').value,
+                note: noteHtml,
                 interfaces_input: inputs,
                 interfaces_output: outputs
             };

@@ -242,7 +242,12 @@
         });
 
         function addStep() {
-            document.getElementById('note').value = quill.root.innerHTML;
+            let noteHtml = quill.getText().trim() === '' 
+                ? null 
+                : quill.root.innerHTML;
+
+            document.getElementById('note').value = noteHtml;
+
             const inputs = [];
             const outputs = [];
 
@@ -267,7 +272,7 @@
             const step = {
                 responsibility: document.getElementById('responsibility').value,
                 activities: document.getElementById('activities').value,
-                note: document.getElementById('note').value,
+                note: noteHtml,
                 interfaces_input: inputs,
                 interfaces_output: outputs
             };
@@ -316,7 +321,7 @@
                         <td class="border border-gray-300 px-3 py-2 align-top">${index+1}</td>
                         <td class="border border-gray-300 px-3 py-2 align-top">${item.responsibility}</td>
                         <td class="border border-gray-300 px-3 py-2 align-top">${item.activities}</td>
-                        <td class="border border-gray-300 px-3 py-2 align-top">${item.note}</td>
+                        <td class="border border-gray-300 px-3 py-2 align-top">${item.note || '-'}</td>
                         <td class="border border-gray-300 px-3 py-2 align-top">${inputHTML || '-'}</td>
                         <td class="border border-gray-300 px-3 py-2 align-top">${outputHTML || '-'}</td>
                         <td class="border border-gray-300 px-3 py-2 align-top text-center">
