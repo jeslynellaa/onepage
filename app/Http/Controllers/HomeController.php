@@ -23,12 +23,19 @@ class HomeController extends Controller
         $logs = ActivityLog::latest('performed_at')
             ->take(20)
             ->get();
-
-        $forReview = Document::where('status', "For Review")->get();
-
-        $forApproval = Document::where('status', "For Review")->get();
-        
-        return view('index', compact('activeCount', 'draftCount', 'reviewCount', 'approvalCount', 'logs', 'forReview', 'forApproval'));
+    
+        $userId = auth()->id();
+        $pendingReviews = Document::where('status', 'For Review')
+            ->whereHas('section', function ($query) {
+                $query->where('reviewer_id', auth()->id());
+            })
+            ->get();
+        $pendingApprovals = Document::where('status', 'For Approval')
+            ->whereHas('section', function ($query) {
+                $query->where('approver_id', auth()->id());
+            })
+            ->get();
+        return view('index', compact('activeCount', 'draftCount', 'reviewCount', 'approvalCount', 'logs', 'pendingReviews', 'pendingApprovals'));
     }
 
     public function showLogs()

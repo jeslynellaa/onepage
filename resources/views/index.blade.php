@@ -58,9 +58,9 @@
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-12 gap-6 my-6">
-            <div class="md:col-span-8 bg-white rounded-2xl shadow-md p-5 max-h-100 flex flex-col">
+            <div class="md:col-span-8 bg-white rounded-2xl shadow-md p-5 max-h-105 flex flex-col">
                 <div class="flex justify-between border-b border-gray-300 items-center mb-2 pt-1 pb-3">
-                    <div class="font-semibold">Activity Log</div>
+                    <div class="font-semibold">Recent Activity</div>
                     <div>
                         <a href="{{route('activity.index')}}" class="cursor-pointer duration-300 text-[#001f3f] bg-blue-200 rounded-xl py-2 px-3 hover:text-white hover:bg-[#1e488f]">View all</a>
                     </div>
@@ -92,7 +92,7 @@
                     </table>
                 </div>
             </div>
-            <div class="md:col-span-4 bg-white rounded-2xl shadow-md p-5 max-h-100 flex flex-col">
+            <div class="md:col-span-4 bg-white rounded-2xl shadow-md p-5 max-h-105 flex flex-col">
                 <div class="flex justify-between border-b border-gray-300 items-center mb-2 pt-1 pb-3">
                     <div class="font-semibold">Action Requests</div>
                     <div>
@@ -102,21 +102,37 @@
                     <table class="w-full text-sm text-left text-gray-700">
                         <thead>
                             <tr class="">
-                                <th class="p-2 sticky top-0 bg-white z-10">Date</th>
-                                <th class="p-2 sticky top-0 bg-white z-10">Document</th>
-                                <th class="p-2 sticky top-0 bg-white z-10">View</th>
+                                <th class="sticky top-0 bg-white z-10">#</th>
+                                <th class="sticky top-0 bg-white z-10">Document</th>
+                                <th class="sticky top-0 bg-white z-10">Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse ($logs as $log)
+                            {{-- Pending Reviews --}}
+                            @forelse ($pendingReviews as $key => $pendingReview)
                                 <tr>
-                                    <td class="p-2">{{ $log->performed_at->format('d M Y - g:i A') }}</td>
-                                    <td class="p-2">{{strtoupper($log->action)}}</td>
-                                    <td class="p-2">{{$log->description}}</td>
+                                    <td class="p-2">{{ $pendingReview->key+1 }}</td>
+                                    <td class="p-2">{{ $pendingReview->title }}</td>
+                                    <td class="p-2">{{ $pendingReview->status }}</td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="5" class="text-center p-2">No Logs Available</td>
+                                    <td colspan="3" class="text-center p-2">No Reviews Pending</td>
+                                </tr>
+                            @endforelse
+                            <tr>
+                                <td colspan="3" class="border-t"></td>
+                            </tr>
+                            {{-- Pending Approvals --}}
+                            @forelse ($pendingApprovals as $key => $pendingApproval)
+                                <tr>
+                                    <td class="p-2">{{ $pendingApproval->key+1 }}</td>
+                                    <td class="p-2">{{ $pendingApproval->title }}</td>
+                                    <td class="p-2">{{ $pendingApproval->status }}</td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="3" class="text-center p-2">No Approvals Pending</td>
                                 </tr>
                             @endforelse
                         </tbody>
