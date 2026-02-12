@@ -39,19 +39,19 @@
     </style>
     <div class="mx-auto w-full px-5 py-1">
         <!-- Header -->
-        <div class="flex justify-between items-start mb-4">
+        <div class="flex justify-between items-center mb-4">
             <h1 class="font-semibold text-gray-800">
                 <a href="{{ route('document.index') }}">Document Management</a> > System Procedures
             </h1>
             <div>
             <a href="{{ route('document.system_procedures.create')}}"
-            class="inline-block bg-sky-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-sky-700 transition">
+            class="inline-block bg-sky-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-sky-700 transition">
                 Create
             </a>
-            <a href="{{ route('document.system_procedures.dirf_generate', 1)}}"
-            class="inline-block bg-sky-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-sky-700 transition">
+            {{-- <a href="{{ route('document.system_procedures.dirf_generate', 1)}}"
+            class="inline-block bg-sky-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-sky-700 transition">
                 DIRFs
-            </a>
+            </a> --}}
             </div>
         </div>
 
