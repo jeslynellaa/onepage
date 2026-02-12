@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
+use App\Http\Controllers\Controller;
+use App\Mail\InvitationMail;
 use App\Models\Company;
 use App\Models\Invitation;
-use Illuminate\Support\Str;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
-use App\Mail\InvitationMail;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class ClientController extends Controller
 {
