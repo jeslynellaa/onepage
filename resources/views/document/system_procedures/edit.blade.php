@@ -129,6 +129,7 @@
                                     <input type="text"
                                         class="interface-input-name w-2/3 rounded-md border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm p-2"
                                         placeholder="Reference #{{ $i + 1 }}">
+                                    <button type="button" class="remove-interface-btn text-red-500 hover:text-red-700 text-sm font-bold">✖</button>
                                 </div>
                             @endfor
                         </div>
@@ -153,6 +154,7 @@
                                     <input type="text"
                                         class="interface-output-name w-2/3 rounded-md border-gray-300 focus:ring-2 focus:ring-blue-500 focus-border-blue-500 text-sm p-2"
                                         placeholder="Output #{{ $i + 1 }}">
+                                    <button type="button" class="remove-interface-btn text-red-500 hover:text-red-700 text-sm font-bold">✖</button>
                                 </div>
                             @endfor
                         </div>
@@ -399,19 +401,23 @@
         }
         
         document.addEventListener('click', function (e) {
-            const btn = e.target.closest('.add-interface-btn');
-            if (!btn) return;
+            const addBtn = e.target.closest('.add-interface-btn');
+            if (addBtn){
+                const type = addBtn.dataset.type;
+                const wrapper = type === 'input' ? document.getElementById('interfaces-inputs-wrapper') : document.getElementById('interfaces-outputs-wrapper');
+                const index = wrapper.children.length + 1;
 
-            const type = btn.dataset.type;
-            const wrapper = type === 'input' ? document.getElementById('interfaces-inputs-wrapper') : document.getElementById('interfaces-outputs-wrapper');
-            const index = wrapper.children.length + 1;
+                const row = document.createElement('div');
+                row.className = 'flex gap-2';
 
-            const row = document.createElement('div');
-            row.className = 'flex gap-2';
+                row.innerHTML = '<select class="interface-' + (type === 'input' ? 'input' : 'output') + '-category w-1/3 rounded-md border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm p-2"><option value="">Select category</option><option value="Form">Form</option><option value="Procedure">System Procedure</option><option value="MS Manual">MS Manual</option><option value="Support Document">Support Document</option><option value="Work Instruction">Work Instruction</option><option value="Document">Document</option></select><input type="text" class="interface-' + (type === 'input' ? 'input' : 'output') + '-name w-2/3 rounded-md border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm p-2" placeholder="' + (type === 'input' ? 'Reference' : 'Output') + ' #' + index + '"><button type="button" class="remove-interface-btn text-red-500 hover:text-red-700 text-sm font-bold">✖</button>';
 
-            row.innerHTML = '<select class="interface-' + (type === 'input' ? 'input' : 'output') + '-category w-1/3 rounded-md border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm p-2"><option value="">Select category</option><option value="Form">Form</option><option value="Procedure">System Procedure</option><option value="MS Manual">MS Manual</option><option value="Support Document">Support Document</option><option value="Work Instruction">Work Instruction</option><option value="Document">Document</option></select><input type="text" class="interface-' + (type === 'input' ? 'input' : 'output') + '-name w-2/3 rounded-md border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm p-2" placeholder="' + (type === 'input' ? 'Reference' : 'Output') + ' #' + index + '">';
+                wrapper.appendChild(row);
+                return;
+            }
 
-            wrapper.appendChild(row);
+            const removeBtn = e.target.closest('.remove-interface-btn');
+            if (removeBtn) removeBtn.parentElement.remove();
         });
     </script>
 </x-layout>
