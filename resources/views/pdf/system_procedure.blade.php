@@ -14,7 +14,7 @@
             font-size: 11pt;
             margin: 0;
             padding-top: 145px;   /* same as header height */
-            padding-bottom: 20px; /* same as footer height */
+            padding-bottom: 120px; /* same as footer height + signatory table height */
             /* border: 3px solid red; */
         }
         header {
@@ -34,7 +34,7 @@
             bottom: -50px; /* adjust depending on your @page bottom margin */
             left: 0;
             right: 0;
-            height: 50px;
+            height: 40px;
             /* border: 3px solid blue; */
 
             /* Optional styling */
@@ -116,15 +116,17 @@
         #process_table tbody tr:last-child td:nth-child(2){
             padding-bottom: 10px
         }
-        p {
-            orphans: 4;
-            widows: 4;
+        
+        .signatory {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
         }
         #signatory_table {
             font-size: 10pt;
             page-break-inside: avoid;
             width: 100%;
-            margin-bottom: 15px;
         }
         #signatory_table tr:nth-child(2) td{
             text-align: center;
@@ -155,102 +157,89 @@
             font-size:14pt;
             padding-top: 5px;
         }
-        
-        .signatory {
+
+        .notes ol {
+        counter-reset: list-1 list-2 list-3 list-4 list-5 list-6 list-7 list-8 list-9;
+        margin-top: 0 !important;
+        padding-top: 0;
+        }
+        .notes ol {
+        padding-left: 1.5em;
+        }
+        .notes ol > li,{
+        list-style-type: none;
+        }
+
+        .notes ol {
+            list-style: none;
+        }
+        .notes ol li {
+            list-style: none;
+            position: relative;
+            padding-left: 2.5em; /* space for number */
+        }
+
+        li::before {
             position: absolute;
-            bottom: 0;
             left: 0;
-            right: 0;
-        }
-        @page :last {
-            margin-bottom: 100px;
+            width: 2em;
+            text-align: right;
         }
 
-ol,
-ul{
-  counter-reset: list-1 list-2 list-3 list-4 list-5 list-6 list-7 list-8 list-9;
-}
-ol,
-ul {
-  padding-left: 1.5em;
-}
-ol > li,
-ul > li {
-  list-style-type: none;
-}
-
-ol,
-ul {
-    list-style: none;
-}
-li {
-    list-style: none;
-    position: relative;
-    padding-left: 2.5em; /* space for number */
-}
-
-li::before {
-    position: absolute;
-    left: 0;
-    width: 2em;
-    text-align: right;
-}
-
-        
-ol li {
-  counter-reset: list-1 list-2 list-3 list-4 list-5 list-6 list-7 list-8 list-9;
-  counter-increment: list-0;
-}
-ol li:before {
-  content: counter(list-0, decimal) '. ';
-}
-ol li.ql-indent-1 {
-  counter-increment: list-1;
-}
-ol li.ql-indent-1:before {
-  content: counter(list-1, lower-alpha) '. ';
-}
-ol li.ql-indent-1 {
-    margin-left: 1.5rem;
-  counter-reset: list-2 list-3 list-4 list-5 list-6 list-7 list-8 list-9;
-}
-ol li.ql-indent-2 {
-    margin-left: 2.5rem;
-  counter-increment: list-2;
-}
-ol li.ql-indent-2:before {
-  content: counter(list-2, lower-roman) '. ';
-}
-ol li.ql-indent-2 {
-  counter-reset: list-3 list-4 list-5 list-6 list-7 list-8 list-9;
-}
-ol li.ql-indent-3 {
-  counter-increment: list-3;
-}
-ol li.ql-indent-3:before {
-  content: counter(list-3, decimal) '. ';
-}
-ol li.ql-indent-3 {
-  counter-reset: list-4 list-5 list-6 list-7 list-8 list-9;
-}
-ol li.ql-indent-4 {
-  counter-increment: list-4;
-}
-ol li.ql-indent-4:before {
-  content: counter(list-4, lower-alpha) '. ';
-}
-ol li.ql-indent-4 {
-  counter-reset: list-5 list-6 list-7 list-8 list-9;
-}
-ol li.ql-indent-5 {
-  counter-increment: list-5;
-}
-ol li.ql-indent-5:before {
-  content: counter(list-5, lower-roman) '. ';
-}
-ol li.ql-indent-5 {
-  counter-reset: list-6 list-7 list-8 list-9;
-}
+        .notes ol li {
+        counter-reset: list-1 list-2 list-3 list-4 list-5 list-6 list-7 list-8 list-9;
+        counter-increment: list-0;
+        }
+        .notes ol li:before {
+        content: counter(list-0, decimal) '. ';
+        }
+        .notes ol li.ql-indent-1 {
+        counter-increment: list-1;
+        }
+        .notes ol li.ql-indent-1:before {
+        content: counter(list-1, lower-alpha) '. ';
+        }
+        .notes ol li.ql-indent-1 {
+            margin-left: 1.5rem;
+        counter-reset: list-2 list-3 list-4 list-5 list-6 list-7 list-8 list-9;
+        }
+        .notes ol li.ql-indent-2 {
+            margin-left: 2.5rem;
+        counter-increment: list-2;
+        }
+        .notes ol li.ql-indent-2:before {
+        content: counter(list-2, lower-roman) '. ';
+        }
+        .notes ol li.ql-indent-2 {
+        counter-reset: list-3 list-4 list-5 list-6 list-7 list-8 list-9;
+        }
+        .notes ol li.ql-indent-3 {
+        counter-increment: list-3;
+        }
+        .notes ol li.ql-indent-3:before {
+        content: counter(list-3, decimal) '. ';
+        }
+        .notes ol li.ql-indent-3 {
+        counter-reset: list-4 list-5 list-6 list-7 list-8 list-9;
+        }
+        .notes ol li.ql-indent-4 {
+        counter-increment: list-4;
+        }
+        .notes ol li.ql-indent-4:before {
+        content: counter(list-4, lower-alpha) '. ';
+        }
+        .notes ol li.ql-indent-4 {
+        counter-reset: list-5 list-6 list-7 list-8 list-9;
+        }
+        .notes ol li.ql-indent-5 {
+        counter-increment: list-5;
+        }
+        .notes ol li.ql-indent-5:before {
+        content: counter(list-5, lower-roman) '. ';
+        }
+        .notes ol li.ql-indent-5 {
+        counter-reset: list-6 list-7 list-8 list-9;
+        }
     </style>
 </head>
 <body>
@@ -297,7 +286,7 @@ ol li.ql-indent-5 {
         <span style="font-style:italic; font-weight: bold;">Except for the MASTER COPY, printed and downloaded copies of this documented information are considered uncontrolled.</span>
     </footer>
 
-    <main>
+    <main style="height: 100%; ">
         <div class="content">
             <table id="scope_objectives_table">
                 <tbody>
@@ -316,7 +305,7 @@ ol li.ql-indent-5 {
                 $note = 1;
             @endphp
 
-            <table id="process_table" style="margin-top: 15px;">
+            <table id="process_table" style="margin-top: 15px; margin-bottom: 8px;">
                 <thead>
                     <tr>
                         <th>Responsibility</th>
@@ -369,7 +358,7 @@ ol li.ql-indent-5 {
                     @endif
                     <tr>
                         <td style="width:120px;">{{$step->responsibility}} </td>
-                        <td style="height: 70px; width:200px; border: 1px solid black;">
+                        <td style="padding-top: 5px; padding-bottom: 5px; width:200px; border: 1px solid black;">
                             {{$step->activities}}
                         </td>
                         <td style="padding-left:5px; width:25px; padding-right:5px;">
@@ -407,11 +396,11 @@ ol li.ql-indent-5 {
 
             @foreach ($steps as $step_note)
                 @if (!empty($step_note->note))
-                    <div style="margin-bottom: 0.5rem; page-break-inside: avoid;">
-                        <p style="text-align: justify;">
-                            <strong>Note {{$note_num++}}: </strong>
+                    <div class="notes">
+                        <div style="text-align: justify;">
+                            <strong>Note {{$note_num++}}:</strong>
                             {!! $step_note->note !!}
-                        </p>
+                        </div>
                     </div>
                 @endif
             @endforeach
@@ -426,14 +415,14 @@ ol li.ql-indent-5 {
                 <tbody>
                     <tr style="padding-top:0">
                         <td style="vertical-align: top; padding-top: 0;">
-                            <ol>
+                            <ol style="margin-top:0; margin-bottom: 0;">
                                 @foreach ($uniqueOutputs  as $output)
                                 <li>{{ $output->category }}: {{ $output->title }} </li>
                                 @endforeach
                             </ol>
                         </td>
                         <td style="vertical-align: top; padding-top: 0;">
-                            <ol>
+                            <ol style="margin-top:0; margin-bottom: 0;">
                                 @foreach ($uniqueInputs  as $input)
                                 <li>{{ $input->category }}: {{ $input->title }} </li>
                                 @endforeach
@@ -453,7 +442,7 @@ ol li.ql-indent-5 {
                     <td>Approved By:</td>
                 </tr>
                 <tr>
-                    <td style="height: 75px; vertical-align: bottom;">
+                    <td style="height: 70px; vertical-align: bottom;">
                         @if($submitted)
                             <img src="{{ $owner_sign }}"
                                 style="height: 35px;" >
@@ -462,7 +451,7 @@ ol li.ql-indent-5 {
                         <strong>{{ $doc->section->processOwner->fullname() }}</strong> <br>
                         Position
                     </td>
-                    <td style="height: 75px; vertical-align: bottom;">
+                    <td style="height: 70px; vertical-align: bottom;">
                         @if($passed)
                             <img src="{{ $reviewer_sign }}"
                                 style="height: 35px;" >
@@ -473,7 +462,7 @@ ol li.ql-indent-5 {
                         <strong>{{ $doc->section->reviewer->fullname() }}</strong><br>
                         Reviewer
                     </td>
-                    <td style="height: 75px; vertical-align: bottom;">
+                    <td style="height: 70px; vertical-align: bottom;">
                         @if($approved)
                             <img src="{{ $approver_sign }}"
                                 style="height: 35px;" >
