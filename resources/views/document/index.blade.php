@@ -46,9 +46,10 @@
                     </div>
                 </a>
             </div>
+            @if(auth()->user()->role == 'Admin')
             <div class="mb-3 max-w-100">
                 <a href="{{ route('document.system_procedures') }}" 
-                class="flex items-center py-5 px-8 bg-white rounded-2xl shadow hover:shadow-lg transition-all duration-300 h-full">
+                class="flex items-center py-5 px-8 bg-white rounded-2xl shadow hover:shadow-lg transition-all duration-300 h-full" disabled>
                     <div class="text-4xl mr-2">
                         <i class="fa-regular fa-file"></i>
                     </div>
@@ -59,6 +60,7 @@
                     </div>
                 </a>
             </div>
+            @endif
         </div>
     </div>
 </x-layout>
