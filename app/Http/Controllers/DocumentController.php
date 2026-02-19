@@ -124,6 +124,7 @@ class DocumentController extends Controller
                 'action' => 'created draft',
                 'description' => 'System Procedure document draft has been created.',
                 'document_id' => $newDocument->id,
+                'document_type' => 'system_procedure',
                 'user_id' => auth()->id()
             ]);
 
@@ -352,6 +353,7 @@ class DocumentController extends Controller
                 'status_from' => 'created draft',
                 'status_to' => 'edited draft',
                 'document_id' => $doc->id,
+                'document_type' => 'system_procedure',
                 'user_id' => auth()->id()
             ]);
 
@@ -381,6 +383,7 @@ class DocumentController extends Controller
                 'action' => 'submitted for review',
                 'description' => 'System Procedure document ('. $doc->code .') has been submitted for review.',
                 'document_id' => $doc->id,
+                'document_type' => 'system_procedure',
                 'user_id' => auth()->id()
             ]);
 
@@ -420,6 +423,7 @@ class DocumentController extends Controller
                     ? 'System Procedure document ('. $doc->code .') passed review and was sent for approval.'
                     : 'System Procedure document ('. $doc->code .') failed review and was sent back.',
                 'document_id' => $doc->id,
+                'document_type' => 'system_procedure',
                 'user_id' => auth()->id()
             ]);
 
@@ -472,6 +476,7 @@ class DocumentController extends Controller
                         'action' => 'superseded',
                         'description' => 'System Procedure document ('. $latestActive->code .') revision '. $latestActive->revision_number .' has been superseded by revision '. $newRevisionNumber,
                         'document_id' => $latestActive->id,
+                        'document_type' => 'system_procedure',
                         'user_id' => auth()->id(),
                         'status_from' => 'Active',
                         'status_to' => 'Superseded'
@@ -499,6 +504,7 @@ class DocumentController extends Controller
                     ? 'System Procedure document ('. $doc->code .') has been approved.'
                     : 'System Procedure document ('. $doc->code .') has not been approved.',
                 'document_id' => $doc->id,
+                'document_type' => 'system_procedure',
                 'user_id' => auth()->id()
             ]);
             DB::commit();

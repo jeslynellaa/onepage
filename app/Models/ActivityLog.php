@@ -17,7 +17,13 @@ class ActivityLog extends Model
     ];
     
     public function document() {
-        return $this->belongsTo(Document::class, 'document_id');
+        return $this->belongsTo(Document::class, 'document_id')
+                ->where('document_type', 'system_procedure');
+    }
+    
+    public function ms_manual() {
+        return $this->belongsTo(MsManual::class, 'document_id')
+                ->where('document_type', 'ms_manual');
     }
 
     public function user() {
