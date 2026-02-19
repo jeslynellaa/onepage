@@ -1,17 +1,18 @@
 <?php
 
-use App\Models\User;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ClientController;
+use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\MsManualController;
+use App\Http\Controllers\SectionsController;
+use App\Http\Controllers\UserController;
 use App\Mail\SendTestEmail;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\AdminController;
-use App\Http\Controllers\ClientController;
-use App\Http\Controllers\DocumentController;
-use App\Http\Controllers\SectionsController;
 
 
 Route::middleware('guest')->group(function () {
@@ -62,6 +63,11 @@ Route::middleware(['auth', 'nocache'])->group(function () {
     Route::get('/users/search', [UserController::class, 'search']);
 
     Route::put('/document/system-procedures/{section}', [SectionsController::class, 'update'])->name('document.system_procedures_section.update');
+
+    Route::get('/documents/ms-manual', [MsManualController::class, 'index'])->name('document.ms_manual.index');
+    Route::get('/documents/ms-manual/create', [MsManualController::class, 'create'])->name('document.ms_manual.create');
+    Route::post('/documents/ms-manual', [MsManualController::class, 'store'])->name('document.ms_manual.store');
+    Route::get('/documents/ms-manual/{doc}', [MsManualController::class, 'view'])->name('document.ms_manual.view');
 
     // Profile Routes
     Route::get('/profie/{user}/edit', [UserController::class, 'profile'])->name('profile.edit');
