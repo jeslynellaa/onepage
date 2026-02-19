@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('title');
             $table->string('code');
             $table->foreignId('section_id')->nullable();
-            $table->string('revision_number');
+            $table->string('revision_number')->nullable();
             $table->date('effective_date')->nullable();
             $table->mediumText('objective');
             $table->mediumText('scope');
