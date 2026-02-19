@@ -20,6 +20,10 @@ class SupportDocument extends Model
         return $this->hasMany(ActivityLog::class, 'document_id');
     }
     
+    public function section() {
+        return $this->belongsTo(Section::class);
+    }
+    
     protected static function booted()
     {
         static::addGlobalScope(new CompanyScope);

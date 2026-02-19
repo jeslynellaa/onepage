@@ -17,6 +17,10 @@ class Section extends Model
     public function documents() {
         return $this->hasMany(Document::class);
     }
+
+    public function support_documents() {
+        return $this->hasMany(SupportDocument::class);
+    }
     
     public function processOwner() {
         return $this->belongsTo(User::class, 'process_owner_id');
