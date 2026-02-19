@@ -34,7 +34,7 @@
                 </a>
             </div>
             <div class="mb-3 max-w-100">
-                <a href="{{ route('document.system_procedures') }}" 
+                <a href="{{ route('document.support_document.index') }}" 
                 class="flex items-center py-5 px-8 bg-white rounded-2xl shadow hover:shadow-lg transition-all duration-300 h-full">
                     <div class="text-4xl mr-2">
                         <i class="fa-regular fa-file"></i>

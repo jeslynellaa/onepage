@@ -7,13 +7,9 @@ use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MsManualController;
 use App\Http\Controllers\SectionsController;
+use App\Http\Controllers\SupportDocumentController;
 use App\Http\Controllers\UserController;
-use App\Mail\SendTestEmail;
-use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
-
 
 Route::middleware('guest')->group(function () {
     Route::get('/', [HomeController::class, 'welcome'])->name('welcome');
@@ -68,6 +64,12 @@ Route::middleware(['auth', 'nocache'])->group(function () {
     Route::get('/documents/ms-manual/create', [MsManualController::class, 'create'])->name('document.ms_manual.create');
     Route::post('/documents/ms-manual', [MsManualController::class, 'store'])->name('document.ms_manual.store');
     Route::get('/documents/ms-manual/{doc}', [MsManualController::class, 'view'])->name('document.ms_manual.view');
+
+    Route::get('/documents/support-documents', [SupportDocumentController::class, 'index'])->name('document.support_document.index');
+    Route::get('/documents/support-documents/create', [SupportDocumentController::class, 'create'])->name('document.support_document.create');
+    Route::post('/documents/support-documents', [SupportDocumentController::class, 'store'])->name('document.support_document.store');
+    Route::get('/documents/support-documents/{doc}', [SupportDocumentController::class, 'view'])->name('document.support_document.view');
+    Route::get('section/sp/documents', [SupportDocumentController::class, 'getSpSectionDocuments']);
 
     // Profile Routes
     Route::get('/profie/{user}/edit', [UserController::class, 'profile'])->name('profile.edit');
