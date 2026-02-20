@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\FormsManualController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MsManualController;
 use App\Http\Controllers\SectionsController;
@@ -70,6 +71,12 @@ Route::middleware(['auth', 'nocache'])->group(function () {
     Route::post('/documents/support-documents', [SupportDocumentController::class, 'store'])->name('document.support_document.store');
     Route::get('/documents/support-documents/{doc}', [SupportDocumentController::class, 'view'])->name('document.support_document.view');
     Route::get('section/sp/documents', [SupportDocumentController::class, 'getSpSectionDocuments']);
+
+    Route::get('/documents/forms', [FormsManualController::class, 'index'])->name('document.forms.index');
+    Route::get('/documents/forms/create', [FormsManualController::class, 'create'])->name('document.forms.create');
+    Route::post('/documents/forms', [FormsManualController::class, 'store'])->name('document.forms.store');
+    Route::get('/documents/forms/{doc}', [FormsManualController::class, 'view'])->name('document.forms.view');
+    Route::get('section/form/documents', [FormsManualController::class, 'getFormsSectionDocuments']);
 
     // Profile Routes
     Route::get('/profie/{user}/edit', [UserController::class, 'profile'])->name('profile.edit');
