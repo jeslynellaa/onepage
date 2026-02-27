@@ -96,7 +96,7 @@
                 </div>
                 <div class="self-center h-50 w-90 border bg-gradient-to-br from-white/10 to-white/40 rounded-2xl p-3">
                     <div class="border rounded-xl h-full img-frame justify-center mx-auto">
-                        <img src="{{ asset('/img/login-page-img.png') }}" alt="sample-image">
+                        <img src="{{ asset('/img/login-page-img.PNG') }}" alt="sample-image">
                     </div>
                 </div>
             </div>
@@ -118,5 +118,4 @@
         }
     });
     </script>
-
 </x-layout>
