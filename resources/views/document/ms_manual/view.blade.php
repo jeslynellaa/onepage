@@ -33,7 +33,7 @@
                     <div class="px-4 rounded-full py-1 bg-blue-200">{{ $doc->justification }}</div>
                 </div>
             </div>
-            <iframe src="{{ asset('storage/'.$doc->file_path) }}" class="w-full h-screen mt-4"></iframe>
+            <iframe src="{{ Storage::url($doc->file_path) }}" class="w-full h-screen mt-4"></iframe>
         </div>
     </div>
 </x-layout>
