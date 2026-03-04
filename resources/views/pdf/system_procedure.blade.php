@@ -157,6 +157,11 @@
             font-size:14pt;
             padding-top: 5px;
         }
+        .note-title {
+            font-weight: 700;
+            break-after: avoid !important;
+            page-break-after: avoid !important;
+        }
 
         .notes ol {
         counter-reset: list-1 list-2 list-3 list-4 list-5 list-6 list-7 list-8 list-9;
@@ -398,7 +403,7 @@
                 @if (!empty($step_note->note))
                     <div class="notes">
                         <div style="text-align: justify;">
-                            <strong>Note {{$note_num++}}:</strong>
+                            <div class="note-title">Note {{$note_num++}}:</div>
                             {!! $step_note->note !!}
                         </div>
                     </div>
