@@ -1,6 +1,6 @@
 <x-landing-layout>
     <div>
-        <div class="mx-auto px-20 bg-gradient-to-b from-gray-100 to-blue-300 h-130" id="hero-section">
+        <div id="hero-section" class="mx-auto px-20 bg-gradient-to-b from-gray-100 to-blue-300 h-130">
             <div class="mt-16 h-110 pt-3 flex flex-row">
                 <div class="flex flex-col w-1/2 justify-around h-95">
                     <div class="rounded-3xl py-1 px-6 bg-blue-100 w-min whitespace-nowrap border border-blue-700 font-semibold">
@@ -301,6 +301,26 @@
                             <div class="text-[30pt] font-extrabold leading-none">400+</div>
                             <div class="text-[12pt] font-semibold leading-tight">Clients</div>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="contact-section" class="bg-blue-600 px-20 py-10">
+            <div class="flex text-white w-full font-extralight">
+                <div class="w-2/5 border-r flex-col flex justify-between">
+                    <div class="flex text-gray-100 font-bold text-3xl gap-2 items-center">
+                        <img src="{{ asset('onepage-blue.png') }}" alt="OnePage Logo" class="w-12" />
+                        <div>OnePage</div>
+                    </div>
+                    <p class="lg:w-60">A powerful, easy-to-use platform that centralizes your documents and speeds up ISO readiness.</p>
+                </div>
+                <div class="w-3/5 text-right">
+                    <div class="font-normal">Contact Us</div>
+                    <div>
+                        02-8332-0264 <br>
+                        <a href="https://www.fcusolutions.org/" target="_blank">Visit our Website</a><br><br>
+                        8R FUTURE POINT PLAZA 2 <br>
+                        MO. IGNACIA ST., QUEZON CITY
                     </div>
                 </div>
             </div>

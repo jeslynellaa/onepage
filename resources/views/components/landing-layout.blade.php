@@ -50,7 +50,7 @@
             <a href="#features-section" class="cursor-pointer duration-300 hover:text-[#0047ab]">Features</a>
             <a href="#benefits-section" class="cursor-pointer duration-300 hover:text-[#0047ab]">Benefits</a>
             <a href="#about-section" class="cursor-pointer duration-300 hover:text-[#0047ab]">About</a>
-            <a href="" class="cursor-pointer duration-300 hover:text-[#0047ab]">Contact</a>
+            <a href="#contact-section" class="cursor-pointer duration-300 hover:text-[#0047ab]">Contact</a>
             <a href="" class="cursor-pointer duration-300 hover:text-[#0047ab]">Pricing</a>
           </div>
         </div>
@@ -69,10 +69,10 @@
         </button>
         <div x-show="open" x-transition @click.outside="open = false" class="lg:hidden inline-block absolute top-16 left-0 w-full bg-white shadow-xl">
             <div class="flex flex-col divide-y">
-                <a href="" class="px-6 py-4 hover:bg-gray-100">Features</a>
-                <a href="" class="px-6 py-4 hover:bg-gray-100">Benefits</a>
-                <a href="" class="px-6 py-4 hover:bg-gray-100">About</a>
-                <a href="" class="px-6 py-4 hover:bg-gray-100">Contact</a>
+                <a href="#features-section" class="px-6 py-4 hover:bg-gray-100">Features</a>
+                <a href="#benefits-section" class="px-6 py-4 hover:bg-gray-100">Benefits</a>
+                <a href="#about-section" class="px-6 py-4 hover:bg-gray-100">About</a>
+                <a href="#contact-section" class="px-6 py-4 hover:bg-gray-100">Contact</a>
                 <a href="" class="px-6 py-4 hover:bg-gray-100">Pricing</a>
 
                 <div class="px-6 py-4 flex flex-col gap-3">
@@ -129,10 +129,10 @@
       </section>
 
       <!-- Footer -->
-      <footer class="border-t border-gray-300 text-center text-sm text-gray-500 py-3">
+      <footer class="border-t border-gray-300 bg-blue-600 text-center text-sm text-gray-100 py-3">
         <p class="m-0">
           &copy; {{ date('Y') }}
-          <a href="/" class="text-gray-500 hover:text-sky-600 transition-colors">OnePage</a>.
+          <a href="/" class="hover:text-sky-600 transition-colors">OnePage</a>.
           All rights reserved.
         </p>
       </footer>
