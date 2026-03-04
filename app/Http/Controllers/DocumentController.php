@@ -17,10 +17,12 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use League\HTMLToMarkdown\HtmlConverter;
 use Yajra\DataTables\Facades\DataTables;
+use Spatie\Browsershot\Browsershot;
+use setasign\Fpdi\Fpdi;
 
 class DocumentController extends Controller
 {
-    public function index() {
+    public function index() { 
         $lastActivity = optional(
             ActivityLog::latest('performed_at')->value('performed_at')
         )->format('d M Y');
@@ -222,6 +224,135 @@ class DocumentController extends Controller
 
         // 5️⃣ Stream or download
         return $pdf->stream();
+    }
+
+    public function sp_view_bs(Document $doc)
+    {
+        set_time_limit(180);
+        ini_set('max_execution_time', '180');
+        // Load steps and their related documents
+        $doc->load([
+            'steps.interfaces',
+            'section.processOwner',
+            'section.reviewer',
+            'section.approver',
+        ]);
+        $steps = $doc->steps;
+        $logoBase64 = null;
+
+        if ($doc->company->logo_path) {
+            $logo = Storage::disk('public')->path($doc->company->logo_path);
+            // if (is_file($path)) {
+            //     $logoBase64 = 'data:image/png;base64,' . base64_encode(file_get_contents($path));
+            // }
+            $path = public_path('img/fcu-logo.jpg');
+            $logoData = base64_encode(file_get_contents($path));
+            $logoSrc = 'data:image/jpeg;base64,'.$logoData;
+
+            $logoPath = storage_path('app/public/logos/'.$doc->company->logo_path);
+$logoPath = str_replace('\\', '/', $logoPath); // important on Windows
+$logoSrc = 'file:///' . ltrim($logoPath, '/');
+        }
+        
+        $logo = public_path('storage/' . $doc->company->logo_path);
+        $color = $doc->company->hex_code;
+        $text_color = $this->getTextColorForBackground($color);
+
+        $allInterfaces = $doc->steps->flatMap(fn ($step) => $step->interfaces);
+        $uniqueInputs = $allInterfaces->where('type', 'input')->unique('title')->values();
+        $uniqueOutputs = $allInterfaces->where('type', 'output')->unique('title')->values();
+        $connectorPath = public_path('img/flowchart-connector.png');
+        $connector = 'data:image/png;base64,' . base64_encode(file_get_contents($connectorPath));
+        $logopath = public_path('img/fcu-logo.jpg');
+        $logoo = 'data:image/png;base64,' . base64_encode(file_get_contents($logopath));
+   
+        $html = view('pdf.test', compact('doc', 'steps', 'uniqueInputs', 'uniqueOutputs', 'allInterfaces', 'connector', 'color', 'text_color', 'logo'))->render();
+// $logoPath = public_path('/img/fcu-logo.jpg');
+
+        $header = '
+        <div style="width:100%; font-family:Arial,sans-serif; font-size:11pt; padding:0 50px; -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important;">
+            <style>
+                * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+                table, td { border-collapse: collapse; }
+                table tbody tr td{
+                    border: 1px solid black !important;
+                    padding-left: 10px !important;
+                    padding-right: 5px !important;
+                }
+            </style>
+
+            <table style="width:100%; border-collapse:collapse; border:1px solid #000; background:#fff;">
+                <tr>
+                    <td colspan="3" style="text-align:center; font-weight:700; background:'.$color.' !important; color:'.$text_color.' !important; -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important;">
+                        SYSTEM PROCEDURES MANUAL
+                    </td>
+                </tr>
+
+                <tr>
+                    <td rowspan="5" style="width:25%; text-align:center; vertical-align:middle;">
+                        <div style="width:100%; height:90px; text-align:center;">
+                        <img src="'.$logoPath.'" alt="Logo" style="height:90px; display:block; margin:0 auto;">
+                        </div>
+                    </td>
+                    <td>Section No.:</td>
+                    <td>'.$doc->section->section_number.'</td>
+                </tr>
+
+                <tr>
+                    <td>Revision No.:</td>
+                    <td>'.$doc->revision_number.'</td>
+                </tr>
+
+                <tr>
+                    <td>Document No.:</td>
+                    <td>'.$doc->code.'</td>
+                </tr>
+
+                <tr>
+                    <td>Effective Date:</td>
+                    <td>'.$doc->effective_date.'</td>
+                </tr>
+
+                <tr>
+                    <td>Page Number:</td>
+                    <td>Page <span class="pageNumber"></span> of <span class="totalPages"></span></td>
+                </tr>
+
+                <tr>
+                    <td colspan="3" style="text-align:center; font-weight:700; font-size: 14pt; text-transform:uppercase;">
+                    '.$doc->title.'
+                    </td>
+                </tr>
+            </table>
+
+            <div style="font-size: 9pt; font-style: italic; text-align: center;"><strong>STRICTLY CONFIDENTIAL</strong> - For use of FCU Solutions Inc only. Unauthorized reproduction is strictly prohibited.</div>
+        </div>
+        ';
+
+        $headerHtml = view('pdf._header', compact('logoo'))->render();
+        $footerHtml = view('pdf._footer')->render();
+        $b = Browsershot::html($html)
+            ->format('A4')
+            ->showBackground()
+            // ->showBrowserHeaderAndFooter()
+            // ->headerHtml($headerHtml)
+            // ->footerHtml($footerHtml)
+            ->setOption('args', [
+                '--allow-file-access-from-files',
+                '--no-sandbox',
+                '--disable-setuid-sandbox'
+            ])
+            ->set_time_limit(180)
+            ->setDelay(200)
+            ->timeout(180);
+            
+        $pdf = $b->pdf();
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="blade-test.pdf"',
+            'Cache-Control' => 'no-store',
+        ]);
     }
 
     private function getTextColorForBackground($hex) {
