@@ -413,24 +413,28 @@
             <table id="interfaces_table" style="page-break-inside: avoid;">
                 <thead>
                     <tr>
-                        <th style="border: 1px solid black; padding: 3px;">Documented Information Generated</th>
+                        <th style="border: 1px solid black; padding: 3px; width: 50%;">Documented Information Generated</th>
                         <th style="border: 1px solid black; padding: 3px;">References</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr style="padding-top:0">
-                        <td style="vertical-align: top; padding-top: 0;">
+                        <td style="vertical-align: top; padding-top: 0; width: 50%;">
                             <ol style="margin-top:0; margin-bottom: 0;">
-                                @foreach ($uniqueOutputs  as $output)
+                                @forelse ($uniqueOutputs  as $output)
                                 <li>{{ $output->category }}: {{ $output->title }} </li>
-                                @endforeach
+                                @empty
+                                <div style="text-align: center">- No Document Outputs -</div>
+                                @endforelse
                             </ol>
                         </td>
                         <td style="vertical-align: top; padding-top: 0;">
                             <ol style="margin-top:0; margin-bottom: 0;">
-                                @foreach ($uniqueInputs  as $input)
+                                @forelse ($uniqueInputs  as $input)
                                 <li>{{ $input->category }}: {{ $input->title }} </li>
-                                @endforeach
+                                @empty
+                                <div style="text-align: center">- No References -</div>
+                                @endforelse
                             </ol>
                         </td>
                     </tr>
