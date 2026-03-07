@@ -6,8 +6,9 @@
             background-color: #f1f1f1;
         }
         .status{
-            padding: 5px 18px;
+            padding: 5px 10px;
             border-radius: 15px;
+            width: 140px;
         }
         .Active{
             color: #f1f1f1;
@@ -20,6 +21,10 @@
         .For_Review{
             color: #f1f1f1;
             background-color: #E1C16E;
+        }
+        .For_Revision{
+            color: #f1f1f1;
+            background-color: gray;
         }
         .For_Approval{
             color: #f1f1f1;
@@ -105,7 +110,6 @@
                                 <i class="fa-solid fa-pen"></i>
                             </button>
                         </td>
-
                     </tr>
                     @endforeach
                 </tbody>
@@ -289,14 +293,22 @@
                 } else {
                     $.each(data.items, function (key, details) {
                         let statusStyle = details.status.replace(/\s/g, "_");
-
+                        let toolTip = `
+                            <div class="group relative flex justify-center">
+                                <button class="px-3 py-1">
+                                    <i class="fa-solid fa-circle-info text-lg"></i>
+                                </button>
+                                <span class="absolute top-full mt-2 hidden group-hover:block px-3 py-1 text-sm text-white bg-gray-800 rounded shadow-lg z-10">
+                                    View Document First
+                                </span>
+                            </div>`
                         itemsTable += `
                             <tr class="align-middle">
                                 <td class="py-2 w-2/6 uppercase">${details.title}</td>
-                                <td class="py-2 text-center">${details.code}</td>
-                                <td class="py-2 text-center">${details.pages ?? 'View Document First'}</td>
-                                <td class="py-2 text-center"><span class="status whitespace-nowrap ${statusStyle}">${details.status}</span></td>
-                                <td class="py-2 text-center">
+                                <td class="py-2 text-center w-25">${details.code}</td>
+                                <td class="py-2 text-center w-10">${details.pages ?? toolTip}</td>
+                                <td class="py-1 text-center align-middle"><div class="status whitespace-nowrap ${statusStyle} mc-auto">${details.status}</div></td>
+                                <td class="py-2 text-center w-28">
                                     ${details.revision_number ?? "N/A"}
                                     ${
                                         details.can.viewRevisionHistory
@@ -309,7 +321,7 @@
                                     }
                                 </td>
                                 <td class="py-2 text-center">${formatDate(details.effective_date)}</td>
-                                <td class="py-2 text-center items-center space-x-2">
+                                <td class="py-2 text-center items-center space-x-2 w-40">
                                     <a href="${details.viewUrl}" class="text-gray-600 hover:text-sky-700">
                                         <i class="fa-solid fa-eye"></i>
                                     </a>`;
@@ -329,7 +341,7 @@
                                         </button>
                                     </form>`;
                         }
-                        if(details.status === 'Draft' && details.can.edit){
+                        if((details.status === 'Draft' || details.status === 'For Revision') && details.can.edit){
                             itemsTable += `
                             <span class="text-gray-400">|</span>
                             <form action="${details.sendForReviewUrl}" method="POST" onsubmit="return confirm(\'Are you sure you want to send this document for review? You will not be able to make changes.\');" class="inline">
@@ -362,9 +374,6 @@
                                     <i class="fa-solid fa-xmark"></i>
                                 </button>
                             </form>
-                            <a href="/documents/system-procedures/${details.id}/comment" class="text-gray-600 hover:text-blue-700 cursor-pointer" title="Leave Comments and Send Back">
-                                <i class="fa-solid fa-comment"></i>
-                            </a>
                             `;
                         }else if(details.can.approve){
                             itemsTable += `
@@ -388,6 +397,11 @@
                                 </button>
                             </form>
                             `;
+                        }
+                        if(details.can.review || details.can.approve){
+                            itemsTable += `<a href="/documents/system-procedures/${details.id}/comment" class="text-gray-600 hover:text-blue-700 cursor-pointer" title="Leave Comments and Send Back">
+                                <i class="fa-solid fa-comment"></i>
+                            </a>`;
                         }
                         itemsTable += `
                             </td>
