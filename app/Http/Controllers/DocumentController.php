@@ -3,18 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\Dirf;
-use App\Models\User;
-use App\Models\Section;
-use App\Models\Document;
 use App\Models\ActivityLog;
-use Illuminate\Support\Str;
-use Illuminate\Http\Request;
-use App\Models\StepDocuments;
+use App\Models\Dirf;
+use App\Models\Document;
+use App\Models\ProcedureComments;
 use App\Models\ProcedureSteps;
+use App\Models\Section;
+use App\Models\StepDocuments;
+use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use League\HTMLToMarkdown\HtmlConverter;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -140,88 +141,34 @@ class DocumentController extends Controller
 
     public function sp_view(Document $doc)
     {
-        // Load steps and their related documents
-        $doc->load([
-            'steps.interfaces',
-            'section.processOwner',
-            'section.reviewer',
-            'section.approver',
-        ]);
-        $steps = $doc->steps;
+        $reviewComments = $doc->comments()
+            ->with('user')
+            ->where('stage', 'review')
+            ->latest()
+            ->get()
+            ->groupBy('section');
+        $approvalComments = $doc->comments()
+            ->with('user')
+            ->where('stage', 'approval')
+            ->latest()
+            ->get()
+            ->groupBy('section');
 
-        $submitted = $doc->logs->firstWhere('action', 'submitted for review');
-        $passed = $doc->logs->firstWhere('action', 'review passed');
-        $approved = $doc->logs->firstWhere('action', 'approved');
-        $color = $doc->company->hex_code;
-        $text_color = $this->getTextColorForBackground($color);
+        $sectionOrder = [
+            'title', 'objectives', 'scope', 'flowchart', 'notes', 'interfaces', 'remarks'
+        ];
 
-        if (app()->environment('production')) {
-            $logo = $doc->company->logo_path
-                ? Storage::disk('public')->path($doc->company->logo_path)
-                : null;
-            $owner_sign = $doc->section->processOwner->signature_path
-                ? Storage::disk('public')->path($doc->section->processOwner->signature_path)
-                : null;
-            $reviewer_sign = $doc->section->reviewer->signature_path
-                ? Storage::disk('public')->path($doc->section->reviewer->signature_path)
-                : null;
-            $approver_sign = $doc->section->approver->signature_path
-                ? Storage::disk('public')->path($doc->section->approver->signature_path)
-                : null;
-            $connector = public_path('img/flowchart-connector.png');
-        } else {
-            $logo = public_path('storage/' . $doc->company->logo_path);
-            $owner_sign = public_path('storage/' . $doc->section->processOwner->signature_path);
-            $reviewer_sign = public_path('storage/' . $doc->section->reviewer->signature_path);
-            $approver_sign = public_path('storage/' . $doc->section->approver->signature_path);
-            $connector = realpath(base_path()).'\public\img\flowchart-connector.png';
-        }
+        $sectionLabels = [
+            'title' => 'Title',
+            'objectives' => 'Objective/s',
+            'scope' => 'Scope',
+            'flowchart' => 'Process Flowchart',
+            'notes' => 'Notes',
+            'interfaces' => 'Interfaces',
+            'remarks' => 'Other Remarks',
+        ];
 
-        // Flatten all interfaces into one collection
-        $allInterfaces = $doc->steps->flatMap(function ($step) {
-            return $step->interfaces;
-        });
-
-        // Separate and deduplicate by type and title
-        $uniqueInputs = $allInterfaces
-            ->where('type', 'input')
-            ->unique('title')
-            ->values();
-
-        $uniqueOutputs = $allInterfaces
-            ->where('type', 'output')
-            ->unique('title')
-            ->values();
-
-        // 1️⃣ Load your Blade view into Dompdf
-        $pdf = Pdf::loadView('pdf.system_procedure', compact('doc', 'steps', 'uniqueInputs', 'uniqueOutputs', 'connector', 'submitted', 'passed', 'approved', 'owner_sign', 'reviewer_sign', 'approver_sign', 'logo', 'color', 'text_color'))
-                ->setPaper('A4', 'portrait');
-
-        // 2️⃣ Force rendering so Dompdf can calculate pages
-        $pdf->output();
-
-        // 3️⃣ Access the underlying Dompdf instance
-        $dompdf = $pdf->getDomPDF();
-        $canvas = $dompdf->getCanvas();
-
-        // 4️⃣ Get total page count and store in the database
-        $totalPages = $canvas->get_page_count();
-        $doc->update([
-            'pages' => $totalPages
-        ]);
-
-        // 4️⃣ Add automatic page numbering
-        $canvas->page_script(function ($pageNumber, $pageCount, $canvas, $fontMetrics) {
-            $text = "Page $pageNumber of $pageCount";
-            $font = $fontMetrics->get_font("Helvetica", "normal");
-            $size = 11;
-
-            // adjust these coordinates to fit your footer area (x, y)
-            $canvas->text(455, 111, "Page $pageNumber of $pageCount", $font, $size);
-        });
-
-        // 5️⃣ Stream or download
-        return $pdf->stream();
+        return view('document.system_procedures.view', compact('doc', 'reviewComments', 'approvalComments', 'sectionOrder', 'sectionLabels'));
     }
 
     private function getTextColorForBackground($hex) {
@@ -624,7 +571,13 @@ class DocumentController extends Controller
 
     public function showCommentForm(Document $doc)
     {
-        return view('document.system_procedures.comments', compact('doc'));
+        $existingComments = $doc->comments()
+            ->where('user_id', auth()->id())
+            ->get()
+            ->keyBy('section');
+        $pageTitle = $doc->status === 'For Approval' ? 'Approver Comments' : 'Reviewer Comments';
+
+        return view('document.system_procedures.comments', compact('doc', 'existingComments', 'pageTitle'));
     }
 
     public function preview(Document $doc)
@@ -641,8 +594,13 @@ class DocumentController extends Controller
         $submitted = $doc->logs->firstWhere('action', 'submitted for review');
         $passed = $doc->logs->firstWhere('action', 'review passed');
         $approved = $doc->logs->firstWhere('action', 'approved');
+        $color = $doc->company->hex_code;
+        $text_color = $this->getTextColorForBackground($color);
 
         if (app()->environment('production')) {
+            $logo = $doc->company->logo_path
+                ? Storage::disk('public')->path($doc->company->logo_path)
+                : null;
             $owner_sign = $doc->section->processOwner->signature_path
                 ? Storage::disk('public')->path($doc->section->processOwner->signature_path)
                 : null;
@@ -654,6 +612,7 @@ class DocumentController extends Controller
                 : null;
             $connector = public_path('img/flowchart-connector.png');
         } else {
+            $logo = public_path('storage/' . $doc->company->logo_path);
             $owner_sign = public_path('storage/' . $doc->section->processOwner->signature_path);
             $reviewer_sign = public_path('storage/' . $doc->section->reviewer->signature_path);
             $approver_sign = public_path('storage/' . $doc->section->approver->signature_path);
@@ -677,7 +636,7 @@ class DocumentController extends Controller
             ->values();
 
         // 1️⃣ Load your Blade view into Dompdf
-        $pdf = Pdf::loadView('pdf.system_procedure', compact('doc', 'steps', 'uniqueInputs', 'uniqueOutputs', 'connector', 'submitted', 'passed', 'approved', 'owner_sign', 'reviewer_sign', 'approver_sign'))
+        $pdf = Pdf::loadView('pdf.system_procedure', compact('doc', 'steps', 'uniqueInputs', 'uniqueOutputs', 'connector', 'submitted', 'passed', 'approved', 'owner_sign', 'reviewer_sign', 'approver_sign', 'logo', 'color', 'text_color'))
                 ->setPaper('A4', 'portrait');
 
         // 2️⃣ Force rendering so Dompdf can calculate pages
@@ -706,5 +665,96 @@ class DocumentController extends Controller
         return response($pdf->output(), 200)
             ->header('Content-Type', 'application/pdf')
             ->header('Content-Disposition', 'inline; filename="invoice.pdf"');
+    }
+
+    public function storeComment(Request $request, Document $doc)
+    {
+        $request->validate([
+            'title_comment' => ['nullable', 'string'],
+            'objectives_comment' => ['nullable', 'string'],
+            'scope_comment' => ['nullable', 'string'],
+            'flowchart_comment' => ['nullable', 'string'],
+            'notes_comment' => ['nullable', 'string'],
+            'interfaces_comment' => ['nullable', 'string'],
+            'remarks_comment' => ['nullable', 'string'],
+            'action' => ['required', 'in:save,send_back'],
+        ]);
+
+        $comments = [
+            'title' => $request->title_comment,
+            'objectives' => $request->objectives_comment,
+            'scope' => $request->scope_comment,
+            'flowchart' => $request->flowchart_comment,
+            'notes' => $request->notes_comment,
+            'interfaces' => $request->interfaces_comment,
+            'remarks' => $request->remarks_comment,
+        ];
+
+        $hasComment = collect($comments)
+            ->filter(fn ($c) => !is_null($c) && trim($c) !== '')
+            ->isNotEmpty();
+
+        if ($request->action === 'send_back' && !$hasComment) {
+            return redirect()->back()->withInput()->withErrors([
+                'action' => 'You must add at least one comment before sending the document back.'
+            ]);
+        }
+
+        DB::beginTransaction();
+
+        try {
+            // remove previous draft comments of this user for this doc
+            ProcedureComments::where('document_id', $doc->id)
+                ->where('user_id', auth()->id())
+                ->delete();
+
+            foreach ($comments as $section => $comment) {
+                if (!is_null($comment) && trim($comment) !== '') {
+                    ProcedureComments::create([
+                        'document_id' => $doc->id,
+                        'user_id' => auth()->id(),
+                        'section' => $section,
+                        'comment' => trim($comment),
+                    ]);
+
+                }
+            }
+
+            // update document if sending back
+            if ($request->action === 'send_back') {
+                $doc->status = 'For Revision';
+                $doc->save();
+            }
+            if ($doc->status === 'For Review'){
+                $commenter = 'Reviewer';
+            }else{
+                $commenter = 'Approver';
+            }
+
+            // create activity log
+            ActivityLog::create([
+                'action' => $request->action === 'send_back'
+                    ? 'Sent back with Comments'
+                    : 'Gave Comments',
+                'description' => $request->action === 'send_back'
+                    ? 'System Procedure document ('. $doc->code .') has been sent back by '. $commenter .' with comments to be revised.'
+                    : $commenter . ' has made some comments to System Procedure document ('. $doc->code .').',
+                'document_id' => $doc->id,
+                'document_type' => 'system_procedure',
+                'user_id' => auth()->id()
+            ]);
+
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            
+            return back()->withErrors(['error' => 'Something went wrong. Please try again. '.$e])->withInput();
+        }
+
+        if ($request->action === 'send_back') {
+            return redirect()->back()->with('success','Comments saved and document sent back.');
+        }
+
+        return redirect()->back()->with('success','Comments saved.');
     }
 }
