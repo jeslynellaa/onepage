@@ -121,7 +121,7 @@
 
     <!-- Header -->
     <header 
-      class="fixed top-0 left-0 bg-gray-100 z-10 h-14 flex items-center justify-end transition-all duration-300 w-full"
+      class="fixed top-0 left-0 bg-gray-100 z-19 h-14 flex items-center justify-end transition-all duration-300 w-full"
       :class="collapsed ? 'pl-16' : 'pl-56'"
     >
       <div class="hidden lg:flex flex-col justify-center px-5 h-full w-3/4">
@@ -143,7 +143,7 @@
             {{ $greeting }}!
           @endauth
         </h4>
-        <div class="text-sm leading-none mt-0"> {{ date('M. d, Y - l h:ia') }} </div>
+        <div class="text-sm leading-none mt-0"> {{ date('M. d, Y - l') }} <span id="clock"></span></div>
       </div>
       @auth
       <div class="flex justify-end items-center px-5 h-full w-1/2 gap-2">
@@ -211,6 +211,22 @@
                     });
             }, 60000);
 
+    let serverTime = new Date({{ now()->timestamp * 1000 }});
+
+    function updateClock() {
+        document.getElementById('clock').innerText =
+            serverTime.toLocaleTimeString('en-US', {
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+            });
+
+        serverTime.setMinutes(serverTime.getMinutes() + 1);
+    }
+
+    updateClock();
+    setInterval(updateClock, 60000);
+            
             window.addEventListener('pageshow', event => {
               if (event.persisted) {
                   window.location.href = '/login';
