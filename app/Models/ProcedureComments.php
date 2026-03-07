@@ -6,37 +6,22 @@ use App\Models\Scopes\CompanyScope;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Document extends Model
+class ProcedureComments extends Model
 {
     use HasFactory;
 
     protected $guarded = [];
-    
-    public function company() {
-        return $this->belongsTo(Company::class);
-    }
 
-    public function steps() {
-        return $this->hasMany(ProcedureSteps::class, 'document_id');
-    }
-
-    public function logs() {
-        return $this->hasMany(ActivityLog::class, 'document_id');
-    }
-
-    public function dirf() {
-        return $this->hasOne(Dirf::class, 'document_id');
-    }
-    
-    public function section() {
-        return $this->belongsTo(Section::class);
-    }
-
-    public function comments()
+    public function document()
     {
-        return $this->hasMany(ProcedureComments::class);
+        return $this->belongsTo(Document::class);
     }
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+    
     protected static function booted()
     {
         static::addGlobalScope(new CompanyScope);

@@ -67,4 +67,9 @@ class User extends Authenticatable
     public function approvedSections() {
         return $this->hasMany(Section::class, 'approver_id');
     }
+
+    public function comments()
+    {
+        return $this->hasMany(ProcedureComments::class);
+    }
 }
