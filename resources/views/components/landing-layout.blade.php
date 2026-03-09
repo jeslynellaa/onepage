@@ -47,11 +47,12 @@
         </div>
         <div class="hidden lg:w-3/6 h-full lg:block">
           <div class="flex flex-row justify-around items-center h-full">
-            <a href="#features-section" class="cursor-pointer duration-300 hover:text-[#0047ab]">Features</a>
-            <a href="#benefits-section" class="cursor-pointer duration-300 hover:text-[#0047ab]">Benefits</a>
-            <a href="#about-section" class="cursor-pointer duration-300 hover:text-[#0047ab]">About</a>
-            <a href="#contact-section" class="cursor-pointer duration-300 hover:text-[#0047ab]">Contact</a>
+            <a href="/#features-section" class="cursor-pointer duration-300 hover:text-[#0047ab]">Features</a>
+            <a href="/#benefits-section" class="cursor-pointer duration-300 hover:text-[#0047ab]">Benefits</a>
+            <a href="/#about-section" class="cursor-pointer duration-300 hover:text-[#0047ab]">About</a>
+            <a href="/#contact-section" class="cursor-pointer duration-300 hover:text-[#0047ab]">Contact</a>
             <a href="" class="cursor-pointer duration-300 hover:text-[#0047ab]">Pricing</a>
+            <a href="{{ route('faqs') }}" class="cursor-pointer duration-300 hover:text-[#0047ab]">FAQs</a>
           </div>
         </div>
         <div class="hidden lg:flex justify-end lg:w-2/6 h-full items-center gap-6">
@@ -62,37 +63,34 @@
 
         {{-- mobile navigation links --}}
         <button @click="open = !open" class="lg:hidden p-2 rounded-lg hover:bg-gray-200 transition cursor-pointer duration-300">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path x-show="!open" stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-              <path x-show="open" stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path x-show="!open" stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+            <path x-show="open" stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
         </button>
         <div x-show="open" x-transition @click.outside="open = false" class="lg:hidden inline-block absolute top-16 left-0 w-full bg-white shadow-xl">
-            <div class="flex flex-col divide-y">
-                <a href="#features-section" class="px-6 py-4 hover:bg-gray-100">Features</a>
-                <a href="#benefits-section" class="px-6 py-4 hover:bg-gray-100">Benefits</a>
-                <a href="#about-section" class="px-6 py-4 hover:bg-gray-100">About</a>
-                <a href="#contact-section" class="px-6 py-4 hover:bg-gray-100">Contact</a>
-                <a href="" class="px-6 py-4 hover:bg-gray-100">Pricing</a>
+          <div class="flex flex-col divide-y">
+            <a href="#features-section" class="px-6 py-4 hover:bg-gray-100">Features</a>
+            <a href="#benefits-section" class="px-6 py-4 hover:bg-gray-100">Benefits</a>
+            <a href="#about-section" class="px-6 py-4 hover:bg-gray-100">About</a>
+            <a href="#contact-section" class="px-6 py-4 hover:bg-gray-100">Contact</a>
+            <a href="" class="px-6 py-4 hover:bg-gray-100">Pricing</a>
 
-                <div class="px-6 py-4 flex flex-col gap-3">
-                    <a href="{{ route('login') }}" class="font-semibold">Sign In</a>
-                    <a href="" class="bg-gradient-to-tl from-[#3de3b1] to-[#575df9] text-white py-2 px-4 rounded-xl text-center">
-                        Get Started
-                    </a>
-                </div>
+            <div class="px-6 py-4 flex flex-col gap-3">
+              <a href="{{ route('login') }}" class="font-semibold">Sign In</a>
+              <a href="" class="bg-gradient-to-tl from-[#3de3b1] to-[#575df9] text-white py-2 px-4 rounded-xl text-center">
+                  Get Started
+              </a>
             </div>
+          </div>
         </div>
       </div>
-
     </header>
 
     <!-- Main content area -->
     <main class="flex-1 transition-all duration-300">
-
       <!-- Page Content -->
       <section class="{{!(request()->routeIs('login')) ? 'pt-14' : ''}} min-h-full flex-grow">
-
         <!-- Flash Messages -->
         @if (session()->has('success'))
           <div class="max-w-4xl mx-auto px-4">

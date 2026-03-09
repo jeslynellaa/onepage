@@ -5,13 +5,17 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\Document;
 use App\Models\ActivityLog;
-use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
     public function welcome()
     {
         return view('landing.index');
+    }
+
+    public function faqs()
+    {
+        return view('landing.faqs');
     }
 
     public function index() {
