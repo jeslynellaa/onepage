@@ -82,6 +82,7 @@ Route::middleware(['auth', 'nocache'])->group(function () {
     // Profile Routes
     Route::get('/profie/{user}/edit', [UserController::class, 'profile'])->name('profile.edit');
     Route::put('/profile/{user}', [UserController::class, 'update'])->name('profile.update');
+    Route::put('/profile/{user}/password', [UserController::class, 'updatePassword'])->name('profile.password.update');
 
     // ADMIN ROUTES
     Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
