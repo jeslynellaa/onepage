@@ -14,10 +14,10 @@
                     <p class="text-lg font-medium max-w-110">
                         Transform your business compliance with our intelligent automation platform. Optimize your approval process while reducing manual error and ensuring continuous compliance.
                     </p>
-                    <div class="flex gap-6">
+                    {{-- <div class="flex gap-6">
                         <button class="rounded-xl w-48 text-center py-2 text-white bg-blue-500 hover:bg-[#74c365] cursor-pointer duration-300 whitespace-nowrap">Contact Us</button>
                         <button class="rounded-xl w-48 text-center py-2 border border-blue-500 hover:border-[#74c365] cursor-pointer duration-300 border-2 whitespace-nowrap">Schedule a Demo</button>
-                    </div>
+                    </div> --}}
                 </div>
                 <div class="flex w-1/2 justify-center mx-auto">
                     <img src="{{ asset('img/pc-icon.png') }}" alt="pc-icon" class="h-full">

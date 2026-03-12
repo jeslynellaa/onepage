@@ -58,7 +58,7 @@
         <div class="hidden lg:flex justify-end lg:w-2/6 h-full items-center gap-6">
           <a href="{{ route('login') }}" class="font-semibold hover:text-[#0047ab] duration-300">Sign In</a>
 
-          <a href="" class="bg-gradient-to-tl from-[#3de3b1] to-[#575df9] text-white py-2 px-4 rounded-xl">Get Started</a>
+          {{-- <a href="" class="bg-gradient-to-tl from-[#3de3b1] to-[#575df9] text-white py-2 px-4 rounded-xl">Get Started</a> --}}
         </div>
 
         {{-- mobile navigation links --}}
@@ -78,9 +78,9 @@
 
             <div class="px-6 py-4 flex flex-col gap-3">
               <a href="{{ route('login') }}" class="font-semibold">Sign In</a>
-              <a href="" class="bg-gradient-to-tl from-[#3de3b1] to-[#575df9] text-white py-2 px-4 rounded-xl text-center">
+              {{-- <a href="" class="bg-gradient-to-tl from-[#3de3b1] to-[#575df9] text-white py-2 px-4 rounded-xl text-center">
                   Get Started
-              </a>
+              </a> --}}
             </div>
           </div>
         </div>
