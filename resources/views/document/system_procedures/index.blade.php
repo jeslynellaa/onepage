@@ -34,12 +34,59 @@
             color: #f1f1f1;
             background-color: #96DED1;
         }
+        .Pending_Code{
+            color: #f1f1f1;
+            background-color: #50C878;
+        }
         .Not_Approved{
             color: #f1f1f1;
             background-color: #96DED1;
         }
         input:read-only{
             background-color: lightgray;
+        }
+        .input-group{
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+        .input-container{
+            display: flex;
+            flex-direction: row;
+            height: 2.5rem;
+            width: 100%;
+        }
+        .input-label{
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            gap: 0.25rem;
+            padding: 0.5rem;
+            border-top-left-radius: 1rem;
+            border-bottom-left-radius: 1rem;
+            --tw-border-opacity: 1;
+            border-color: rgba(156, 163, 175, var(--tw-border-opacity));
+            border-top-width: 1px;
+            border-left-width: 1px;
+            border-bottom-width: 1px;
+            width: 50%;
+            text-align: left;
+            color: gray;
+        }
+        .input-append{
+            height: 2.5rem;
+            width: 50%;
+            padding: 0.5rem 0.75rem;
+            margin-bottom: 0.75rem;
+            border-width: 1px;
+            --tw-border-opacity: 1;
+            border-color: rgba(156, 163, 175, var(--tw-border-opacity)) !important;
+            border-left-width: 0px !important;
+            border-radius: 0px !important;
+            border-top-right-radius: 1rem !important;
+            border-bottom-right-radius: 1rem !important;
+            outline: 1px solid transparent;
+            outline-offset: 1px;
         }
     </style>
     <div class="mx-auto w-full px-5 py-1">
@@ -185,6 +232,69 @@
         </div>
     </div>
 
+    {{-- Set Code Modal --}}
+    <div id="assignCodeModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 px-4">
+        <div class="w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl">
+            <div class="mb-4 flex items-center justify-between">
+                <h2 class="text-lg font-semibold text-gray-800">Assign Document Code</h2>
+                <button type="button" onclick="closeAssignCodeModal()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form id="assignCodeForm" method="POST" action="">
+                @csrf
+                @method('PUT')
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Document Title</label>
+                        <input type="text" id="modal_document_title" class="mt-1 w-full rounded-lg border border-gray-300 bg-gray-100 px-3 py-2" readonly>
+                    </div>
+
+                    <div class="input-group">
+                        <div class="input-container">
+                            <div class="input-label">
+                                <div class="w-full whitespace-nowrap"> Final Document Code <span class="text-red-500">*</span></div>
+                            </div>
+                            <input id="modal_document_code" type="text" name="document_code" class="input-append focus:ring-0 focus:border-blue-500 @error('document_code') is-invalid @enderror" required/>
+                        </div>
+                        @error('document_code')
+                            <span class="text-xs text-red-600" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                        @enderror
+                    </div>
+
+                    <div class="input-group">
+                        <div class="input-container">
+                            <div class="input-label">
+                                <div class="w-full whitespace-nowrap"> Revision Number <span class="text-red-500">*</span></div>
+                            </div>
+                            <input id="modal_revision_number" type="text" name="revision_number" class="input-append focus:ring-0 focus:border-blue-500 @error('revision_number') is-invalid @enderror" required/>
+                        </div>
+                        @error('revision_number')
+                            <span class="text-xs text-red-600" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                        @enderror
+                    </div>
+                </div>
+                <span class="italic text-xs text-gray-400">
+                    * The fields have been pre-filled with suggested code input by the process owner and revision number based from past version/s.
+                </span>
+                <div class="mt-6 flex justify-end gap-2">
+                    <button type="button" onclick="closeAssignCodeModal()" class="rounded-lg border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-50">
+                        Cancel
+                    </button>
+                    <button type="submit" class="rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">
+                        Assign Code
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <x-slot:scripts>
         <script>
             function openEditModal(id, sectionNumber, title, processOwnerName='', processOwnerId='', reviewerName='', reviewerId='', approverName='', approverId=''){
@@ -209,6 +319,26 @@
 
             function closeEditModal(){
                 document.getElementById('editModal').classList.add('hidden');
+            }
+
+            function openAssignCodeModal(id, title, suggestedCode, documentCode, revisionNumber) {
+                const modal = document.getElementById('assignCodeModal');
+                const form = document.getElementById('assignCodeForm');
+
+                document.getElementById('modal_document_title').value = title || '';
+                document.getElementById('modal_document_code').value = documentCode || suggestedCode || '';
+                document.getElementById('modal_revision_number').value = revisionNumber || '0';
+
+                form.action = `/documents/system-procedures/${id}/assign-code`;
+
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            }
+
+            function closeAssignCodeModal() {
+                const modal = document.getElementById('assignCodeModal');
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
             }
 
 
@@ -309,7 +439,7 @@
                                 <td class="py-2 text-center w-10">${details.pages ?? toolTip}</td>
                                 <td class="py-1 text-center align-middle"><div class="status whitespace-nowrap ${statusStyle} mc-auto">${details.status}</div></td>
                                 <td class="py-2 text-center w-28">
-                                    ${details.revision_number ?? "N/A"}
+                                    ${details.status === 'Active' ? details.revision_number : "N/A"}
                                     ${
                                         details.can.viewRevisionHistory
                                             ? `<a href="${details.revHistoryUrl}"
@@ -321,7 +451,7 @@
                                     }
                                 </td>
                                 <td class="py-2 text-center">${formatDate(details.effective_date)}</td>
-                                <td class="py-2 text-center items-center space-x-2 w-40">
+                                <td class="py-2 items-center space-x-2 w-38">
                                     <a href="${details.viewUrl}" class="text-gray-600 hover:text-sky-700">
                                         <i class="fa-solid fa-eye"></i>
                                     </a>`;
@@ -397,7 +527,14 @@
                                 </button>
                             </form>
                             `;
+                        }else if(details.can.setCode){
+                            itemsTable += `
+                                <button type="button" class="text-gray-600 hover:text-blue-700" onclick="openAssignCodeModal('${details.id}', '${details.title}', '${details.code}', '${details.code}', '${details.revision_number}')" title="Assign Code">
+                                    <i class="fa-solid fa-file-pen"></i>
+                                </button>
+                            `;
                         }
+
                         if(details.can.review || details.can.approve){
                             itemsTable += `<a href="/documents/system-procedures/${details.id}/comment" class="text-gray-600 hover:text-blue-700 cursor-pointer" title="Leave Comments and Send Back">
                                 <i class="fa-solid fa-comment"></i>

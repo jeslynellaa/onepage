@@ -46,6 +46,8 @@ Route::middleware(['auth', 'nocache'])->group(function () {
     Route::put('/documents/system-procedures/{doc}/reviewDecision', [DocumentController::class, 'sp_reviewPassOrFail'])->name('document.system_procedures.reviewPassOrFail');
     Route::put('/documents/system-procedures/{doc}/approvalDecision', [DocumentController::class, 'sp_approveOrNot'])->name('document.system_procedures.approveOrNot');
 
+    Route::put('/documents/system-procedures/{doc}/assign-code', [DocumentController::class, 'assignCode'])->name('document.system_procedures.assignCode');
+
     Route::delete('/documents/{doc}', [DocumentController::class, 'destroy'])->name('document.system_procedures.destroy');
 
     Route::get('section/documents', [DocumentController::class, 'getSectionDocuments']);

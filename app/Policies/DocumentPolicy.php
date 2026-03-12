@@ -46,7 +46,7 @@ class DocumentPolicy
     public function sendForReview(User $user, Document $document)
     {
         return
-            $document->status === 'Draft' &&
+            ($document->status === 'Draft' || $document->status === 'For Revision') &&
             $user->id === $document->section->process_owner_id;
     }
 
@@ -62,6 +62,13 @@ class DocumentPolicy
         return
             $document->status === 'For Approval' &&
             $user->id === $document->section->approver_id;
+    }
+
+    public function setCode(User $user, Document $document)
+    {
+        return
+            $document->status === 'Pending Code' &&
+            $user->role === 'Document Controller';
     }
 
     public function viewRevisionHistory(User $user, Document $document)

@@ -315,9 +315,9 @@ class DocumentController extends Controller
     }
 
     public function sp_forReview(Document $doc) {
-        if ($doc->status !== 'Draft') {
+        if (!($doc->status == 'Draft' || $doc->status == 'For Revision')) {
             return back()->withErrors([
-                'error' => 'Only draft documents can be sent for review.'
+                'error' => 'Only draft and for revision documents can be sent for review.'
             ]);
         }
         
@@ -432,11 +432,11 @@ class DocumentController extends Controller
 
                 // ✅ Activate the new document
                 $doc->update([
-                    'status' => 'Active',
+                    'status' => 'Pending Code',
                     'revision_number' => $newRevisionNumber,
                     'effective_date' => now()->toDateString(), // YYYY-MM-DD
                 ]);
-                $successMessage = 'Document has been approved and activated.';
+                $successMessage = 'Document has been approved.';
             }else{
                 // Review failed
                 $doc->update(['status' => 'Not Approved',]);
@@ -460,6 +460,45 @@ class DocumentController extends Controller
         } catch (\Throwable $e) {
             DB::rollBack();
             return back()->withErrors(['error' => 'Something went wrong. '. $e->getMessage()]);
+        }
+    }
+
+    public function assignCode(Request $request, Document $doc)
+    {
+        if ($doc->status !== 'Pending Code') {
+            return back()->withErrors(['error' => 'This document is not ready for code assignment.']);
+        }
+
+        $validated = $request->validate([
+            'document_code' => ['required', 'string', 'max:255'],
+            'revision_number' => ['required', 'string', 'max:50']
+        ]);
+
+        DB::beginTransaction();
+
+        try {
+            $doc->code = $validated['document_code'];
+            $doc->revision_number = $validated['revision_number'];
+            $doc->status = 'Active';
+            $doc->save();
+
+            ActivityLog::create([
+                'action' => 'assigned code',
+                'description' => 'Assigned code: ' . $validated['document_code'] . '; Revision: ' . $validated['revision_number'],
+                'document_id' => $doc->id,
+                'document_type' => 'system_procedure',
+                'user_id' => auth()->id(),
+                'status_from' => 'Pending Code',
+                'status_to' => 'Active'
+            ]);
+
+            DB::commit();
+
+            return back()->with('success', 'Document code and revision number assigned successfully.');
+        } catch (\Throwable $e) {
+            DB::rollBack();
+
+            return back()->with('error', 'Failed to assign document code.');
         }
     }
 
@@ -519,6 +558,7 @@ class DocumentController extends Controller
                         'review' => auth()->user()->can('review', $doc),
                         'approve' => auth()->user()->can('approve', $doc),
                         'viewRevisionHistory' => auth()->user()->can('viewRevisionHistory', $doc),
+                        'setCode' => auth()->user()->can('setCode', $doc),
                     ],
                 ];
             }),
