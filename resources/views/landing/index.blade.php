@@ -233,7 +233,7 @@
                 <p class="text-lg lg:text-xl font-medium md:px-12 lg:px-45 mt-3">OnePage is developed by FCU Solutions Inc., a trusted consultancy with over two decades of experience in management systems and organizational development.</p>
 
                 <div class="grid grid-cols-6 lg:grid-cols-12 gap-2 mt-3">
-                    <div class="relative shadow-lg bg-blue-500 lg:col-span-3 col-span-3 rounded-tl-[3rem] text-white overflow-hidden flex justify-center items-center xl:min-h-34">
+                    <div class="relative shadow-lg bg-blue-500 lg:col-span-3 col-span-3 rounded-tl-[3rem] text-white overflow-hidden flex justify-center items-center lg:min-h-34">
                         <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('/img/lines.png'); background-size: cover;background-position: center; background-repeat: no-repeat;"></div>
 
                         <div class="relative flex flex-row justify-center items-center [text-shadow:0_2px_6px_rgba(0,0,0,0.75)] gap-3 text-left">
@@ -261,8 +261,10 @@
                         </div>
                     </div>
 
-                    <div class="shadow-lg bg-white lg:col-span-2 col-span-3 row-span-1 xl:block hidden xl:row-span-2 overflow-hidden">
-                        <img src="{{ asset('img/team-hands.png') }}" alt="team hands" class="w-full h-full object-cover">
+                    <div class="shadow-lg bg-white lg:col-span-2 col-span-3 lg:row-span-2 hidden lg:block overflow-hidden relative">
+                        <img src="{{ asset('img/team-hands.png') }}" 
+                            alt="team hands" 
+                            class="absolute inset-0 w-full h-full object-cover">
                     </div>
 
                     <div class="shadow-lg bg-white lg:col-span-3 flex justify-center items-center lg:min-h-34 col-span-3">
