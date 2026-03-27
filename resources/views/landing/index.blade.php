@@ -261,7 +261,7 @@
                         </div>
                     </div>
 
-                    <div class="shadow-lg bg-white lg:col-span-2 col-span-3 row-span-1 lg:block hidden lg:row-span-2 overflow-hidden">
+                    <div class="shadow-lg bg-white lg:col-span-2 col-span-3 row-span-1 xl:block hidden xl:row-span-2 overflow-hidden">
                         <img src="{{ asset('img/team-hands.png') }}" alt="team hands" class="w-full h-full object-cover">
                     </div>
 
