@@ -5,7 +5,7 @@
         </h1>
         <div class="flex flex-col lg:flex-row gap-4">
             <div class="w-full lg:w-2/3">
-                <div class="h-[78vh] pb-2">
+                <div class="w-full h-[600px] overflow-y-auto overflow-x-hidden -webkit-overflow-scrolling-touch">
                     <iframe src="{{ route('document.system_procedures.sp_preview', $doc->id) }}" class="w-full h-full border rounded-xl"></iframe>
                 </div>
                 <div>
