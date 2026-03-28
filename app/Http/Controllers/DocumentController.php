@@ -25,7 +25,6 @@ class DocumentController extends Controller
         $lastActivity = optional(
             ActivityLog::latest('performed_at')->value('performed_at')
         )->format('d M Y');
-
             
         return view('document.index', compact('lastActivity'));
     }
@@ -502,19 +501,36 @@ class DocumentController extends Controller
         }
     }
 
-    public function destroy(Document $doc)
+    public function destroy(Request $request, Document $doc)
     {
-        try {
-            DB::beginTransaction();
+        $request->validate([
+            'delete_justification' => 'required|string|min:10'
+        ]);
 
+        \DB::transaction(function () use ($doc, $request) {
+            $oldStatus = $doc->status;
+
+            $doc->update([
+                'delete_justification' => $request->delete_justification,
+                'status' => 'Archived' 
+            ]);
+
+            // 3. Create the Activity Log
+            ActivityLog::create([
+                'action' => 'deleted document',
+                'description' => "Archived Document: {$doc->document_code}. Justification: {$request->delete_justification}",
+                'document_id' => $doc->id,
+                'document_type' => 'system_procedure',
+                'user_id' => auth()->id(),
+                'status_from' => $oldStatus,
+                'status_to' => 'Archived'
+            ]);
+
+            // 4. Perform the Soft Delete
             $doc->delete();
+        });
 
-            DB::commit();
-            return redirect()->route('document.system_procedures')->with('success', 'Document deleted successfully.');
-        } catch (\Throwable $e) {
-            DB::rollBack();
-            return back()->withErrors(['error' => 'Failed to delete document. ' . $e->getMessage()]);
-        }
+        return redirect()->back()->with('success', 'Document has been successfully archived.');
     }
 
     public function getSectionDocuments(Request $request)

@@ -294,6 +294,50 @@
             </form>
         </div>
     </div>
+    <div id="deleteModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-gray-500/50 transition-opacity" aria-hidden="true" onclick="closeDeleteModal()"></div>
+
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+            <div class="relative inline-block align-bottom bg-white rounded-2xl px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
+                <div class="sm:flex sm:items-start">
+                    <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                        <svg class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 15c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                    </div>
+                    <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+                            Archive Document: <span id="modalDocCode" class="text-red-600"></span>
+                        </h3>
+            
+                        <p class="mt-2 text-sm text-gray-500">
+                            Please provide a justification for archiving this document. This will be stored in the audit trail.
+                        </p>
+                        <div class="mt-4">
+                            <form id="deleteForm" method="POST" action="">
+                                @csrf
+                                @method('DELETE')
+                
+                                <label class="block text-sm font-medium text-gray-700">Justification</label>
+                                <textarea name="delete_justification" id="justificationInput" required rows="3" class="w-full mt-1 border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500" placeholder="e.g. This procedure will be moved/combined with another procedure"></textarea>
+                                
+                                <div class="mt-6 flex justify-end space-x-3">
+                                    <button type="button" onclick="closeDeleteModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 cursor-pointer">
+                                        Cancel
+                                    </button>
+                                    <button type="submit" id="confirmDeleteBtn" disabled class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer">
+                                        Confirm Archive
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <x-slot:scripts>
         <script>
@@ -452,24 +496,20 @@
                                 </td>
                                 <td class="py-2 text-center">${formatDate(details.effective_date)}</td>
                                 <td class="py-2 items-center space-x-2 w-38">
-                                    <a href="${details.viewUrl}" class="text-gray-600 hover:text-sky-700">
+                                    <a href="${details.viewUrl}" class="inline-flex items-center justify-center text-gray-600 hover:text-sky-700">
                                         <i class="fa-solid fa-eye"></i>
                                     </a>`;
                         if(details.status !== 'For Review' && details.status !== 'For Approval' && details.can.edit){
                             itemsTable += `
-                                <a href="${details.editUrl}" class="text-gray-600 hover:text-sky-700">
+                                <a href="${details.editUrl}" class="inline-flex items-center justify-center text-gray-600 hover:text-sky-700">
                                     <i class="fa-solid fa-pen"></i>
                                 </a>`;
                         }
                         if(details.can.delete){
                             itemsTable += `
-                                    <form action="${details.deleteUrl}" method="POST" onsubmit="return confirm(\'Are you sure you want to delete this document?\');" style="display:inline;">
-                                        <input type="hidden" name="_token" value="${data.csrf}">
-                                        <input type="hidden" name="_method" value="DELETE">
-                                        <button type="submit" class="text-gray-600 hover:text-sky-700 cursor-pointer transition-colors duration-300">
-                                            <i class="fa-solid fa-trash"></i>
-                                        </button>
-                                    </form>`;
+                                    <button type="button" onclick="openDeleteModal('${details.id}', '${details.code}')" class="inline-flex text-red-600 hover:text-red-900 font-medium text-sm flex items-center justify-center transition-colors" title="Archive Document">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>`;
                         }
                         if((details.status === 'Draft' || details.status === 'For Revision') && details.can.edit){
                             itemsTable += `
@@ -743,6 +783,38 @@
                     messageBox.classList.remove('hidden');
                 });
             });
+
+            /**
+             * Opens the Delete Modal and sets the target document context
+             * @param {string|number} docId - The primary key of the document
+             * @param {string} docCode - The readable code (e.g., SP-BPL-01)
+             */
+            function openDeleteModal(docId, docCode) {
+                const modal = document.getElementById('deleteModal');
+                const form = document.getElementById('deleteForm');
+                const codeSpan = document.getElementById('modalDocCode');
+                const input = document.getElementById('justificationInput');
+                const btn = document.getElementById('confirmDeleteBtn');
+                
+                form.action = `/documents/${docId}`;
+                
+                codeSpan.innerText = docCode;
+                input.value = '';
+                btn.disabled = true;
+                
+                modal.classList.remove('hidden');
+                
+                setTimeout(() => input.focus(), 100);
+                
+            document.getElementById('justificationInput').addEventListener('input', function(e) {
+                const btn = document.getElementById('confirmDeleteBtn');
+                btn.disabled = e.target.value.trim().length < 0;
+            });
+            }
+
+            function closeDeleteModal() {
+                document.getElementById('deleteModal').classList.add('hidden');
+            }
         </script>
     </x-slot:scripts>
 </x-layout>
