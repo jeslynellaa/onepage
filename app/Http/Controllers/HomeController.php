@@ -39,7 +39,17 @@ class HomeController extends Controller
                 $query->where('approver_id', auth()->id());
             })
             ->get();
-        return view('index', compact('activeCount', 'draftCount', 'reviewCount', 'approvalCount', 'logs', 'pendingReviews', 'pendingApprovals'));
+        $pendingCode = collect();
+        if(auth()->user()->role == 'Document Controller'){
+            $pendingCode = Document::where('status', 'Pending Code')
+            ->get();
+        }
+        $allActions = collect()
+        ->concat($pendingReviews)
+        ->concat($pendingApprovals)
+        ->concat($pendingCode)
+        ->sortByDesc('updated_at');
+        return view('index', compact('activeCount', 'draftCount', 'reviewCount', 'approvalCount', 'logs', 'allActions'));
     }
 
     public function showLogs()

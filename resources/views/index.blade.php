@@ -1,143 +1,187 @@
 <x-layout>
-    <div class="mx-auto px-5 pt-1">
-        <!-- Header -->
-        <div class="flex justify-between items-center mb-4">
-            <h1 class="font-semibold text-gray-800">Dashboard</h1>
-        </div>
-
-        <!-- Content Row -->
-        <div class="grid grid-cols-2 xl:grid-cols-4 gap-4">
-            <div class="bg-white rounded-2xl shadow p-5 flex items-center justify-between flex-col-reverse sm:flex-row">
-                <div class="flex flex-col-reverse sm:flex-col">
-                    <div class="text-sm font-semibold text-gray-600">
-                        Active Documents
+    <div class="min-h-screen bg-gray-50/50 pb-5">
+        <div class="mx-auto px-6 pt-6">
+            <div class="mb-5 flex flex-col sm:flex-row sm:items-center justify-between border-b border-gray-300">
+                <div class="flex items-center gap-6">
+                    <div class="flex-shrink-0">
+                        @if(auth()->user()->company->logo_path)
+                            <div class="h-12 sm:h-16 flex items-center justify-start">
+                                <img src="{{ asset('storage/' . auth()->user()->company->logo_path) }}" 
+                                    alt="{{ auth()->user()->company->name }} Logo" 
+                                    class="h-full w-auto object-contain pointer-events-none drop-shadow-sm">
+                            </div>
+                        @else
+                            <div class="h-16 w-16 bg-[#001f3f] rounded-2xl flex items-center justify-center shadow-sm">
+                                <span class="text-white font-bold text-2xl uppercase">
+                                    {{ substr(auth()->user()->company->name, 0, 1) }}
+                                </span>
+                            </div>
+                        @endif
                     </div>
-                    <div class="text-2xl font-bold text-gray-900 text-center sm:text-left">
-                        {{$activeCount}}
+
+                    <div class="hidden sm:block h-10 w-px bg-gray-200"></div>
+
+                    <div class="flex flex-col">
+                        <div class="flex items-center gap-3">
+                            <h2 class="text-2xl font-black text-gray-900 tracking-tight leading-tight">
+                                {{ auth()->user()->company->name }}
+                            </h2>
+                            <span class="hidden sm:inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700 uppercase tracking-tighter">
+                                Active Workspace
+                            </span>
+                        </div>
+                        <p class="text-xs font-semibold text-gray-400 uppercase tracking-widest mt-1">
+                            Document Management Portal
+                        </p>
                     </div>
                 </div>
-                <i class="fas fa-file text-lg sm:text-3xl text-[#74c365]"></i>
-            </div>
 
-            <div class="bg-white rounded-2xl shadow p-5 flex items-center justify-between flex-col-reverse sm:flex-row">
-                <div class="flex flex-col-reverse sm:flex-col">
-                    <div class="text-sm font-semibold text-gray-600">
-                        Draft Documents
-                    </div>
-                    <div class="text-2xl font-bold text-gray-900 text-center sm:text-left">
-                        {{$draftCount}}
+                <div class="mt-4 sm:mt-0 flex items-center gap-4 text-right">
+                    <div class="hidden lg:block">
+                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">System Status</p>
+                        <p class="text-sm font-semibold text-emerald-600 flex items-center justify-end gap-1">
+                            <span class="h-2 w-2 rounded-full bg-emerald-500"></span> All Systems Operational
+                        </p>
                     </div>
                 </div>
-                <i class="fas fa-pen text-lg sm:text-3xl text-[#74c365]"></i>
             </div>
-
-            <div class="bg-white rounded-2xl shadow p-5 flex items-center justify-between flex-col-reverse sm:flex-row">
-                <div class="flex flex-col-reverse sm:flex-col">
-                    <div class="text-sm font-semibold text-gray-600">
-                        For Review
-                    </div>
-                    <div class="text-2xl font-bold text-gray-900 text-center sm:text-left">
-                        {{$reviewCount}}
-                    </div>
+            <div class="flex justify-between items-end mb-3">
+                <div>
+                    <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">Dashboard</h1>
+                    <p class="text-sm text-gray-500 mt-1">Overview of your document pipeline and team activity.</p>
                 </div>
-                <i class="fas fa-glasses text-lg sm:text-3xl text-[#74c365]"></i>
             </div>
 
-            <div class="bg-white rounded-2xl shadow p-5 flex items-center justify-between flex-col-reverse sm:flex-row">
-                <div class="flex flex-col-reverse sm:flex-col">
-                    <div class="text-sm font-semibold text-gray-600">
-                        Pending Approval
-                    </div>
-                    <div class="text-2xl font-bold text-gray-900 text-center sm:text-left">
-                        {{$approvalCount}}
-                    </div>
-                </div>
-                <i class="fas fa-circle-check text-lg sm:text-3xl text-[#74c365]"></i>
-            </div>
-
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-12 gap-6 my-6">
-            <div class="md:col-span-8 bg-white rounded-2xl shadow-md p-5 max-h-105 flex flex-col">
-                <div class="flex justify-between border-b border-gray-300 items-center mb-2 pt-1 pb-3">
-                    <div class="font-semibold">Recent Activity</div>
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex items-center justify-between group hover:border-blue-200 transition">
                     <div>
-                        <a href="{{route('activity.index')}}" class="cursor-pointer duration-300 text-[#001f3f] bg-blue-200 rounded-xl py-2 px-3 hover:text-white hover:bg-[#1e488f]">View all</a>
+                        <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Active</p>
+                        <h3 class="text-3xl font-bold text-gray-900">{{$activeCount}}</h3>
+                    </div>
+                    <div class="h-12 w-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition">
+                        <i class="fas fa-file-signature text-xl"></i>
                     </div>
                 </div>
-                <div class="overflow-y-auto max-h-96">
-                    <table class="w-full text-sm text-left text-gray-700">
-                        <thead>
-                            <tr class="">
-                                <th class="p-2 sticky top-0 bg-white z-10">Date</th>
-                                <th class="p-2 sticky top-0 bg-white z-10">Action</th>
-                                <th class="p-2 sticky top-0 bg-white z-10">Description</th>
-                                <th class="p-2 sticky top-0 bg-white z-10">Performed By</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse ($logs as $log)
-                                <tr>
-                                    <td class="p-2">{{ $log->performed_at->format('d M Y - g:i A') }}</td>
-                                    <td class="p-2">{{strtoupper($log->action)}}</td>
-                                    <td class="p-2">{{$log->description}}</td>
-                                    <td class="p-2">{{$log->user->first_name}} {{$log->user->last_name}}</td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="5" class="text-center p-2">No Logs Available</td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
+
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex items-center justify-between group hover:border-amber-200 transition">
+                    <div>
+                        <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Drafts</p>
+                        <h3 class="text-3xl font-bold text-gray-900">{{$draftCount}}</h3>
+                    </div>
+                    <div class="h-12 w-12 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition">
+                        <i class="fas fa-pen-ruler text-xl"></i>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex items-center justify-between group hover:border-purple-200 transition">
+                    <div>
+                        <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">In Review</p>
+                        <h3 class="text-3xl font-bold text-gray-900">{{$reviewCount}}</h3>
+                    </div>
+                    <div class="h-12 w-12 bg-purple-50 text-purple-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition">
+                        <i class="fas fa-magnifying-glass text-xl"></i>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex items-center justify-between group hover:border-emerald-200 transition">
+                    <div>
+                        <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Approved</p>
+                        <h3 class="text-3xl font-bold text-gray-900">{{$approvalCount}}</h3>
+                    </div>
+                    <div class="h-12 w-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition">
+                        <i class="fas fa-check-double text-xl"></i>
+                    </div>
                 </div>
             </div>
-            <div class="md:col-span-4 bg-white rounded-2xl shadow-md p-5 max-h-105 flex flex-col">
-                <div class="flex justify-between border-b border-gray-300 items-center mb-2 pt-1 pb-3">
-                    <div class="font-semibold">Action Requests</div>
-                    <div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+                <div class="lg:col-span-8 bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col overflow-hidden h-[500px]">
+                    <div class="flex justify-between items-center p-6 border-b border-gray-50">
+                        <h2 class="font-bold text-gray-800 flex items-center gap-2">
+                            <span class="w-2 h-2 bg-blue-500 rounded-full"></span>
+                            Recent Activity
+                        </h2>
+                        <a href="{{route('activity.index')}}" class="text-xs font-bold text-blue-600 hover:underline">VIEW ALL</a>
+                    </div>
+                    
+                    <div class="overflow-y-auto flex-1">
+                        <table class="w-full text-sm text-left border-separate border-spacing-0">
+                            <thead class="sticky top-0 bg-white/80 backdrop-blur-md z-10">
+                                <tr>
+                                    <th class="px-6 py-4 text-[11px] font-bold text-gray-400 uppercase border-b border-gray-50">Date</th>
+                                    <th class="px-6 py-4 text-[11px] font-bold text-gray-400 uppercase border-b border-gray-50">Action</th>
+                                    <th class="px-6 py-4 text-[11px] font-bold text-gray-400 uppercase border-b border-gray-50">Description</th>
+                                    <th class="px-6 py-4 text-[11px] font-bold text-gray-400 uppercase border-b border-gray-50">User</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-50">
+                                @forelse ($logs as $log)
+                                    <tr class="hover:bg-gray-50/50 transition">
+                                        <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-xs">{{ $log->performed_at->format('M d, H:i') }}</td>
+                                        <td class="px-6 py-4">
+                                            <span class="px-2 py-1 rounded-md bg-slate-100 text-slate-600 text-[10px] font-bold">
+                                                {{ strtoupper($log->action) }}
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4 font-medium text-gray-700 relative group cursor-help">
+                                            <span class="truncate max-w-[150px] block">
+                                                {{ $log->description }}
+                                            </span>
+
+                                            <div class="absolute invisible group-hover:visible z-30 w-64 p-2 mt-1 text-xs text-white bg-gray-900 rounded-lg shadow-xl -left-2 top-full">
+                                                {{ $log->description }}
+                                                <div class="absolute -top-1 left-4 w-2 h-2 bg-gray-900 rotate-45"></div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <div class="flex items-center gap-2">
+                                                <div class="h-6 w-6 rounded-full bg-gray-800 text-white flex items-center justify-center text-[10px] font-bold">
+                                                    {{ substr($log->user->first_name, 0, 1) }}
+                                                </div>
+                                                <span class="text-gray-600 text-xs font-medium">{{$log->user->first_name}}</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr><td colspan="4" class="py-20 text-center text-gray-400">No recent logs found.</td></tr>
+                                @endforelse
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-                <div class="overflow-y-auto max-h-96">
-                    <table class="w-full text-sm text-left text-gray-700">
-                        <thead>
-                            <tr class="">
-                                <th class="sticky top-0 bg-white z-10">#</th>
-                                <th class="sticky top-0 bg-white z-10">Document</th>
-                                <th class="sticky top-0 bg-white z-10">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {{-- Pending Reviews --}}
-                            @forelse ($pendingReviews as $key => $pendingReview)
-                                <tr>
-                                    <td class="p-2">{{ $pendingReview->key+1 }}</td>
-                                    <td class="p-2">{{ $pendingReview->title }}</td>
-                                    <td class="p-2">{{ $pendingReview->status }}</td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="3" class="text-center p-2">No Reviews Pending</td>
-                                </tr>
-                            @endforelse
-                            <tr>
-                                <td colspan="3" class="border-t"></td>
-                            </tr>
-                            {{-- Pending Approvals --}}
-                            @forelse ($pendingApprovals as $key => $pendingApproval)
-                                <tr>
-                                    <td class="p-2">{{ $pendingApproval->key+1 }}</td>
-                                    <td class="p-2">{{ $pendingApproval->title }}</td>
-                                    <td class="p-2">{{ $pendingApproval->status }}</td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="3" class="text-center p-2">No Approvals Pending</td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
+
+                <div class="lg:col-span-4 bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col overflow-hidden h-[500px]">
+                    <div class="p-6 border-b border-gray-50">
+                        <h2 class="font-bold text-gray-800">Action Requests</h2>
+                    </div>
+                    
+                    <div class="overflow-y-auto flex-1 p-4 space-y-3 bg-gray-50/30">
+                        @forelse ($allActions as $item)
+                            <div class="p-4 rounded-xl bg-white border border-gray-100 shadow-sm hover:border-blue-300 hover:shadow-md transition group">
+                                <div class="flex justify-between items-start mb-2">
+                                    <span class="px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-600 text-[10px] font-bold uppercase">
+                                        {{ $item['status'] }}
+                                    </span>
+                                    <span class="text-[10px] text-gray-400">#{{ $loop->iteration }}</span>
+                                </div>
+                                <p class="text-sm font-bold text-gray-800 leading-tight group-hover:text-blue-600 transition">{{ $item['title'] }}</p>
+                                <div class="mt-4 flex justify-end">
+                                    <a href="{{ route('document.system_procedures.view_pdf', $item['id'])}}" class="text-xs font-bold text-gray-400 group-hover:text-blue-600 flex items-center gap-1">
+                                        View <i class="fas fa-arrow-right text-[10px]"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        @empty
+                            <div class="h-full flex flex-col items-center justify-center text-center p-6">
+                                <div class="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-3">
+                                    <i class="fas fa-check text-gray-300"></i>
+                                </div>
+                                <p class="text-sm text-gray-500 font-medium">All caught up!</p>
+                            </div>
+                        @endforelse
+                    </div>
                 </div>
+
             </div>
         </div>
     </div>
