@@ -6,15 +6,18 @@ use App\Http\Controllers\Controller;
 use App\Models\ActivityLog;
 use App\Models\Dirf;
 use App\Models\Document;
+use App\Models\Form;
+use App\Models\MsManual;
 use App\Models\ProcedureComments;
 use App\Models\ProcedureSteps;
 use App\Models\Section;
 use App\Models\StepDocuments;
+use App\Models\SupportDocument;
 use App\Models\User;
+use App\Services\DocumentPdfService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use League\HTMLToMarkdown\HtmlConverter;
 use Yajra\DataTables\Facades\DataTables;
@@ -25,8 +28,17 @@ class DocumentController extends Controller
         $lastActivity = optional(
             ActivityLog::latest('performed_at')->value('performed_at')
         )->format('d M Y');
-            
-        return view('document.index', compact('lastActivity'));
+        
+        // In your Controller
+        $spCount = Document::distinct('code')
+            ->count();
+        $msCount = MsManual::distinct('section_number')
+            ->count();
+        $supportCount = SupportDocument::distinct('code')
+            ->count();
+        $formsCount = Form::distinct('code')
+            ->count();
+        return view('document.index', compact('lastActivity', 'spCount', 'msCount', 'supportCount', 'formsCount'));
     }
 
     public function system_procedures() {
@@ -169,24 +181,6 @@ class DocumentController extends Controller
 
         return view('document.system_procedures.view', compact('doc', 'reviewComments', 'approvalComments', 'sectionOrder', 'sectionLabels'));
     }
-
-    private function getTextColorForBackground($hex) {
-        $hex = ltrim($hex, '#');
-
-        // Support shorthand hex (#fff)
-        if (strlen($hex) === 3) {
-            $hex = $hex[0].$hex[0].$hex[1].$hex[1].$hex[2].$hex[2];
-        }
-
-        $r = hexdec(substr($hex, 0, 2));
-        $g = hexdec(substr($hex, 2, 2));
-        $b = hexdec(substr($hex, 4, 2));
-
-        $brightness = ($r * 299 + $g * 587 + $b * 114) / 1000;
-
-        return $brightness < 128 ? '#ffffff' : '#000000';
-    }
-
 
     public function sp_edit(Document $doc) {
         $converter = new HtmlConverter();
@@ -636,91 +630,20 @@ class DocumentController extends Controller
         return view('document.system_procedures.comments', compact('doc', 'existingComments', 'pageTitle'));
     }
 
-    public function preview(Document $doc)
+    public function preview(Document $doc, DocumentPdfService $pdfService)
     {
-        // Load steps and their related documents
-        $doc->load([
-            'steps.interfaces',
-            'section.processOwner',
-            'section.reviewer',
-            'section.approver',
-        ]);
-        $steps = $doc->steps;
-
-        $submitted = $doc->logs->firstWhere('action', 'submitted for review');
-        $passed = $doc->logs->firstWhere('action', 'review passed');
-        $approved = $doc->logs->firstWhere('action', 'approved');
-        $color = $doc->company->hex_code;
-        $text_color = $this->getTextColorForBackground($color);
-
-        if (app()->environment('production')) {
-            $logo = $doc->company->logo_path
-                ? Storage::disk('public')->path($doc->company->logo_path)
-                : null;
-            $owner_sign = $doc->section->processOwner->signature_path
-                ? Storage::disk('public')->path($doc->section->processOwner->signature_path)
-                : null;
-            $reviewer_sign = $doc->section->reviewer->signature_path
-                ? Storage::disk('public')->path($doc->section->reviewer->signature_path)
-                : null;
-            $approver_sign = $doc->section->approver->signature_path
-                ? Storage::disk('public')->path($doc->section->approver->signature_path)
-                : null;
-            $connector = public_path('img/flowchart-connector.png');
-        } else {
-            $logo = public_path('storage/' . $doc->company->logo_path);
-            $owner_sign = public_path('storage/' . $doc->section->processOwner->signature_path);
-            $reviewer_sign = public_path('storage/' . $doc->section->reviewer->signature_path);
-            $approver_sign = public_path('storage/' . $doc->section->approver->signature_path);
-            $connector = realpath(base_path()).'\public\img\flowchart-connector.png';
-        }
-
-        // Flatten all interfaces into one collection
-        $allInterfaces = $doc->steps->flatMap(function ($step) {
-            return $step->interfaces;
-        });
-
-        // Separate and deduplicate by type and title
-        $uniqueInputs = $allInterfaces
-            ->where('type', 'input')
-            ->unique('title')
-            ->values();
-
-        $uniqueOutputs = $allInterfaces
-            ->where('type', 'output')
-            ->unique('title')
-            ->values();
-
-        // 1️⃣ Load your Blade view into Dompdf
-        $pdf = Pdf::loadView('pdf.system_procedure', compact('doc', 'steps', 'uniqueInputs', 'uniqueOutputs', 'connector', 'submitted', 'passed', 'approved', 'owner_sign', 'reviewer_sign', 'approver_sign', 'logo', 'color', 'text_color'))
-                ->setPaper('A4', 'portrait');
-
-        // 2️⃣ Force rendering so Dompdf can calculate pages
-        $pdf->output();
-
-        // 3️⃣ Access the underlying Dompdf instance
-        $dompdf = $pdf->getDomPDF();
-        $canvas = $dompdf->getCanvas();
-
-        // 4️⃣ Get total page count and store in the database
-        $totalPages = $canvas->get_page_count();
-        $doc->update([
-            'pages' => $totalPages
-        ]);
-
-        // 4️⃣ Add automatic page numbering
-        $canvas->page_script(function ($pageNumber, $pageCount, $canvas, $fontMetrics) {
-            $text = "Page $pageNumber of $pageCount";
-            $font = $fontMetrics->get_font("Helvetica", "normal");
-            $size = 11;
-
-            // adjust these coordinates to fit your footer area (x, y)
-            $canvas->text(455, 111, "Page $pageNumber of $pageCount", $font, $size);
-        });
+        $pdf = $pdfService->generate($doc);
 
         return response($pdf->output(), 200)
             ->header('Content-Type', 'application/pdf')
             ->header('Content-Disposition', 'inline; filename="invoice.pdf"');
+    }
+
+    public function sp_pdf_view(Document $doc, DocumentPdfService $pdfService)
+    {
+        $pdf = $pdfService->generate($doc);
+
+        return $pdf->stream();
     }
 
     public function storeComment(Request $request, Document $doc)
