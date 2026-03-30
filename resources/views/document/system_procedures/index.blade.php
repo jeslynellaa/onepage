@@ -3,8 +3,31 @@
         .collapse-content {
             border-radius: 15px;
             padding: 10px 15px;
-            background-color: #f1f1f1;
+            background-color: #f8f8f8;
+            animation: slideDown 0.2s ease-out;
         }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        #section_documents thead th {
+            font-size: 10px;
+            background: transparent;
+        }
+
+        #section_documents tbody tr td {
+            border-bottom: 1px solid rgba(243, 244, 246, 1);
+        }
+
+        /* Status Pill Styling for Workflow */
+        .status-pill-workflow {
+            background: rgba(87, 93, 249, 0.1);
+            color: #575df9;
+            border: 1px solid rgba(87, 93, 249, 0.2);
+        }
+        
         .status{
             padding: 5px 10px;
             border-radius: 15px;
@@ -89,17 +112,15 @@
             outline-offset: 1px;
         }
     </style>
-    <div class="mx-auto w-full px-5 py-1">
-        <!-- Header -->
-        <div class="flex justify-between items-center mb-4">
-            <h1 class="font-semibold text-gray-800">
-                <a href="{{ route('document.index') }}">Document Management</a> > System Procedures
-            </h1>
+    <div class="mx-auto w-full px-5 py-3">
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest">System Procedures</h3>
             <div>
-            <a href="{{ route('document.system_procedures.create')}}"
-            class="inline-block bg-sky-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-sky-700 transition">
-                Create
-            </a>
+                <a href="{{ route('document.system_procedures.create') }}" 
+                class="inline-flex items-center gap-2 bg-[#575df9] text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow hover:bg-[#464bd4] hover:shadow-[#575df9]/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200">
+                    <i class="fa-solid fa-plus text-[10px]"></i>
+                    <span>Create Document</span>
+                </a>
             {{-- <a href="{{ route('document.system_procedures.dirf_generate', 1)}}"
             class="inline-block bg-sky-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-sky-700 transition">
                 DIRFs
@@ -108,71 +129,98 @@
         </div>
 
         <!-- Table -->
-        <div class="overflow-x-auto bg-white rounded-2xl shadow-lg px-5 py-2">
-            <table id="sections-table" class="w-full border border-gray-200 text-sm text-left text-gray-700">
-                <thead class="bg-gray-100 text-gray-600 uppercase text-xs">
-                    <tr>
-                        <th class="px-2 py-3 text-center">
-                            <div class="flex justify-center">
+        <div class="overflow-hidden bg-white rounded-3xl border border-gray-100 shadow-sm px-5">
+            <div class="overflow-x-auto">
+                <table id="sections-table" class="w-full text-sm text-left border-separate border-spacing-0">
+                    <thead class="bg-gray-50/50">
+                        <tr>
+                            <th class="px-6 py-5 border-b border-gray-100 text-center w-16">
                                 <button id="toggleAll" type="button"
-                                    class="inline-flex items-center justify-center w-8 h-8 rounded-md
-                                        border border-gray-300 hover:bg-gray-100 transition" title="Expand / Collapse all" >
-                                    <span id="toggleIcon" class="text-lg leading-none">+</span>
+                                    class="inline-flex items-center justify-center w-8 h-8 rounded-xl border border-gray-200 bg-white text-gray-500 hover:text-[#575df9] hover:border-[#575df9] transition shadow-sm" title="Expand / Collapse all">
+                                    <span id="toggleIcon" class="text-lg font-bold leading-none">+</span>
                                 </button>
-                            </div>
-                        </th>
-                        <th class="px-4 py-3">No.</th>
-                        <th class="px-4 py-3">Section Title</th>
-                        <th class="px-4 py-3">Process Owner</th>
-                        <th class="px-4 py-3">Reviewer</th>
-                        <th class="px-4 py-3">Approver</th>
-                        <th class="px-4 py-3">Count</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($sections as $section)
-                    <tr class="align-middle" data-id="{{$section->section_number}}">
-                        <td class="details-control dt-control"></td> <!-- Expand button -->
-                        <td class="px-4 py-3">{{$section->section_number}}</td>
-                        <td class="px-4 py-3">{{$section->title}}</td>
-                        <td class="px-4 py-3">{{$section->processOwner->last_name ?? ''}}, {{$section->processOwner->first_name ?? ''}}{{$section->processOwner->middle_name ? ' ' . $section->processOwner->middle_name : ''}}</td>
+                            </th>
+                            <th class="px-4 py-5 border-b border-gray-100 font-bold text-gray-400 uppercase text-[10px] tracking-widest">No.</th>
+                            <th class="px-4 py-5 border-b border-gray-100 font-bold text-gray-400 uppercase text-[10px] tracking-widest">Section Title</th>
+                            <th class="px-4 py-5 border-b border-gray-100 font-bold text-gray-400 uppercase text-[10px] tracking-widest">Process Owner</th>
+                            <th class="px-4 py-5 border-b border-gray-100 font-bold text-gray-400 uppercase text-[10px] tracking-widest text-center">Stakeholders</th>
+                            <th class="px-4 py-5 border-b border-gray-100 font-bold text-gray-400 uppercase text-[10px] tracking-widest">Docs</th>
+                            <th class="px-4 py-5 border-b border-gray-100 w-16"></th>
+                        </tr>
+                    </thead>
 
-                        <td class="px-4 py-3">{{$section->reviewer->last_name ?? ''}}, {{$section->reviewer->first_name ?? ''}} {{$section->reviewer->middle_name ?? ''}}</td>
-                        <td class="px-4 py-3">{{$section->approver->last_name ?? ''}}, {{$section->approver->first_name ?? ''}} {{$section->approver->middle_name ?? ''}}</td>
-                        <td class="px-4 py-3">{{$section->count}}</td>
-                        <td class="px-4 py-3 text-center">
-                            <button type="button" class="text-gray-400 text-sm hover:text-sky-700" 
-                            onclick="openEditModal(
-                                {{ $section->id }},
-                                '{{ addslashes($section->section_number) }}',
-                                '{{ addslashes($section->title) }}',
-                                '{{ addslashes($section->processOwner->last_name ?? '') }}, {{ addslashes($section->processOwner->first_name ?? '') }}{{ $section->processOwner->middle_name ? ' ' . addslashes($section->processOwner->middle_name) : '' }}',
-                                '{{ $section->processOwner->id ?? '' }}',
-                                '{{ addslashes($section->reviewer->last_name ?? '') }}, {{ addslashes($section->reviewer->first_name ?? '') }}{{ $section->reviewer->middle_name ? ' ' . addslashes($section->reviewer->middle_name) : '' }}',
-                                '{{ $section->reviewer->id ?? '' }}',
-                                '{{ addslashes($section->approver->last_name ?? '') }}, {{ addslashes($section->approver->first_name ?? '') }}{{ $section->approver->middle_name ? ' ' . addslashes($section->approver->middle_name) : '' }}',
-                                '{{ $section->approver->id ?? '' }}'
-                            )">
-                                <i class="fa-solid fa-pen"></i>
-                            </button>
-                        </td>
-                    </tr>
-                    @endforeach
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td>{{$totalCount}}</td>
-                        <td></td>
-                    </tr>
-                </tfoot>
-            </table>
+                    <tbody class="divide-y divide-gray-50">
+                        @foreach($sections as $section)
+                        <tr class="group hover:bg-slate-50/50 transition-colors" data-id="{{$section->section_number}}">
+                            <td class="details-control dt-control px-6 py-4 text-center"></td>
+                            
+                            <td class="px-4 py-4 font-bold text-gray-900">{{$section->section_number}}</td>
+                            
+                            <td class="px-4 py-4">
+                                <span class="block font-bold text-gray-800 group-hover:text-[#575df9] transition-colors">
+                                    {{$section->title}}
+                                </span>
+                            </td>
+                            
+                            <td class="px-4 py-4">
+                                <div class="flex items-center gap-2">
+                                    <div class="h-7 w-7 rounded-full bg-indigo-50 text-[#575df9] flex items-center justify-center text-[10px] font-bold border border-indigo-100">
+                                        {{ substr($section->processOwner->first_name ?? 'U', 0, 1) }}
+                                    </div>
+                                    <span class="text-gray-600 font-medium">
+                                        {{ $section->processOwner->last_name ?? '' }}, {{ $section->processOwner->first_name ?? '' }}
+                                    </span>
+                                </div>
+                            </td>
+
+                            <td class="px-4 py-4">
+                                <div class="flex flex-col gap-1">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-[9px] font-black text-gray-400 uppercase w-12">Reviewer:</span>
+                                        <span class="text-xs text-gray-600">{{ $section->reviewer->last_name}}, {{ $section->reviewer->first_name}}</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-[9px] font-black text-gray-400 uppercase w-12">Approver:</span>
+                                        <span class="text-xs text-gray-600">{{ $section->approver->last_name}}, {{ $section->approver->first_name}}</span>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td class="px-4 py-4">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#3de3b1]/10 text-[#2db68e]">
+                                    {{$section->count}}
+                                </span>
+                            </td>
+
+                            <td class="px-4 py-4 text-right">
+                                <button type="button" class="h-8 w-8 rounded-lg text-gray-400 hover:text-[#575df9] hover:bg-white hover:shadow-sm transition"
+                                onclick="openEditModal(
+                                    {{ $section->id }},
+                                    '{{ addslashes($section->section_number) }}',
+                                    '{{ addslashes($section->title) }}',
+                                    '{{ addslashes($section->processOwner->last_name ?? '') }}, {{ addslashes($section->processOwner->first_name ?? '') }}{{ $section->processOwner->middle_name ? ' ' . addslashes($section->processOwner->middle_name) : '' }}',
+                                    '{{ $section->processOwner->id ?? '' }}',
+                                    '{{ addslashes($section->reviewer->last_name ?? '') }}, {{ addslashes($section->reviewer->first_name ?? '') }}{{ $section->reviewer->middle_name ? ' ' . addslashes($section->reviewer->middle_name) : '' }}',
+                                    '{{ $section->reviewer->id ?? '' }}',
+                                    '{{ addslashes($section->approver->last_name ?? '') }}, {{ addslashes($section->approver->first_name ?? '') }}{{ $section->approver->middle_name ? ' ' . addslashes($section->approver->middle_name) : '' }}',
+                                    '{{ $section->approver->id ?? '' }}'
+                                )">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+
+                    <tfoot class="bg-gray-50/30">
+                        <tr>
+                            <td colspan="5" class="px-6 py-4 text-right font-bold text-gray-400 uppercase text-[10px] tracking-widest">Total Documents:</td>
+                            <td class="px-4 py-4 font-black text-[#575df9] text-lg">{{$totalCount}}</td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
         </div>
     </div>
 
@@ -294,6 +342,8 @@
             </form>
         </div>
     </div>
+
+    {{-- Delete Modal --}}
     <div id="deleteModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
             <div class="fixed inset-0 bg-gray-500/50 transition-opacity" aria-hidden="true" onclick="closeDeleteModal()"></div>
@@ -397,7 +447,7 @@
                 "autoWidth": false,
                 "responsive": true,
                 columnDefs: [
-                    {targets: [0, 7], orderable: false}
+                    {targets: [0, 6], orderable: false}
                 ],
                 "paging": false,
                 "searching": false
@@ -441,60 +491,50 @@
 
             function formatDetails(data) {
                 let itemsTable = `
-                    <table class="w-full text-sm text-gray-700" style="font-size: 14px;" id="section_documents">
-                        <thead>
-                            <tr>
-                                <th class="px-4 border-b w-2/6">Title</th>
-                                <th class="px-4 border-b !text-center">Code</th>
-                                <th class="px-4 border-b !text-center">Pages</th>
-                                <th class="px-4 border-b !text-center">Status</th>
-                                <th class="px-4 border-b !text-center">Rev. No</th>
-                                <th class="px-4 border-b !text-center">Effective Date</th>
-                                <th class="px-4 border-b !text-center">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>`;
+                    <div class="p-4 rounded-b-2xl border-x border-b border-gray-100">
+                        <table class="w-full text-xs text-left" id="section_documents">
+                            <thead>
+                                <tr class="text-gray-400 uppercase tracking-widest border-b border-gray-200">
+                                    <th class="px-4 py-3 w-2/6">Document Title</th>
+                                    <th class="px-4 py-3 text-center!">Code</th>
+                                    <th class="px-4 py-3 text-center!">Status</th>
+                                    <th class="px-4 py-3 text-center">Rev</th>
+                                    <th class="px-4 py-3 text-center">Effective Date</th>
+                                    <th class="px-4 py-3 text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100">`;
 
                 let index = 1;
                 if (!data.items || data.items.length === 0) {
-                    itemsTable += `
-                        <tr>
-                            <td colspan="7" class="text-center py-4 text-gray-500 italic">
-                                No documents found for this section
-                            </td>
-                        </tr>
-                    `;
+                    itemsTable += `<tr><td colspan="6" class="text-center py-8 text-gray-400 italic font-medium">No documents currently in this section.</td></tr>`;
                 } else {
-                    $.each(data.items, function (key, details) {
-                        let statusStyle = details.status.replace(/\s/g, "_");
-                        let toolTip = `
-                            <div class="group relative flex justify-center">
-                                <button class="px-3 py-1">
-                                    <i class="fa-solid fa-circle-info text-lg"></i>
-                                </button>
-                                <span class="absolute top-full mt-2 hidden group-hover:block px-3 py-1 text-sm text-white bg-gray-800 rounded shadow-lg z-10">
-                                    View Document First
-                                </span>
-                            </div>`
+                    data.items.forEach((details) => {
+                        let statusColor = details.status === 'Active' ? 'bg-[#3de3b1]/10 text-[#2db68e]' : 'bg-gray-100 text-gray-500';
+                        if (details.status.includes('Review') || details.status.includes('Approval')) {
+                            statusColor = 'bg-[#575df9]/10 text-[#575df9]'; // Use Brand Blue for Workflow
+                        }
+                        let pageInfo = `<i class="fa-solid fa-circle-info mr-1"></i>View Document First`;
                         itemsTable += `
-                            <tr class="align-middle">
-                                <td class="py-2 w-2/6 uppercase">${details.title}</td>
-                                <td class="py-2 text-center w-25">${details.code}</td>
-                                <td class="py-2 text-center w-10">${details.pages ?? toolTip}</td>
-                                <td class="py-1 text-center align-middle"><div class="status whitespace-nowrap ${statusStyle} mc-auto">${details.status}</div></td>
-                                <td class="py-2 text-center w-28">
-                                    ${details.status === 'Active' ? details.revision_number : "N/A"}
-                                    ${
-                                        details.can.viewRevisionHistory
-                                            ? `<a href="${details.revHistoryUrl}"
-                                                class="ml-1 text-gray-600 hover:text-sky-700"
-                                                title="View Revision History">
-                                                <i class="fa-solid fa-clock-rotate-left"></i>
-                                            </a>`
-                                            : ''
-                                    }
+                            <tr class="hover:bg-white transition-colors group">
+                                <td class="px-4 py-4">
+                                    <div class="flex flex-col">
+                                        <span class="font-bold text-gray-800 uppercase tracking-tight">${details.title}</span>
+                                        <span class="text-[9pt] text-gray-400 font-medium">${details.pages>1 ? details.pages + ' pages' : details.pages == 1 ? details.pages + ' page' : pageInfo}</span>
+                                    </div>
                                 </td>
-                                <td class="py-2 text-center">${formatDate(details.effective_date)}</td>
+                                <td class="px-4 py-4 text-center font-mono text-gray-500">${details.code}</td>
+                                <td class="px-4 py-4 text-center">
+                                    <span class="px-2 py-0.5 rounded-full font-bold text-[9pt] uppercase ${statusColor}">
+                                        ${details.status}
+                                    </span>
+                                </td>
+                                <td class="px-4 py-4 text-center text-gray-600 font-bold">
+                                    ${details.status === 'Active' ? details.revision_number : '—'}
+                                </td>
+                                <td class="px-4 py-4 text-center text-gray-500">
+                                    ${formatDate(details.effective_date)}
+                                </td>
                                 <td class="py-2 items-center space-x-2 w-38">
                                     <a href="${details.viewUrl}" class="inline-flex items-center justify-center text-gray-600 hover:text-sky-700">
                                         <i class="fa-solid fa-eye"></i>
@@ -526,49 +566,54 @@
                         }else if(details.can.review){
                             itemsTable += `
                             <span class="text-gray-400">|</span>
-                            <form action="${details.reviewDecisionUrl}" method="POST" onsubmit="return confirm(\'Are you sure you want to send this document for approval? You will not be able to make changes.\');" class="inline">
-                                <input type="hidden" name="_token" value="${data.csrf}">
-                                <input type="hidden" name="_method" value="PUT">
-                                <input type="hidden" name="decision" value="pass">
+                            <div class="inline-flex rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                                <form action="${details.reviewDecisionUrl}" method="POST" onsubmit="return confirm(\'Are you sure you want to send this document for approval? You will not be able to make changes.\');" class="inline">
+                                    <input type="hidden" name="_token" value="${data.csrf}">
+                                    <input type="hidden" name="_method" value="PUT">
+                                    <input type="hidden" name="decision" value="pass">
 
-                                <button type="submit" class="text-gray-600 hover:text-green-700 cursor-pointer" title="Pass and Send For Approval">
-                                    <i class="fa-solid fa-check"></i>
-                                </button>
-                            </form>
-                            <form action="${details.reviewDecisionUrl}" method="POST" onsubmit="return confirm(\'Are you sure you want to fail document review and send back? You will not be able to make changes.\');" class="inline">
-                                <input type="hidden" name="_token" value="${data.csrf}">
-                                <input type="hidden" name="_method" value="PUT">
-                                <input type="hidden" name="decision" value="fail">
+                                    <button type="submit" class="px-2 py-1 bg-white hover:bg-green-50 text-green-600 border-r border-gray-200 cursor-pointer" title="Pass and Send For Approval">
+                                        <i class="fa-solid fa-check"></i>
+                                    </button>
+                                </form>
+                                <form action="${details.reviewDecisionUrl}" method="POST" onsubmit="return confirm(\'Are you sure you want to fail document review and send back? You will not be able to make changes.\');" class="inline">
+                                    <input type="hidden" name="_token" value="${data.csrf}">
+                                    <input type="hidden" name="_method" value="PUT">
+                                    <input type="hidden" name="decision" value="fail">
 
-                                <button type="submit" class="text-gray-600 hover:text-red-700 cursor-pointer" title="Fail Review">
-                                    <i class="fa-solid fa-xmark"></i>
-                                </button>
-                            </form>
+                                    <button type="submit" class="px-2 py-1 bg-white hover:bg-red-50 text-red-600 cursor-pointer" title="Fail Review">
+                                        <i class="fa-solid fa-xmark"></i>
+                                    </button>
+                                </form>
+                            </div>
                             `;
                         }else if(details.can.approve){
                             itemsTable += `
                             <span class="text-gray-400">|</span>
-                            <form action="${details.approveDecisionUrl}" method="POST" onsubmit="return confirm(\'Are you sure you want to approve this document? You will not be able to make changes and this will mark the document as Active.\');" class="inline">
-                                <input type="hidden" name="_token" value="${data.csrf}">
-                                <input type="hidden" name="_method" value="PUT">
-                                <input type="hidden" name="decision" value="pass">
+                            <div class="inline-flex rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                                <form action="${details.approveDecisionUrl}" method="POST" onsubmit="return confirm(\'Are you sure you want to approve this document? You will not be able to make changes and this will mark the document as Active.\');" class="inline">
+                                    <input type="hidden" name="_token" value="${data.csrf}">
+                                    <input type="hidden" name="_method" value="PUT">
+                                    <input type="hidden" name="decision" value="pass">
 
-                                <button type="submit" class="text-gray-600 hover:text-green-700 cursor-pointer" title="Document Approved and Make Active">
-                                    <i class="fa-solid fa-check-double"></i>
-                                </button>
-                            </form>
-                            <form action="${details.approveDecisionUrl}" method="POST" onsubmit="return confirm(\'Are you sure you want to not approve this document? You will not be able to make changes.\');" class="inline">
-                                <input type="hidden" name="_token" value="${data.csrf}">
-                                <input type="hidden" name="_method" value="PUT">
-                                <input type="hidden" name="decision" value="fail">
+                                    <button type="submit" class="px-2 py-1 bg-white hover:bg-green-50 text-green-600 border-r border-gray-200 cursor-pointer" title="Document Approved and Make Active">
+                                        <i class="fa-solid fa-check-double"></i>
+                                    </button>
+                                </form>
+                                <form action="${details.approveDecisionUrl}" method="POST" onsubmit="return confirm(\'Are you sure you want to not approve this document? You will not be able to make changes.\');" class="inline">
+                                    <input type="hidden" name="_token" value="${data.csrf}">
+                                    <input type="hidden" name="_method" value="PUT">
+                                    <input type="hidden" name="decision" value="fail">
 
-                                <button type="submit" class="text-gray-600 hover:text-red-700 cursor-pointer" title="Document Not Approved">
-                                    <i class="fa-solid fa-xmark"></i>
-                                </button>
-                            </form>
+                                    <button type="submit" class="px-2 py-1 bg-white hover:bg-red-50 text-red-600 cursor-pointer" title="Document Not Approved">
+                                        <i class="fa-solid fa-xmark"></i>
+                                    </button>
+                                </form>
+                            </div>
                             `;
                         }else if(details.can.setCode){
                             itemsTable += `
+                                <span class="text-gray-400">|</span>
                                 <button type="button" class="text-gray-600 hover:text-blue-700" onclick="openAssignCodeModal('${details.id}', '${details.title}', '${details.code}', '${details.code}', '${details.revision_number}')" title="Assign Code">
                                     <i class="fa-solid fa-file-pen"></i>
                                 </button>
