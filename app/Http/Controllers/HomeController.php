@@ -53,6 +53,7 @@ class HomeController extends Controller
         ->sortByDesc('updated_at');
 
         $allLoggedDurations = ActivityLog::query()
+            ->where('document_type', 'system_procedure')
             ->select('document_id', 'action', 'created_at')
             ->whereIn('action', ['created draft', 'submitted for review', 'review passed', 'approved', 'assigned code'])
             ->orderBy('document_id')
