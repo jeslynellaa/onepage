@@ -100,6 +100,7 @@
                         $totalHours = $processStats->sum('average');
                         $offset = 0;
                         $colors = ['#4F46E5', '#10B981', '#F59E0B', '#EF4444', '#06B6D4'];
+                        $stages = ['Drafting', 'Review', 'Approval', 'Code Assignment'];
                     @endphp
 
                     <div class="relative w-56 h-56 rounded-full shadow-inner" 
@@ -130,7 +131,7 @@
                         <div class="group flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 transition-colors">
                             <div class="flex items-center space-x-3">
                                 <div class="w-3 h-3 rounded-full shadow-sm" style="background-color: {{ $colors[$index % count($colors)] }}"></div>
-                                <span class="text-sm font-medium text-gray-700 capitalize">{{ $item['action'] }}</span>
+                                <span class="text-sm font-medium text-gray-700 capitalize">{{ $stages[$index] }}</span>
                             </div>
                             <div class="text-right">
                                 <span class="text-sm font-bold text-gray-900 block">{{ $item['average'] }}h</span>
