@@ -94,6 +94,52 @@
                 </div>
             </div>
 
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10 items-center bg-white p-8 rounded-2xl border border-gray-200 mb-4 shadow">
+                <div class="flex justify-center">
+                    @php
+                        $totalHours = $processStats->sum('average');
+                        $offset = 0;
+                        $colors = ['#4F46E5', '#10B981', '#F59E0B', '#EF4444', '#06B6D4'];
+                    @endphp
+
+                    <div class="relative w-56 h-56 rounded-full shadow-inner" 
+                        style="background: conic-gradient(
+                            @foreach($processStats as $index => $item)
+                                @php 
+                                    $rawPercent = ($item['average'] / max($totalHours, 1)) * 100;
+                                    // Logic: Ensure even tiny slices are at least 1.5% visible
+                                    $percentage = max($rawPercent, 1.5); 
+                                    $nextOffset = $offset + $percentage;
+                                    $color = $colors[$index % count($colors)];
+                                @endphp
+                                {{ $color }} {{ $offset }}% {{ $nextOffset }}%{{ !$loop->last ? ',' : '' }}
+                                @php $offset = $nextOffset; @endphp
+                            @endforeach
+                        );">
+                        <div class="absolute inset-10 bg-white rounded-full flex flex-col items-center justify-center shadow-sm">
+                            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Total Cycle</span>
+                            <span class="text-2xl font-black text-gray-900 leading-none">{{ number_format($totalHours, 1) }}</span>
+                            <span class="text-[10px] font-semibold text-gray-500 mt-1">HOURS</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-3">
+                    <h4 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Process Breakdown</h4>
+                    @foreach($processStats as $index => $item)
+                        <div class="group flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 transition-colors">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-3 h-3 rounded-full shadow-sm" style="background-color: {{ $colors[$index % count($colors)] }}"></div>
+                                <span class="text-sm font-medium text-gray-700 capitalize">{{ $item['action'] }}</span>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-sm font-bold text-gray-900 block">{{ $item['average'] }}h</span>
+                                <span class="text-[10px] text-gray-400">{{ $item['count'] }} documents</span>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
                 <div class="lg:col-span-8 bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col overflow-hidden h-[500px]">
                     <div class="flex justify-between items-center p-6 border-b border-gray-50">
