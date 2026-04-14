@@ -151,7 +151,7 @@
 
                     <tbody class="divide-y divide-gray-50">
                         @foreach($sections as $section)
-                        <tr class="group hover:bg-slate-50/50 transition-colors" data-id="{{$section->section_number}}">
+                        <tr class="group hover:bg-slate-50/50 transition-colors" data-id="{{$section->id}}">
                             <td class="details-control dt-control px-6 py-4 text-center"></td>
                             
                             <td class="px-4 py-4 font-bold text-gray-900">{{$section->section_number}}</td>
@@ -457,6 +457,7 @@
                 const tr = $(this).closest('tr');
                 const row = table.row(tr);
                 const sectionId = tr.data('id');
+                console.log(sectionId);
 
                 if (row.child.isShown()) {
                     row.child.hide();
@@ -479,6 +480,7 @@
                         row.child('<div class="loader"></div>').show();
                     },
                     success: function (data) {
+                        console.log(data);
                         const details = formatDetails(data);
                         loadedSections[sectionId] = details; // cache
                         row.child(details).show();
