@@ -31,17 +31,9 @@
                         <label for="section_id" class="block text-xs font-bold uppercase mb-1">Section No.</label>
                         <select name="section_id" id="section_id" value="{{ old('section_id') }}" class="w-full rounded-md border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm p-2">
                             <option disabled selected>-- Select --</option>
-                            <option value="1" {{ selected('1', old('section_id')) }}>01 Business Planning</option>
-                            <option value="2" {{ selected('2', old('section_id')) }}>02 Business Development</option>
-                            <option value="3" {{ selected('3', old('section_id')) }}>03 Project Planning and Implementation</option>
-                            <option value="4" {{ selected('4', old('section_id')) }}>04 Project Evaluation</option>
-                            <option value="5" {{ selected('5', old('section_id')) }}>05 Project Completion</option>
-                            <option value="6" {{ selected('6', old('section_id')) }}>06 Asset Management</option>
-                            <option value="7" {{ selected('7', old('section_id')) }}>07 Maintenance</option>
-                            <option value="8" {{ selected('8', old('section_id')) }}>08 Human Resource Management</option>
-                            <option value="9" {{ selected('9', old('section_id')) }}>09 Financial Resource Management</option>
-                            <option value="10" {{ selected('10', old('section_id')) }}>10 Documented Information Management</option>
-                            <option value="11" {{ selected('11', old('section_id')) }}>11 Continual Improvement</option>
+                            @foreach($process_names as $process)
+                                <option value="{{$process->id}}" {{ selected($process->id, old('section_id')) }}>{{$process->section_number}} {{$process->title}}</option>
+                            @endforeach
                         </select>
                     </div>
 

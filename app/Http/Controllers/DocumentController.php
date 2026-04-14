@@ -43,7 +43,7 @@ class DocumentController extends Controller
 
     public function system_procedures() {
         $documents = Document::all();
-        $sections = Section::with(['processOwner', 'reviewer', 'approver'])->get();
+        $sections = Section::where('company_id', auth()->user()->company_id)->with(['processOwner', 'reviewer', 'approver'])->get();
         $user_list = User::all();
         $users = User::orderBy('last_name', 'ASC')
             ->get(['id', 'first_name', 'middle_name', 'last_name']);
@@ -66,7 +66,8 @@ class DocumentController extends Controller
     }
 
     public function sp_create() {
-        return view('document.system_procedures.create');
+        $process_names = Section::where('company_id', auth()->user()->company_id)->get();
+        return view('document.system_procedures.create', compact('process_names'));
     }
 
     public function sp_store(Request $request) {
