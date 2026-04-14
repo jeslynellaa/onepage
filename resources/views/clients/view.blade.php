@@ -62,6 +62,37 @@
 
         <div class="shadow-md rounded-xl bg-white p-5 mt-4">
             <div class="font-bold mb-2">
+                Process Names
+            </div>
+
+            <table class="w-full border-collapse">
+                <thead>
+                    <tr class="bg-gray-300">
+                        <th class="text-left rounded-tl-xl">#</th>
+                        <th class="text-left">Title</th>
+                        <th class="text-left">Acronym</th>
+                        <th class="rounded-tr-xl"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($processes as $key => $process)
+                    <tr class="p-2">
+                        <td>{{$process->section_number}}</td>
+                        <td>{{$process->title}}</td>
+                        <td class="capitalize">{{$process->description}}</td>
+                        <td></td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="6" class="italic text-center">No Processes</td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+
+        <div class="shadow-md rounded-xl bg-white p-5 mt-4">
+            <div class="font-bold mb-2">
                 User Accounts
             </div>
 

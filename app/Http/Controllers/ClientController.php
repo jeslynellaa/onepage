@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Mail\InvitationMail;
 use App\Models\Company;
 use App\Models\Invitation;
+use App\Models\Section;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -53,8 +54,9 @@ class ClientController extends Controller
     {
         $userAccounts = User::where('company_id', $client->id)->get();
         $invitations = Invitation::where('company_id', $client->id)->get();
+        $processes = Section::where('company_id', $client->id)->get();
         
-        return view('clients.view', compact('client', 'userAccounts', 'invitations'));
+        return view('clients.view', compact('client', 'userAccounts', 'invitations', 'processes'));
     }
 
     public function edit(Company $client)
