@@ -187,6 +187,7 @@ class DocumentController extends Controller
         $converter = new HtmlConverter();
         $doc->scope = $converter->convert($doc->scope);
         $doc->objective = $converter->convert($doc->objective);
+        $process_names = Section::where('company_id', auth()->user()->company_id)->get();
 
         $doc->load('steps.interfaces');
 
@@ -213,7 +214,8 @@ class DocumentController extends Controller
         // dd($steps);
         return view('document.system_procedures.edit', [
             'doc' => $doc,
-            'procedureStepsJson' => $steps->toJson()
+            'procedureStepsJson' => $steps->toJson(),
+            'process_names' => $process_names,
         ]);
     }
 
