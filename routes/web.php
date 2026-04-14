@@ -8,6 +8,7 @@ use App\Http\Controllers\FormsManualController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MsManualController;
 use App\Http\Controllers\SectionsController;
+use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\SupportDocumentController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -100,6 +101,9 @@ Route::middleware(['auth', 'nocache'])->group(function () {
     Route::post('/invitations/{invitation}/send', [ClientController::class, 'send'])->name('admin.client.send-invite');
 
     Route::get('/activity-logs', [HomeController::class, 'showLogs'])->name('activity.index');
+
+    Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
+    Route::put('/settings', [SettingsController::class, 'update'])->name('settings.update');
 });
 
 

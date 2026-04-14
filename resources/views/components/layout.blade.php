@@ -84,11 +84,11 @@
         </a>
 
         <!-- SETTINGS -->
-        {{-- <a href="#" x-data="{ showTooltip: false }"
+        <a href="{{ route('settings.index') }}" x-data="{ showTooltip: false }"
           @mouseenter="showTooltip = true" 
           @mouseleave="showTooltip = false" 
           class="relative flex h-10 items-center px-4 py-2 rounded-2xl transition-colors duration-300 
-            {{ request()->routeIs('settings') 
+            {{ request()->routeIs('settings.*') 
               ? 'bg-gradient-to-br from-white/15 to-white/60 text-[#001f3f]' 
               : 'text-white hover:text-white hover:border hover:border-white' 
           }}"
@@ -97,7 +97,7 @@
           <i class="fa-solid fa-gear text-lg"></i>
           <span x-show="!collapsed" class="ml-3">Settings</span>
           <div x-show="collapsed && showTooltip" class="fixed left-13 ml-3 px-2 py-1 text-sm bg-gray-800 text-white rounded shadow-lg whitespace-nowrap z-[9999]">Settings</div>
-        </a> --}}
+        </a>
 
         <!-- ADMIN -->
         @can('enter-admin')

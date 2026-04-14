@@ -10,7 +10,7 @@
             margin: 75px 65px 50px 65px; /* top, right, bottom, left */
         }
         body {
-            font-family: Helvetica, sans-serif;
+            font-family: {{$font}};
             font-size: 11pt;
             margin: 0;
             padding-top: 145px;   /* same as header height */
