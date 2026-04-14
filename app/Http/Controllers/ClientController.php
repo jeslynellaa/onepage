@@ -52,8 +52,8 @@ class ClientController extends Controller
     public function view(Company $client)
     {
         $userAccounts = User::where('company_id', $client->id)->get();
-        $invitations = Invitation::where('company_id', $client->id)->where('sent_out', false)->get();
-
+        $invitations = Invitation::where('company_id', $client->id)->get();
+        
         return view('clients.view', compact('client', 'userAccounts', 'invitations'));
     }
 
@@ -114,6 +114,7 @@ class ClientController extends Controller
             'token' => $token,
             'sent_out' => false,
             'expires_at' => now()->addDays(7),
+            'company_id' => $client->id,
         ]);
 
         // 3. Optionally: send email invite here

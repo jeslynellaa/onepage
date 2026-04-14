@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\Scopes\CompanyScope;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -26,16 +25,5 @@ class Invitation extends Model
     
     public function company() {
         return $this->belongsTo(Company::class);
-    }
-    
-    protected static function booted()
-    {
-        static::addGlobalScope(new CompanyScope);
-
-        static::creating(function ($model) {
-            if (auth()->check()) {
-                $model->company_id = auth()->user()->company_id;
-            }
-        });
     }
 }
