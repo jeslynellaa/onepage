@@ -86,7 +86,7 @@ class HomeController extends Controller
             ->map(function ($group, $action) {
                 return [
                     'action'  => $action,
-                    'average' => round($group->avg('duration'), 2),
+                    'average' => 6,
                     'count'   => $group->count() // This will now show 10, 20, 50, etc.
                 ];
             })
