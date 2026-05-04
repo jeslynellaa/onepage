@@ -2,7 +2,7 @@
     <div>
         <div id="hero-section" class="mx-auto px-20 bg-gradient-to-b from-gray-100 to-blue-300 h-130">
             <div class="mt-16 h-110 pt-3 flex flex-row">
-                <div class="flex flex-col w-1/2 justify-around h-95">
+                <div class="flex flex-col md:w-1/2 justify-around h-95">
                     <div class="rounded-3xl py-1 px-6 bg-blue-100 w-min whitespace-nowrap border border-blue-700 font-semibold">
                         <i class="fa-regular fa-circle-check font-bold"></i>
                         Compliance Made Simple
@@ -19,7 +19,7 @@
                         <button class="rounded-xl w-48 text-center py-2 border border-blue-500 hover:border-[#74c365] cursor-pointer duration-300 border-2 whitespace-nowrap">Schedule a Demo</button>
                     </div> --}}
                 </div>
-                <div class="flex w-1/2 justify-center mx-auto">
+                <div class="flex w-1/2 justify-center mx-auto hidden md:block">
                     <img src="{{ asset('img/pc-icon.png') }}" alt="pc-icon" class="h-full">
                 </div>
             </div>
@@ -38,7 +38,7 @@
                 <div class="relative">
                     <p class="text-2xl font-semibold text-white">Powerful Features for <span class="underline">Complete Control</span></p>
                     <p class="text-xl font-medium md:px-15 mt-3">Everything you need to streamline your document processes, ensure compliance, and drive continuous improvement across your organization.</p>
-                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
+                    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mt-8">
                         <div class="rounded-3xl bg-white/80 p-6 gap-6 flex flex-col text-left min-h-80 max-h-120 shadow-2xl justify-between">
                             <div class="flex justify-between items-center">
                                 <div class="rounded-lg bg-gradient-to-b from-green-200 to-green-300 h-12 w-12 flex items-center justify-center shadow-sm">
@@ -189,7 +189,7 @@
         </div>
         <div id="benefits-section" class="bg-gray-100 p-20">
             <div class="flex flex-col lg:flex-row justify-between">
-                <div class="p-5 bg-white rounded-3xl h-110 shadow-2xl justify-center items-center mx-auto flex">
+                <div class="p-5 bg-white rounded-3xl md:h-110 shadow-2xl justify-center items-center mx-auto flex">
                     <img src="{{ asset('img/group-working.png') }}" alt="group working" class="rounded-2xl h-full">
                 </div>
                 <div class="p-3 lg:w-1/2 flex flex-col justify-around lg:pr-15">
