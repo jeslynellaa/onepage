@@ -284,7 +284,7 @@
                 </tr>
             </tbody>
         </table>
-        <span style="font-size: 9pt; font-style: italic;"><strong>STRICTLY CONFIDENTIAL</strong> - For use of FCU Solutions Inc only. Unauthorized reproduction is strictly prohibited.</span>
+        <span style="font-size: 9pt; font-style: italic;"><strong>STRICTLY CONFIDENTIAL</strong> - For use of {{$doc->company->name}} only. Unauthorized reproduction is strictly prohibited.</span>
     </header>
 
     <footer>
