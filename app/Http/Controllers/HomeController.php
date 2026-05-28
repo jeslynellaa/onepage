@@ -20,6 +20,11 @@ class HomeController extends Controller
         return view('landing.faqs');
     }
 
+    public function pricing()
+    {
+        return view('landing.pricing');
+    }
+
     public function index() {
         $activeCount = Document::where('status', "Active")->count();
         $draftCount = Document::where('status', "Draft")->count();

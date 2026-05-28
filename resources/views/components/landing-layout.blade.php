@@ -51,7 +51,7 @@
             <a href="/#benefits-section" class="cursor-pointer duration-300 hover:text-[#0047ab]">Benefits</a>
             <a href="/#about-section" class="cursor-pointer duration-300 hover:text-[#0047ab]">About</a>
             <a href="/#contact-section" class="cursor-pointer duration-300 hover:text-[#0047ab]">Contact</a>
-            <a href="" class="cursor-pointer duration-300 hover:text-[#0047ab]">Pricing</a>
+            <a href="{{ route('pricing') }}" class="cursor-pointer duration-300 hover:text-[#0047ab]">Pricing</a>
             <a href="{{ route('faqs') }}" class="cursor-pointer duration-300 hover:text-[#0047ab]">FAQs</a>
           </div>
         </div>
@@ -74,7 +74,8 @@
             <a href="#benefits-section" class="px-6 py-4 hover:bg-gray-100">Benefits</a>
             <a href="#about-section" class="px-6 py-4 hover:bg-gray-100">About</a>
             <a href="#contact-section" class="px-6 py-4 hover:bg-gray-100">Contact</a>
-            <a href="" class="px-6 py-4 hover:bg-gray-100">Pricing</a>
+            <a href="{{ route('pricing') }}" class="px-6 py-4 hover:bg-gray-100">Pricing</a>
+            <a href="{{ route('faqs') }}" class="px-6 py-4 hover:bg-gray-100">FAQs</a>
 
             <div class="px-6 py-4 flex flex-col gap-3">
               <a href="{{ route('login') }}" class="font-semibold">Sign In</a>

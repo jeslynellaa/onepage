@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BookDemoController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\FormsManualController;
@@ -16,6 +17,9 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('guest')->group(function () {
     Route::get('/', [HomeController::class, 'welcome'])->name('welcome');
     Route::get('/faqs', [HomeController::class, 'faqs'])->name('faqs');
+    Route::get('/pricing', [HomeController::class, 'pricing'])->name('pricing');
+    Route::get('/book-demo', [BookDemoController::class, 'index'])->name('demo.index');
+    Route::post('/book-demo', [BookDemoController::class, 'store'])->name('demo.store');
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
     Route::post('/login', [AuthController::class, 'login']);
     Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
