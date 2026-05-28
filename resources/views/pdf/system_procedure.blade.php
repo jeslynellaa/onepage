@@ -458,7 +458,7 @@
                             <span style="font-style: italic;">(e-signed)</span><br>
                         @endif
                         <strong>{{ $doc->section->processOwner->fullname() }}</strong> <br>
-                        Position
+                        {{ $doc->section->processOwner->position ?? 'Process Owner' }}
                     </td>
                     <td style="height: 70px; vertical-align: bottom;">
                         @if($passed)
@@ -469,7 +469,7 @@
                         
                         @endif
                         <strong>{{ $doc->section->reviewer->fullname() }}</strong><br>
-                        Reviewer
+                        {{ $doc->section->processOwner->position ?? 'Reviewer' }}
                     </td>
                     <td style="height: 70px; vertical-align: bottom;">
                         @if($approved)
@@ -480,7 +480,7 @@
                         
                         @endif
                         <strong>{{ $doc->section->approver->fullname() }}</strong><br>
-                        Approver
+                        {{ $doc->section->processOwner->position ?? 'Approver' }}
                     </td>
                 </tr>
                 <tr>
