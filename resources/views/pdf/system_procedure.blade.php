@@ -469,7 +469,7 @@
                         
                         @endif
                         <strong>{{ $doc->section->reviewer->fullname() }}</strong><br>
-                        {{ $doc->section->processOwner->position ?? 'Reviewer' }}
+                        {{ $doc->section->reviewer->position ?? 'Reviewer' }}
                     </td>
                     <td style="height: 70px; vertical-align: bottom;">
                         @if($approved)
@@ -480,7 +480,7 @@
                         
                         @endif
                         <strong>{{ $doc->section->approver->fullname() }}</strong><br>
-                        {{ $doc->section->processOwner->position ?? 'Approver' }}
+                        {{ $doc->section->approver->position ?? 'Approver' }}
                     </td>
                 </tr>
                 <tr>
