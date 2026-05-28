@@ -13,7 +13,7 @@
             font-family: {{$font}};
             font-size: 11pt;
             margin: 0;
-            padding-top: 145px;   /* same as header height */
+            padding-top: 150px;   /* same as header height */
             padding-bottom: 120px; /* same as footer height + signatory table height */
             /* border: 3px solid red; */
         }
@@ -284,7 +284,7 @@
                 </tr>
             </tbody>
         </table>
-        <span style="font-size: 9pt; font-style: italic;"><strong>STRICTLY CONFIDENTIAL</strong> - For use of {{$doc->company->name}} only. Unauthorized reproduction is strictly prohibited.</span>
+        <span style="font-size: 9pt; font-style: italic;"><strong>STRICTLY CONFIDENTIAL</strong> - For use of LDC Construction and Supply Incorporated only. Unauthorized reproduction is strictly prohibited.</span>
     </header>
 
     <footer>
