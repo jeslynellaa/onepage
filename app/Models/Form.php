@@ -34,11 +34,5 @@ class Form extends Model
             }
         });
         
-        static::deleting(function ($document) {
-            // delete all steps related to this document
-            foreach ($document->steps as $step) {
-                $step->delete();
-            }
-        });
     }
 }

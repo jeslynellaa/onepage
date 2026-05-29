@@ -33,12 +33,5 @@ class SupportDocument extends Model
                 $model->company_id = auth()->user()->company_id;
             }
         });
-        
-        static::deleting(function ($document) {
-            // delete all steps related to this document
-            foreach ($document->steps as $step) {
-                $step->delete();
-            }
-        });
     }
 }
