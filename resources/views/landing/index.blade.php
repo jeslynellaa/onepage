@@ -1,6 +1,28 @@
 <x-landing-layout>
+    <style>
+        .set-x-padding {
+            padding-right: 2.5rem;
+            padding-left: 2.5rem;
+        }
+
+        /* Tablets and up */
+        @media (min-width: 768px) {
+            .set-x-padding {
+                padding-right: 3.5rem;
+                padding-left: 3.5rem;
+            }
+        }
+
+        /* Laptops and up */
+        @media (min-width: 1024px) {
+            .set-x-padding {
+                padding-right: 5rem;
+                padding-left: 5rem;
+            }
+        }
+    </style>
     <div>
-        <div id="hero-section" class="mx-auto px-20 bg-gradient-to-b from-gray-100 to-blue-300 h-130">
+        <div id="hero-section" class="mx-auto set-x-padding bg-gradient-to-b from-gray-100 to-blue-300 h-130">
             <div class="mt-16 h-110 pt-3 flex flex-row">
                 <div class="flex flex-col md:w-1/2 justify-around h-95">
                     <div class="rounded-3xl py-1 px-6 bg-blue-100 w-min whitespace-nowrap border border-blue-700 font-semibold">
@@ -25,7 +47,7 @@
             </div>
         </div>
         <div id="features-section" class="bg-gradient-to-b from-blue-300 to-gray-100 min-h-screen">
-            <div class="relative bg-gradient-to-b from-blue-400 to-blue-600 rounded-t-[7rem] rounded-b-3xl flex flex-col text-center px-20 py-12 overflow-hidden">
+            <div class="relative bg-gradient-to-b from-blue-400 to-blue-600 rounded-t-[7rem] rounded-b-3xl flex flex-col text-center set-x-padding py-12 overflow-hidden">
                 <!-- background image layer -->
                 <div class="absolute inset-0 bg-cover bg-center"
                      style="background-image: url('/img/bg-line.png');
@@ -187,7 +209,7 @@
                 </div>
             </div>
         </div>
-        <div id="benefits-section" class="bg-gray-100 p-20">
+        <div id="benefits-section" class="bg-gray-100 set-x-padding py-20">
             <div class="flex flex-col lg:flex-row justify-between">
                 <div class="p-5 bg-white rounded-3xl md:h-110 shadow-2xl justify-center items-center mx-auto flex">
                     <img src="{{ asset('img/group-working.png') }}" alt="group working" class="rounded-2xl h-full">
@@ -225,7 +247,7 @@
                 </div>
             </div>
         </div>
-        <div class="px-20 py-10">
+        <div class="set-x-padding py-10">
             <div id="about-section" class="text-center">
                 <p class="text-2xl font-bold">
                     About <a href="https://www.fcusolutions.org/" class="hover:text-blue-700">FCU Solutions Inc.</a>
@@ -252,10 +274,10 @@
                         <div class="rounded-full bg-green-100 absolute -bottom-20 -left-10 h-60 w-60 blur-xl"></div>
 
                         <div class="relative">
-                            <p class="lg:text-xl font-light">
+                            <p class="text-xs md:text-xl font-light leading-none">
                                 Backed by a team of professionals with diverse expertise, FCU created OnePage to embody its mission of driving positive organizational change through innovative, practical solutions.
                             </p><br>
-                            <p class="lg:text-xl font-light">
+                            <p class="text-xs md:text-xl font-light leading-none">
                                 Built on a legacy of numerous client partnerships, OnePage reflects our commitment to simplifying ISO compliance while empowering businesses to grow and succeed.
                             </p>
                         </div>
@@ -298,16 +320,16 @@
                     </div>
 
                     <div class="shadow-lg bg-white lg:col-span-2 col-span-3 flex flex-row gap-3 lg:flex-col lg:gap-0 justify-center items-center rounded-br-[3rem] p-4 gap-0 min-h-36 lg:h-36">
-                        <i class="fa-solid fa-users text-[28pt] leading-none"></i>
+                        <i class="fa-solid fa-users text-[20pt] md:text-[28pt] leading-none"></i>
                         <div>
-                            <div class="text-[30pt] font-extrabold leading-none">400+</div>
-                            <div class="text-[12pt] font-semibold leading-tight">Clients</div>
+                            <div class="text-[22pt] md:text-[30pt] font-extrabold leading-none">400+</div>
+                            <div class="text-[10pt] md:text-[12pt] font-semibold leading-tight">Clients</div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div id="contact-section" class="bg-blue-600 px-20 py-10">
+        <div id="contact-section" class="bg-blue-600 set-x-padding py-10">
             <div class="flex text-white w-full font-extralight">
                 <div class="w-2/5 border-r flex-col flex justify-between">
                     <div class="flex text-gray-100 font-bold text-3xl gap-2 items-center">
@@ -319,10 +341,9 @@
                 <div class="w-3/5 text-right">
                     <div class="font-normal">Contact Us</div>
                     <div>
-                        02-8332-0264 <br>
-                        <a href="https://www.fcusolutions.org/" target="_blank">Visit our Website</a><br><br>
-                        8R FUTURE POINT PLAZA 2 <br>
-                        MO. IGNACIA ST., QUEZON CITY
+                        (02) 8332-0264 <br>
+                        <a href="https://www.fcusolutions.org/" target="_blank">Visit our Website</a><br>
+                        info.fcusi@gmail.com
                     </div>
                 </div>
             </div>
