@@ -269,15 +269,15 @@
                         </div>
                     </div>
 
-                    <div class="shadow-lg bg-white lg:col-span-7 lg:row-span-2 col-span-3 row-span-3 p-5 lg:p-10 text-left overflow-hidden relative">
+                    <div class="shadow-lg bg-white lg:col-span-7 lg:row-span-2 col-span-3 row-span-3 p-5 lg:p-10 text-left overflow-hidden relative flex flex-col justify-center">
                         <div class="rounded-full bg-blue-200 absolute -top-10 -right-10 h-60 w-60 blur-xl"></div>
                         <div class="rounded-full bg-green-100 absolute -bottom-20 -left-10 h-60 w-60 blur-xl"></div>
 
-                        <div class="relative">
-                            <p class="text-xs md:text-xl font-light leading-none">
+                        <div class="relative flex flex-col gap-4">
+                            <p class="sm:text-xs md:text-xl font-light leading-none">
                                 Backed by a team of professionals with diverse expertise, FCU created OnePage to embody its mission of driving positive organizational change through innovative, practical solutions.
                             </p><br>
-                            <p class="text-xs md:text-xl font-light leading-none">
+                            <p class="sm:text-xs md:text-xl font-light leading-none">
                                 Built on a legacy of numerous client partnerships, OnePage reflects our commitment to simplifying ISO compliance while empowering businesses to grow and succeed.
                             </p>
                         </div>
