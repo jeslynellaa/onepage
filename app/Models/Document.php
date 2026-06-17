@@ -38,6 +38,13 @@ class Document extends Model
     {
         return $this->hasMany(ProcedureComments::class);
     }
+    /**
+     * Get all document records affected by this specific document's workflow.
+     */
+    public function affectedDocuments()
+    {
+        return $this->hasMany(AffectedDocument::class, 'parent_document_id');
+    }
 
     protected static function booted()
     {
