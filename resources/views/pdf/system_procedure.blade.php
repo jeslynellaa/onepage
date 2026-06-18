@@ -82,6 +82,10 @@
             padding-left: 10px;
             margin: 0;
         }
+        #scope_objectives_table p{
+            padding: 0;
+            margin: 0;
+        }
         #process_table tbody{
             font-size: 10pt;
             text-align: center;
@@ -131,17 +135,15 @@
         #signatory_table tr:nth-child(2) td{
             text-align: center;
         }
-        ol ol {
-            list-style-type: lower-alpha; /* makes sublist a, b, c, etc. */
-        }
+        
+        /* ol ol {
+            list-style-type: lower-alpha;
+        } */
+
         li {
             text-align: justify;
         }
-        #scope_objectives_table p{
-            padding: 0;
-            margin: 0;
-        }
-        td ol{
+        td ol, td ul{
             padding-left: 1rem;
         }
         .connector{
@@ -163,12 +165,12 @@
             page-break-after: avoid !important;
         }
 
-        .notes ol {
+        .notes ol, .notes ul {
         counter-reset: list-1 list-2 list-3 list-4 list-5 list-6 list-7 list-8 list-9;
         margin-top: 0 !important;
         padding-top: 0;
         }
-        .notes ol {
+        /* .notes ol {
         padding-left: 1.5em;
         }
         .notes ol > li,{
@@ -177,11 +179,11 @@
 
         .notes ol {
             list-style: none;
-        }
-        .notes ol li {
+        } */
+        .notes ol li{
             list-style: none;
             position: relative;
-            padding-left: 2.5em; /* space for number */
+            padding-left: 3em; /* space for number */
         }
 
         li::before {
@@ -191,7 +193,7 @@
             text-align: right;
         }
 
-        .notes ol li {
+        .notes ol li, .notes ul li {
         counter-reset: list-1 list-2 list-3 list-4 list-5 list-6 list-7 list-8 list-9;
         counter-increment: list-0;
         }
@@ -209,24 +211,24 @@
         counter-reset: list-2 list-3 list-4 list-5 list-6 list-7 list-8 list-9;
         }
         .notes ol li.ql-indent-2 {
-            margin-left: 2.5rem;
-        counter-increment: list-2;
+            counter-increment: list-2;
         }
         .notes ol li.ql-indent-2:before {
-        content: counter(list-2, lower-roman) '. ';
+            content: counter(list-2, lower-roman) '. ';
         }
         .notes ol li.ql-indent-2 {
-        counter-reset: list-3 list-4 list-5 list-6 list-7 list-8 list-9;
+            counter-reset: list-3 list-4 list-5 list-6 list-7 list-8 list-9;
         }
         .notes ol li.ql-indent-3 {
-        counter-increment: list-3;
+            counter-increment: list-3;
         }
         .notes ol li.ql-indent-3:before {
-        content: counter(list-3, decimal) '. ';
+            content: counter(list-3, decimal) '. ';
         }
         .notes ol li.ql-indent-3 {
-        counter-reset: list-4 list-5 list-6 list-7 list-8 list-9;
+            counter-reset: list-4 list-5 list-6 list-7 list-8 list-9;
         }
+
         .notes ol li.ql-indent-4 {
         counter-increment: list-4;
         }
@@ -244,7 +246,27 @@
         }
         .notes ol li.ql-indent-5 {
         counter-reset: list-6 list-7 list-8 list-9;
-        }
+        }/* Ensure the list containers themselves don't collapse or override padding */
+ol, ul {
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-left: 0; /* Let individual list items handle their own indent spacing */
+}
+
+li {
+    list-style-position: inside; /* Helps dompdf align markers correctly */
+}
+
+/* Map Quill's exact flat indentation depths for dompdf */
+.ql-indent-1 { padding-left: 20px !important; }
+.ql-indent-2 { padding-left: 60px !important; }
+.ql-indent-3 { padding-left: 60px !important; }
+.ql-indent-4 { padding-left: 80px !important; }
+.ql-indent-5 { padding-left: 100px !important; }
+.ql-indent-6 { padding-left: 120px !important; }
+.ql-indent-7 { padding-left: 140px !important; }
+.ql-indent-8 { padding-left: 160px !important; }
+.ql-indent-9 { padding-left: 180px !important; }
     </style>
 </head>
 <body>
@@ -284,11 +306,11 @@
                 </tr>
             </tbody>
         </table>
-        <span style="font-size: 9pt; font-style: italic;"><strong>STRICTLY CONFIDENTIAL</strong> - For use of <span style="text-transform: uppercase;">{{ $doc->company->name }}</span> only. Unauthorized reproduction is strictly prohibited.</span>
+        <span style="font-size: 9pt; font-style: italic;"><strong>STRICTLY CONFIDENTIAL</strong> - For use of <span style="text-transform: uppercase;">{{ $doc->company->name }}</span>. Unauthorized reproduction is strictly prohibited.</span>
     </header>
 
     <footer>
-        <span style="font-style:italic; font-weight: bold;">Except for the MASTER COPY, printed and downloaded copies of this documented information are considered uncontrolled.</span>
+        <span style="font-style:italic; font-weight: bold;">Except for the MASTER COPY AND CONTROLLED COPIES, printed and downloaded copies of this documented information are considered uncontrolled.</span>
     </footer>
 
     <main style="height: 100%; ">
@@ -399,6 +421,7 @@
                 $note_num = 1;
             @endphp
 
+            <div style="page-break-before: always;"></div>
             @foreach ($steps as $step_note)
                 @if (!empty($step_note->note))
                     <div class="notes">
