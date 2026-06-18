@@ -185,7 +185,7 @@
                         </div>
 
                         <div class="flex justify-end pt-1">
-                            <button type="submit" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold uppercase tracking-wider rounded-lg shadow-sm transition-all flex items-center gap-1.5">Add Step To Matrix</button>
+                            <button type="submit" id="submit-step-btn" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold uppercase tracking-wider rounded-lg shadow-sm transition-all flex items-center gap-1.5">Add Step To Matrix</button>
                         </div>
                     </form>
 
@@ -528,6 +528,7 @@
             if (editingIndex !== null) {
                 steps[editingIndex] = step;
                 editingIndex = null;
+                document.getElementById('submit-step-btn').innerText = "Add Step To Matrix";
             } else {
                 steps.push(step);
             }
@@ -665,6 +666,8 @@
             populateInterfaceRows('interfaces-inputs-wrapper', selectedStep.interfaces_input);
             populateInterfaceRows('interfaces-outputs-wrapper', selectedStep.interfaces_output);
             
+            
+            document.getElementById('submit-step-btn').innerText = "Update Matrix Step";
             document.getElementById('procedure-steps-form').scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
         
