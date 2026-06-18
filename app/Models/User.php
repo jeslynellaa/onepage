@@ -72,4 +72,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(ProcedureComments::class);
     }
+
+    public function clients()
+    {
+        return $this->belongsToMany(Company::class);
+    }
 }
