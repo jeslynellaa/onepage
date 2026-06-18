@@ -136,137 +136,126 @@
             text-align: center;
         }
         
-        /* ol ol {
-            list-style-type: lower-alpha;
-        } */
+        /* ==========================================================================
+        Quill JS Flat List Engine for Dompdf
+        ========================================================================== */
 
-        li {
+        /* 1. Global Counter Initialization 
+            Ensures counters persist across HTML block breaks (like <ul> splitting an <ol>) */
+        .notes {
+            counter-reset: list-0 list-1 list-2 list-3 list-4 list-5 list-6 list-7 list-8 list-9;
+        }
+
+        /* 2. Structural Reset for Lists inside Notes */
+        .notes ol, 
+        .notes ul {
+            margin-top: 0;
+            margin-bottom: 0;
+            padding-left: 0; 
+        }
+
+        /* 3. Base List Item Layout 
+            Hides native markers and sets up a strict vertical column for text wrapping */
+        .notes ol li, 
+        .notes ul li {
+            list-style: none !important;
+            position: relative !important;
+            padding-left: 2.5em !important; /* The gutter space between marker and text */
             text-align: justify;
         }
-        td ol, td ul{
-            padding-left: 1rem;
-        }
-        .connector{
-            margin-right: auto;
-            margin-left: auto;
-            width:45px;
-            height:45px;
-            background-size: 45px 45px;
-            background-repeat:no-repeat;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            font-size:14pt;
-            padding-top: 5px;
-        }
-        .note-title {
-            font-weight: 700;
-            break-after: avoid !important;
-            page-break-after: avoid !important;
+
+        /* 4. Shared Marker Pseudo-Element Settings */
+        .notes ol li::before, 
+        .notes ul li::before {
+            position: absolute !important;
+            left: 0 !important;
+            width: 2em !important;
+            text-align: right !important;
         }
 
-        .notes ol, .notes ul {
-        counter-reset: list-1 list-2 list-3 list-4 list-5 list-6 list-7 list-8 list-9;
-        margin-top: 0 !important;
-        padding-top: 0;
+        /* ==========================================================================
+        Ordered List Counter & Indentation Engine
+        ========================================================================== */
+
+        /* Base Level (Tier 0 - e.g., 1., 2.) */
+        .notes ol li {
+            counter-increment: list-0;
         }
-        /* .notes ol {
-        padding-left: 1.5em;
-        }
-        .notes ol > li,{
-        list-style-type: none;
+        .notes ol li::before { 
+            content: counter(list-0, decimal) '. '; 
         }
 
-        .notes ol {
-            list-style: none;
-        } */
-        .notes ol li{
-            list-style: none;
-            position: relative;
-            padding-left: 3em; /* space for number */
-        }
-
-        li::before {
-            position: absolute;
-            left: 0;
-            width: 2em;
-            text-align: right;
-        }
-
-        .notes ol li, .notes ul li {
-        counter-reset: list-1 list-2 list-3 list-4 list-5 list-6 list-7 list-8 list-9;
-        counter-increment: list-0;
-        }
-        .notes ol li:before {
-        content: counter(list-0, decimal) '. ';
-        }
+        /* Indent Tier 1 (e.g., a., b.) */
         .notes ol li.ql-indent-1 {
-        counter-increment: list-1;
+            margin-left: 2.5rem !important;
+            counter-increment: list-1;
         }
-        .notes ol li.ql-indent-1:before {
-        content: counter(list-1, lower-alpha) '. ';
+        .notes ol li.ql-indent-1::before { 
+            content: counter(list-1, lower-alpha) '. '; 
         }
-        .notes ol li.ql-indent-1 {
-            margin-left: 1.5rem;
-        counter-reset: list-2 list-3 list-4 list-5 list-6 list-7 list-8 list-9;
-        }
+
+        /* Indent Tier 2 (e.g., i., ii.) */
         .notes ol li.ql-indent-2 {
+            margin-left: 5.0rem !important; 
             counter-increment: list-2;
         }
-        .notes ol li.ql-indent-2:before {
-            content: counter(list-2, lower-roman) '. ';
+        .notes ol li.ql-indent-2::before { 
+            content: counter(list-2, lower-roman) '. '; 
         }
-        .notes ol li.ql-indent-2 {
-            counter-reset: list-3 list-4 list-5 list-6 list-7 list-8 list-9;
-        }
+
+        /* Indent Tier 3 (e.g., 1., 2.) */
         .notes ol li.ql-indent-3 {
+            margin-left: 7.5rem !important; 
             counter-increment: list-3;
         }
-        .notes ol li.ql-indent-3:before {
-            content: counter(list-3, decimal) '. ';
-        }
-        .notes ol li.ql-indent-3 {
-            counter-reset: list-4 list-5 list-6 list-7 list-8 list-9;
+        .notes ol li.ql-indent-3::before { 
+            content: counter(list-3, decimal) '. '; 
         }
 
+        /* Indent Tier 4 (e.g., a., b.) */
         .notes ol li.ql-indent-4 {
-        counter-increment: list-4;
+            margin-left: 10.0rem !important; 
+            counter-increment: list-4;
         }
-        .notes ol li.ql-indent-4:before {
-        content: counter(list-4, lower-alpha) '. ';
+        .notes ol li.ql-indent-4::before { 
+            content: counter(list-4, lower-alpha) '. '; 
         }
-        .notes ol li.ql-indent-4 {
-        counter-reset: list-5 list-6 list-7 list-8 list-9;
-        }
-        .notes ol li.ql-indent-5 {
-        counter-increment: list-5;
-        }
-        .notes ol li.ql-indent-5:before {
-        content: counter(list-5, lower-roman) '. ';
-        }
-        .notes ol li.ql-indent-5 {
-        counter-reset: list-6 list-7 list-8 list-9;
-        }/* Ensure the list containers themselves don't collapse or override padding */
-ol, ul {
-    margin-top: 0;
-    margin-bottom: 0;
-    padding-left: 0; /* Let individual list items handle their own indent spacing */
-}
 
-li {
-    list-style-position: inside; /* Helps dompdf align markers correctly */
-}
+        /* Indent Tier 5 (e.g., i., ii.) */
+        .notes ol li.ql-indent-5 {
+            margin-left: 12.5rem !important; 
+            counter-increment: list-5;
+        }
+        .notes ol li.ql-indent-5::before { 
+            content: counter(list-5, lower-roman) '. '; 
+        }
 
-/* Map Quill's exact flat indentation depths for dompdf */
-.ql-indent-1 { padding-left: 20px !important; }
-.ql-indent-2 { padding-left: 60px !important; }
-.ql-indent-3 { padding-left: 60px !important; }
-.ql-indent-4 { padding-left: 80px !important; }
-.ql-indent-5 { padding-left: 100px !important; }
-.ql-indent-6 { padding-left: 120px !important; }
-.ql-indent-7 { padding-left: 140px !important; }
-.ql-indent-8 { padding-left: 160px !important; }
-.ql-indent-9 { padding-left: 180px !important; }
+
+        /* ==========================================================================
+        Unordered List (Bullet Points) Indentation Engine
+        ========================================================================== */
+
+        /* Force bullet characters into the pseudo-element position */
+        .notes ul li::before {
+            content: "• " !important;
+            font-size: 11pt;
+        }
+
+        /* Map structural alignment margins for bullet lists matching Quill tiers */
+        .notes ul li.ql-indent-1 { margin-left: 2.5rem !important; }
+        .notes ul li.ql-indent-2 { margin-left: 5.0rem !important; }
+        .notes ul li.ql-indent-3 { margin-left: 7.5rem !important; }
+        .notes ul li.ql-indent-4 { margin-left: 10.0rem !important; }
+        .notes ul li.ql-indent-5 { margin-left: 12.5rem !important; }
+
+
+        /* ==========================================================================
+        Isolated Table List Fixes (Keeps your table styles intact)
+        ========================================================================== */
+        td ol, 
+        td ul {
+            padding-left: 1rem;
+        }
     </style>
 </head>
 <body>
@@ -421,7 +410,6 @@ li {
                 $note_num = 1;
             @endphp
 
-            <div style="page-break-before: always;"></div>
             @foreach ($steps as $step_note)
                 @if (!empty($step_note->note))
                     <div class="notes">
