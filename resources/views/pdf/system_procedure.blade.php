@@ -284,7 +284,7 @@
                 </tr>
             </tbody>
         </table>
-        <span style="font-size: 9pt; font-style: italic;"><strong>STRICTLY CONFIDENTIAL</strong> - For use of <span style="text-transform: uppercase;">{{ $doc->company->name }}</span>. Unauthorized reproduction is strictly prohibited.</span>
+        <span style="font-size: 9pt; font-style: italic;"><strong>STRICTLY CONFIDENTIAL</strong> - For use of <span style="text-transform: uppercase;">{{ $doc->company->name }}</span> only. Unauthorized reproduction is strictly prohibited.</span>
     </header>
 
     <footer>
