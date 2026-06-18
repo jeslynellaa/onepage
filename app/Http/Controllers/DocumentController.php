@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\ActivityLog;
+use App\Models\AffectedDocument;
 use App\Models\Dirf;
 use App\Models\Document;
 use App\Models\Form;
@@ -67,7 +68,11 @@ class DocumentController extends Controller
 
     public function sp_create() {
         $process_names = Section::where('company_id', auth()->user()->company_id)->get();
-        return view('document.system_procedures.create', compact('process_names'));
+        $all_documents = Document::where('status', 'Active')->get();
+        $existing_inputs = StepDocuments::where('type', 'input')->distinct()->pluck('title');
+        $existing_outputs = StepDocuments::where('type', 'output')->distinct()->pluck('title');
+
+        return view('document.system_procedures.create', compact('process_names', 'all_documents', 'existing_inputs', 'existing_outputs'));
     }
 
     public function sp_store(Request $request) {
@@ -81,6 +86,7 @@ class DocumentController extends Controller
             'justification' => 'required',
             'scope' => 'required',
             'type' => 'required',
+            'affected_documents' => 'nullable|array', // Validates the optional array wrapper from step 3
         ]);
         
         $procedureSteps = json_decode($request->input('procedure_steps_json'), true);
@@ -88,25 +94,35 @@ class DocumentController extends Controller
         // Ensure it's an array with at least one entry
         if (!is_array($procedureSteps) || count($procedureSteps) === 0) {
             return back()->withErrors([
-                'procedure_steps_json' => 'At least one prcodeure step is required.'
+                'procedure_steps_json' => 'At least one procedure step is required.'
             ])->withInput();
         }
+        
         // Transaction - all or nothing
         DB::beginTransaction();
 
         try {
             unset($incomingFields['procedure_steps_json']);
+            
+            // Extract the affected documents payload so it doesn't try to save directly to the Document model
+            $affectedDocsData = $incomingFields['affected_documents'] ?? [];
+            unset($incomingFields['affected_documents']);
+
+            // Convert raw text strings to Markdown formatting seamlessly
             $incomingFields['objective'] = Str::markdown($incomingFields['objective']);
             $incomingFields['scope'] = Str::markdown($incomingFields['scope']);
+            
             $newDocument = Document::create(array_merge($incomingFields, ['status' => 'Draft']));
 
+            // --- Save Procedure Steps
             foreach ($procedureSteps as $step) {
-                // dd($step, $step['interfaces_input'], $step['interfaces_output']);
+                $cleanNote = isset($step['note']) ? trim($step['note']) : '';
+
                 $procedureStep = ProcedureSteps::create([
                     'document_id' => $newDocument->id,
                     'responsibility' => $step['responsibility'],
                     'activities' => $step['activities'],
-                    'note' => !(empty($step['note']) || $step['note'] == '') ? Str::markdown($step['note']) : null,
+                    'note' => (!empty($cleanNote) && $cleanNote !== '<p><br></p>') ? Str::markdown($cleanNote) : null,
                 ]);
 
                 // --- Save inputs (references)
@@ -133,6 +149,22 @@ class DocumentController extends Controller
                     }
                 }
             }
+
+            // --- Save Affected Documents (Optional Impact Assessment Logs)
+            if (!empty($affectedDocsData)) {
+                foreach ($affectedDocsData as $affectedData) {
+                    AffectedDocument::create([
+                        'parent_document_id' => $newDocument->id,
+                        'affected_document_id' => $affectedData['document_id'],
+                        'title' => $affectedData['title'],
+                        'code' => $affectedData['code'],
+                        'revision_number' => $affectedData['revision_number'] ?? null,
+                        'details' => $affectedData['details'] ?? null,
+                    ]);
+                }
+            }
+
+            // --- Write System Logs
             ActivityLog::create([
                 'action' => 'created draft',
                 'description' => 'System Procedure document draft has been created.',
@@ -143,11 +175,10 @@ class DocumentController extends Controller
 
             DB::commit();
 
-            return redirect()->back()->with("success","New Document Created Successfully!");
+            return redirect()->back()->with("success", "New Document Created Successfully!");
         } catch (\Throwable $e) {
             DB::rollBack();
-            // dd(session()->all(), $e->getMessage());
-            return back()->withErrors(['error' => 'Something went wrong. Please try again. '.$e])->withInput();
+            return back()->withErrors(['error' => 'Something went wrong. Please try again. ' . $e->getMessage()])->withInput();
         }
     }
 
@@ -187,9 +218,13 @@ class DocumentController extends Controller
         $converter = new HtmlConverter();
         $doc->scope = $converter->convert($doc->scope);
         $doc->objective = $converter->convert($doc->objective);
+
         $process_names = Section::where('company_id', auth()->user()->company_id)->get();
 
-        $doc->load('steps.interfaces');
+        $all_documents = Document::where('status', 'Active')
+                            ->where('id', '!=', $doc->id)->get();
+
+        $doc->load(['steps.interfaces', 'affectedDocuments']);
 
         // Transform expense details to include interfaces title
         $steps = $doc->steps->map(function ($detail) {
@@ -210,12 +245,28 @@ class DocumentController extends Controller
                 ]
             );
         });
+        
+        $affectedDocsJson = json_encode($doc->affectedDocuments->map(function ($affected) {
+            return [
+                'document_id'     => $affected->affected_document_id,
+                'code'            => $affected->code ?? 'Cross-Ref', 
+                'title'           => $affected->title ?? 'System Document',
+                'revision_number' => $affected->revision_number ?? '00',
+                'details'         => $affected->details ?? '',
+            ];
+        }));
 
-        // dd($steps);
+        $existing_inputs = StepDocuments::where('type', 'input')->distinct()->pluck('title');
+        $existing_outputs = StepDocuments::where('type', 'output')->distinct()->pluck('title');
+
         return view('document.system_procedures.edit', [
             'doc' => $doc,
             'procedureStepsJson' => $steps->toJson(),
             'process_names' => $process_names,
+            'all_documents' => $all_documents,
+            'affectedDocsJson'   => $affectedDocsJson,
+            'existing_inputs' => $existing_inputs,
+            'existing_outputs' => $existing_outputs
         ]);
     }
 
@@ -230,6 +281,10 @@ class DocumentController extends Controller
             'justification' => 'nullable',
             'scope' => 'required',
             'type' => 'required',
+            'affected_docs_payload' => 'nullable|array',
+            'affected_docs_payload.*.document_id' => 'required',
+            'affected_docs_payload.*.revision_number' => 'required',
+            'affected_docs_payload.*.details' => 'nullable|string',
         ]);
         
         $procedureSteps = json_decode($request->input('procedure_steps_json'), true);
@@ -247,6 +302,9 @@ class DocumentController extends Controller
             // Update main document
             $incomingFields['objective'] = Str::markdown($incomingFields['objective']);
             $incomingFields['scope'] = Str::markdown($incomingFields['scope']);
+
+            $affectedDocsPayload = $incomingFields['affected_docs_payload'] ?? null;
+            unset($incomingFields['affected_docs_payload']);
 
             $doc->update($incomingFields);
 
@@ -287,6 +345,25 @@ class DocumentController extends Controller
                             'procedure_step_id' => $procedureStep->id
                         ]);
                     }
+                }
+            }
+            // --- SECTION B: Sync Affected System Documents ---
+            // Wipe old records clean first to prevent orphan tracking
+            $doc->affectedDocuments()->delete();
+
+            // Re-build relations using the safely extracted validation payload array
+            if (!empty($affectedDocsPayload) && is_array($affectedDocsPayload)) {
+                foreach ($affectedDocsPayload as $affectedRow) {
+                    $targetMasterDoc = Document::find($affectedRow['document_id']);
+                    
+                    AffectedDocument::create([
+                        'parent_document_id'      => $doc->id,
+                        'affected_document_id'    => $affectedRow['document_id'],
+                        'code'  => $targetMasterDoc ? $targetMasterDoc->code : 'Cross-Ref',
+                        'title' => $targetMasterDoc ? $targetMasterDoc->title : 'System Document',
+                        'revision_number'  => $affectedRow['revision_number'],
+                        'details'          => $affectedRow['details'] ?? null,
+                    ]);
                 }
             }
 
