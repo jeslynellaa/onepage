@@ -458,7 +458,7 @@
                             <span style="font-style: italic;">(e-signed)</span><br>
                         @endif
                         <strong>{{ $doc->section->processOwner->fullname() }}</strong> <br>
-                        {{ $doc->section->processOwner->position ?? 'Process Owner' }}
+                        Process Owner
                     </td>
                     <td style="height: 70px; vertical-align: bottom;">
                         @if($passed)
