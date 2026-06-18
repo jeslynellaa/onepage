@@ -15,8 +15,7 @@ class DocumentPdfService
         $submitted = $doc->logs->firstWhere('action', 'submitted for review');
         $passed = $doc->logs->firstWhere('action', 'review passed');
         $approved = $doc->logs->firstWhere('action', 'approved');
-        $companyName = rtrim($doc->company->name, '.');
-
+        
         $color = $doc->company->hex_code;
         $text_color = $this->getTextColorForBackground($color);
         $font = $doc->company->pdf_font;
@@ -65,7 +64,7 @@ class DocumentPdfService
             ->values();
 
         // 1️⃣ Load your Blade view into Dompdf
-        $pdf = Pdf::loadView('pdf.system_procedure', compact('companyName', 'doc', 'steps', 'uniqueInputs', 'uniqueOutputs', 'connector', 'submitted', 'passed', 'approved', 'owner_sign', 'reviewer_sign', 'approver_sign', 'logo', 'color', 'text_color', 'font'))
+        $pdf = Pdf::loadView('pdf.system_procedure', compact('doc', 'steps', 'uniqueInputs', 'uniqueOutputs', 'connector', 'submitted', 'passed', 'approved', 'owner_sign', 'reviewer_sign', 'approver_sign', 'logo', 'color', 'text_color', 'font'))
                 ->setPaper($doc->company->paper_size, 'portrait');
 
         // 3. Render and Page Counting
