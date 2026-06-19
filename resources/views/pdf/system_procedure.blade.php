@@ -135,6 +135,25 @@
         #signatory_table tr:nth-child(2) td{
             text-align: center;
         }
+
+        .connector{
+            margin-right: auto;
+            margin-left: auto;
+            width:45px;
+            height:45px;
+            background-size: 45px 45px;
+            background-repeat:no-repeat;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:14pt;
+            padding-top: 5px;
+        }
+        .note-title {
+            font-weight: 700;
+            break-after: avoid !important;
+            page-break-after: avoid !important;
+        }
         
         /* ==========================================================================
         Quill JS Flat List Engine for Dompdf
