@@ -156,125 +156,126 @@
         }
         
         /* ==========================================================================
-        Quill JS Flat List Engine for Dompdf
-        ========================================================================== */
+   Quill JS Flat List Engine for Dompdf (Production Stabilized)
+   ========================================================================== */
 
-        /* 1. Global Counter Initialization 
-            Ensures counters persist across HTML block breaks (like <ul> splitting an <ol>) */
-        .notes {
-            counter-reset: list-0 list-1 list-2 list-3 list-4 list-5 list-6 list-7 list-8 list-9;
-        }
+/* 1. Global Counter Initialization */
+.notes {
+    counter-reset: list-0 list-1 list-2 list-3 list-4 list-5 list-6 list-7 list-8 list-9;
+}
 
-        /* 2. Structural Reset for Lists inside Notes */
-        .notes ol, 
-        .notes ul {
-            margin-top: 0;
-            margin-bottom: 0;
-            padding-left: 0; 
-        }
+/* 2. Structural Reset for Lists inside Notes */
+.notes ol, 
+.notes ul {
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-left: 0; 
+}
 
-        /* 3. Base List Item Layout 
-            Hides native markers and sets up a strict vertical column for text wrapping */
-        .notes ol li, 
-        .notes ul li {
-            list-style: none !important;
-            position: relative !important;
-            padding-left: 2.5em !important; /* The gutter space between marker and text */
-            text-align: justify;
-        }
+/* 3. Base List Item Layout 
+      Switched padding-left to 35px so text clearance remains completely static */
+.notes ol li, 
+.notes ul li {
+    list-style: none !important;
+    position: relative !important;
+    padding-left: 35px !important; /* 👈 Absolute px runway fixes environment text variance */
+    text-align: justify;
+}
 
-        /* 4. Shared Marker Pseudo-Element Settings */
-        .notes ol li::before, 
-        .notes ul li::before {
-            position: absolute !important;
-            left: 0 !important;
-            width: 2em !important;
-            text-align: right !important;
-        }
+/* 4. Shared Marker Pseudo-Element Settings 
+      Switched width to 26px to give a completely stable boundary box */
+.notes ol li::before, 
+.notes ul li::before {
+    position: absolute !important;
+    left: 0 !important;
+    width: 26px !important; /* 👈 Absolute px marker container */
+    text-align: right !important;
+}
 
-        /* ==========================================================================
-        Ordered List Counter & Indentation Engine
-        ========================================================================== */
+/* ==========================================================================
+   Ordered List Counter & Indentation Engine
+   ========================================================================== */
 
-        /* Base Level (Tier 0 - e.g., 1., 2.) */
-        .notes ol li {
-            counter-increment: list-0;
-        }
-        .notes ol li::before { 
-            content: counter(list-0, decimal) '. '; 
-        }
+/* Base Level (Tier 0 - e.g., 1., 2.) */
+.notes ol li {
+    counter-increment: list-0;
+}
+.notes ol li::before { 
+    content: counter(list-0, decimal) '. '; 
+}
 
-        /* Indent Tier 1 (e.g., a., b.) */
-        .notes ol li.ql-indent-1 {
-            margin-left: 2.5rem !important;
-            counter-increment: list-1;
-        }
-        .notes ol li.ql-indent-1::before { 
-            content: counter(list-1, lower-alpha) '. '; 
-        }
+/* Indent Tier 1 (e.g., a., b.) */
+.notes ol li.ql-indent-1 {
+    margin-left: 35px !important;
+    counter-increment: list-1;
+}
+.notes ol li.ql-indent-1::before { 
+    content: counter(list-1, lower-alpha) '. '; 
+}
 
-        /* Indent Tier 2 (e.g., i., ii.) */
-        .notes ol li.ql-indent-2 {
-            margin-left: 5.0rem !important; 
-            counter-increment: list-2;
-        }
-        .notes ol li.ql-indent-2::before { 
-            content: counter(list-2, lower-roman) '. '; 
-        }
+/* Indent Tier 2 (e.g., i., ii.) */
+.notes ol li.ql-indent-2 {
+    margin-left: 70px !important; 
+    counter-increment: list-2;
+}
+.notes ol li.ql-indent-2::before { 
+    content: counter(list-2, lower-roman) '. '; 
+}
 
-        /* Indent Tier 3 (e.g., 1., 2.) */
-        .notes ol li.ql-indent-3 {
-            margin-left: 7.5rem !important; 
-            counter-increment: list-3;
-        }
-        .notes ol li.ql-indent-3::before { 
-            content: counter(list-3, decimal) '. '; 
-        }
+/* Indent Tier 3 (e.g., 1., 2.) */
+.notes ol li.ql-indent-3 {
+    margin-left: 105px !important; 
+    counter-increment: list-3;
+}
+.notes ol li.ql-indent-3::before { 
+    content: counter(list-3, decimal) '. '; 
+}
 
-        /* Indent Tier 4 (e.g., a., b.) */
-        .notes ol li.ql-indent-4 {
-            margin-left: 10.0rem !important; 
-            counter-increment: list-4;
-        }
-        .notes ol li.ql-indent-4::before { 
-            content: counter(list-4, lower-alpha) '. '; 
-        }
+/* Indent Tier 4 (e.g., a., b.) */
+.notes ol li.ql-indent-4 {
+    margin-left: 140px !important; 
+    counter-increment: list-4;
+}
+.notes ol li.ql-indent-4::before { 
+    content: counter(list-4, lower-alpha) '. '; 
+}
 
-        /* Indent Tier 5 (e.g., i., ii.) */
-        .notes ol li.ql-indent-5 {
-            margin-left: 12.5rem !important; 
-            counter-increment: list-5;
-        }
-        .notes ol li.ql-indent-5::before { 
-            content: counter(list-5, lower-roman) '. '; 
-        }
-
-
-        /* ==========================================================================
-        Unordered List (Bullet Points) Indentation Engine
-        ========================================================================== */
-
-        /* Force bullet characters into the pseudo-element position */
-        .notes ul li::before {
-            content: "• " !important;
-            font-size: 11pt;
-        }
-
-        /* Map structural alignment margins for bullet lists matching Quill tiers */
-        .notes ul li.ql-indent-1 { margin-left: 2.5rem !important; }
-        .notes ul li.ql-indent-2 { margin-left: 5.0rem !important; }
-        .notes ul li.ql-indent-3 { margin-left: 7.5rem !important; }
-        .notes ul li.ql-indent-4 { margin-left: 10.0rem !important; }
-        .notes ul li.ql-indent-5 { margin-left: 12.5rem !important; }
+/* Indent Tier 5 (e.g., i., ii.) */
+.notes ol li.ql-indent-5 {
+    margin-left: 175px !important; 
+    counter-increment: list-5;
+}
+.notes ol li.ql-indent-5::before { 
+    content: counter(list-5, lower-roman) '. '; 
+}
 
 
-        /* ==========================================================================
-        Isolated Table List Fixes (Keeps your table styles intact)
-        ========================================================================== */
-        td ol, 
-        td ul {
-            padding-left: 1rem;
-        }
+/* ==========================================================================
+   Unordered List (Bullet Points) Indentation Engine
+   ========================================================================== */
+
+/* Force bullet characters into the pseudo-element position */
+.notes ul li::before {
+    content: "• " !important;
+    font-size: 11pt;
+}
+
+/* Map structural alignment margins for bullet lists matching Quill tiers 
+   Using the exact same static pixel increments to force perfect parity */
+.notes ul li.ql-indent-1 { margin-left: 35px !important; }
+.notes ul li.ql-indent-2 { margin-left: 70px !important; }
+.notes ul li.ql-indent-3 { margin-left: 105px !important; }
+.notes ul li.ql-indent-4 { margin-left: 140px !important; }
+.notes ul li.ql-indent-5 { margin-left: 175px !important; }
+
+
+/* ==========================================================================
+   Isolated Table List Fixes
+   ========================================================================== */
+td ol, 
+td ul {
+    padding-left: 1rem;
+}
     </style>
 </head>
 <body>
