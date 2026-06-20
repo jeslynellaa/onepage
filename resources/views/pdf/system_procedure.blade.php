@@ -405,7 +405,6 @@
                 </tbody>
             </table>
             
-            <div style="page-break-before: always;"></div>
             @php
                 $note_num = 1;
             @endphp
