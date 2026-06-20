@@ -154,80 +154,107 @@
             break-after: avoid !important;
             page-break-after: avoid !important;
         }
-        
         /* ==========================================================================
-   Quill JS Flat List Engine for Dompdf (Max Compatibility)
-   ========================================================================== */
+        Quill JS v2.0+ Data-Attribute List Engine for Dompdf
+        ========================================================================== */
 
-.notes {
-    counter-reset: list-0 list-1 list-2 list-3 list-4 list-5 list-6 list-7 list-8 list-9;
-}
+        /* 1. Global Reset for Container Tags */
+        .notes ol, 
+        .notes ul {
+            margin-top: 0;
+            margin-bottom: 0;
+            padding-left: 0 !important; 
+            list-style-type: none !important;
+        }
 
-.notes ol, 
-.notes ul {
-    margin-top: 0;
-    margin-bottom: 0;
-    padding-left: 0 !important; 
-}
+        /* 2. Base Structural Layout for ALL List Items */
+        .notes li[data-list] {
+            list-style: none !important;
+            list-style-type: none !important;
+            position: relative !important;
+            margin-left: 30px !important;    /* Base indent lane for Tier 0 numbers */
+            padding-left: 30px !important;   /* Spacing between the text and marker block */
+            text-align: justify;
+        }
 
-.notes li {
-    list-style: none !important;
-    position: relative !important;
-    padding-left: 35px !important; 
-    text-align: justify;
-}
+        /* 3. Global Marker Boundary Box Setup */
+        .notes li[data-list]::before {
+            position: absolute !important;
+            left: 0 !important;
+            width: 24px !important; 
+            text-align: right !important;
+        }
 
-.notes li::before {
-    position: absolute !important;
-    left: 0 !important;
-    width: 26px !important; 
-    text-align: right !important;
-}
+        /* ==========================================================================
+        Counter Initialization Engine
+        ========================================================================== */
+        .notes {
+            counter-reset: ql-0 ql-1 ql-2 ql-3 ql-4 ql-5;
+        }
 
-/* ==========================================================================
-   Universal Tier System (Forces BOTH Margins and Counters)
-   ========================================================================== */
+        /* ==========================================================================
+        Universal Tier System (Relying on Cascading Specificity)
+        ========================================================================== */
 
-/* --- Base Tier 0 (1.) --- */
-.notes ol li { counter-increment: list-0; }
-.notes ol li::before { content: counter(list-0, decimal) '. '; }
-
-/* --- Tier 1 (a. or Bullet) --- */
-.notes .ql-indent-1 { margin-left: 35px !important; }
-.notes ol li.ql-indent-1 { counter-increment: list-1; }
-.notes ol li.ql-indent-1::before { content: counter(list-1, lower-alpha) '. '; }
-
-/* --- Tier 2 (i. or Bullet) --- */
-.notes .ql-indent-2 { margin-left: 70px !important; }
-.notes ol li.ql-indent-2 { counter-increment: list-2; }
-.notes ol li.ql-indent-2::before { content: counter(list-2, lower-roman) '. '; }
-
-/* --- Tier 3 (1. or Bullet) --- */
-.notes .ql-indent-3 { margin-left: 105px !important; }
-.notes ol li.ql-indent-3 { counter-increment: list-3; }
-.notes ol li.ql-indent-3::before { content: counter(list-3, decimal) '. '; }
-
-/* --- Tier 4 (a. or Bullet) --- */
-.notes .ql-indent-4 { margin-left: 140px !important; }
-.notes ol li.ql-indent-4 { counter-increment: list-4; }
-.notes ol li.ql-indent-4::before { content: counter(list-4, lower-alpha) '. '; }
-
-/* --- Tier 5 (i. or Bullet) --- */
-.notes .ql-indent-5 { margin-left: 175px !important; }
-.notes ol li.ql-indent-5 { counter-increment: list-5; }
-.notes ol li.ql-indent-5::before { content: counter(list-5, lower-roman) '. '; }
+        /* --- Tier 0 (Base Level: e.g., 1., 2. or top-level bullet) --- */
+        /* Simple selectors here act as the default fallback for all lists */
+        .notes li[data-list="ordered"] { 
+            counter-increment: ql-0; 
+            counter-reset: ql-1 ql-2 ql-3 ql-4 ql-5; 
+        }
+        .notes li[data-list="ordered"]::before { content: counter(ql-0, decimal) '. '; }
+        .notes li[data-list="bullet"]::before { content: "• " !important; font-size: 11pt; }
 
 
-/* ==========================================================================
-   Unordered List Symbol Enforcement
-   ========================================================================== */
-.notes ul li::before {
-    content: "• " !important;
-    font-size: 11pt;
-}
+        /* --- Tier 1 (.ql-indent-1 / e.g., a., b.) --- */
+        /* The addition of the class increases specificity, overriding Tier 0 rules */
+        .notes .ql-indent-1 { margin-left: 60px !important; }
+        .notes li[data-list="ordered"].ql-indent-1 { 
+            counter-increment: ql-1; 
+            counter-reset: ql-2 ql-3 ql-4 ql-5; 
+        }
+        .notes li[data-list="ordered"].ql-indent-1::before { content: counter(ql-1, lower-alpha) '. '; }
+        .notes li[data-list="bullet"].ql-indent-1::before { content: "• " !important; font-size: 11pt; }
 
-/* Table Isolation */
-td ol, td ul { padding-left: 1rem; }
+
+        /* --- Tier 2 (.ql-indent-2 / e.g., i., ii.) --- */
+        .notes .ql-indent-2 { margin-left: 90px !important; }
+        .notes li[data-list="ordered"].ql-indent-2 { 
+            counter-increment: ql-2; 
+            counter-reset: ql-3 ql-4 ql-5; 
+        }
+        .notes li[data-list="ordered"].ql-indent-2::before { content: counter(ql-2, lower-roman) '. '; }
+        .notes li[data-list="bullet"].ql-indent-2::before { content: "• " !important; font-size: 11pt; }
+
+
+        /* --- Tier 3 (.ql-indent-3 / Bullet Points) --- */
+        .notes .ql-indent-3 { margin-left: 120px !important; }
+        .notes li[data-list="ordered"].ql-indent-3 { 
+            counter-increment: ql-3; 
+            counter-reset: ql-4 ql-5;
+        }
+        .notes li[data-list="ordered"].ql-indent-3::before { content: counter(ql-3, decimal) '. '; }
+        .notes li[data-list="bullet"].ql-indent-3::before { content: "• " !important; font-size: 11pt; }
+
+
+        /* --- Tier 4 (.ql-indent-4) --- */
+        .notes .ql-indent-4 { margin-left: 150px !important; }
+        .notes li[data-list="ordered"].ql-indent-4 { 
+            counter-increment: ql-4; 
+            counter-reset: ql-5;
+        }
+        .notes li[data-list="ordered"].ql-indent-4::before { content: counter(ql-4, lower-alpha) '. '; }
+        .notes li[data-list="bullet"].ql-indent-4::before { content: "• " !important; font-size: 11pt; }
+
+
+        /* --- Tier 5 (.ql-indent-5) --- */
+        .notes .ql-indent-5 { margin-left: 180px !important; }
+        .notes li[data-list="ordered"].ql-indent-5 { counter-increment: ql-5; }
+        .notes li[data-list="ordered"].ql-indent-5::before { content: counter(ql-5, lower-roman) '. '; }
+        .notes li[data-list="bullet"].ql-indent-5::before { content: "• " !important; font-size: 11pt; }
+
+        /* Table Isolation Linkage */
+        td ol, td ul { padding-left: 1rem; }
     </style>
 </head>
 <body>
@@ -378,6 +405,7 @@ td ol, td ul { padding-left: 1rem; }
                 </tbody>
             </table>
             
+            <div style="page-break-before: always;"></div>
             @php
                 $note_num = 1;
             @endphp
