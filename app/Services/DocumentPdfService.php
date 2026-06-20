@@ -19,6 +19,7 @@ class DocumentPdfService
         $color = $doc->company->hex_code;
         $text_color = $this->getTextColorForBackground($color);
         $font = $doc->company->pdf_font;
+        $size = $doc->company->paper_size;
 
         // Path Logic
 
@@ -64,8 +65,7 @@ class DocumentPdfService
             ->values();
 
         // 1️⃣ Load your Blade view into Dompdf
-        $pdf = Pdf::loadView('pdf.system_procedure', compact('doc', 'steps', 'uniqueInputs', 'uniqueOutputs', 'connector', 'submitted', 'passed', 'approved', 'owner_sign', 'reviewer_sign', 'approver_sign', 'logo', 'color', 'text_color', 'font'))
-                ->setPaper($doc->company->paper_size, 'portrait');
+        $pdf = Pdf::loadView('pdf.system_procedure', compact('doc', 'steps', 'uniqueInputs', 'uniqueOutputs', 'connector', 'submitted', 'passed', 'approved', 'owner_sign', 'reviewer_sign', 'approver_sign', 'logo', 'color', 'text_color', 'font'))->setPaper($size, 'portrait');
 
         // 3. Render and Page Counting
         $pdf->output();
@@ -76,12 +76,30 @@ class DocumentPdfService
         $doc->update(['pages' => $canvas->get_page_count()]);
 
         // 4. Page Numbering Script
-        $canvas->page_script(function ($pageNumber, $pageCount, $canvas, $fontMetrics) use ($font) {
+        $canvas->page_script(function ($pageNumber, $pageCount, $canvas, $fontMetrics) use ($font, $size) {
             $selectedFont = $fontMetrics->get_font($font, "normal");
             $x = 455;
             $y = 111;
             if($font == 'Times-Roman'){
-                $x = 467;
+                if($size == 'letter'){
+                    $x = 467; //ok
+                }else if($size == 'a4'){
+                    $x = 455; //ok
+                }
+            }else if($font == 'Helvetica'){
+                if($size == 'letter'){
+                    $x = 467; //ok
+                }else if($size == 'a4'){
+                    $x = 455; // ok
+                }
+            }else if($font == 'Courier'){
+                if($size == 'letter'){
+                    $x = 467;
+                    $y = 120; // ok
+                }else if($size == 'a4'){
+                    $x = 454;
+                    $y = 120; // ok
+                }
             }
             $canvas->text($x, $y, "Page $pageNumber of $pageCount", $selectedFont, 11);
         });
