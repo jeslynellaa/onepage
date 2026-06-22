@@ -191,6 +191,13 @@
         .notes {
             counter-reset: ql-0 ql-1 ql-2 ql-3 ql-4 ql-5;
         }
+        /* ==========================================================================
+   HTML Container Reset 
+   Forces fresh <ol> wrappers to reset the custom Quill engine counters back to 0
+   ========================================================================== */
+.notes ol {
+    counter-reset: ql-0 ql-1 ql-2 ql-3 ql-4 ql-5;
+}
 
         /* ==========================================================================
         Universal Tier System (Relying on Cascading Specificity)
