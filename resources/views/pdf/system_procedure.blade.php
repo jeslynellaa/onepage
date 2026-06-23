@@ -505,6 +505,8 @@
                         Date:
                         @if($submitted)
                             {{ $submitted->performed_at->format('F j, Y') }}
+                        @elseif($doc->status == 'Active')
+                            {{  date("m/d/Y", strtotime($doc->effective_date)) }}
                         @else
                             -
                         @endif
@@ -513,6 +515,8 @@
                         Date:
                         @if($passed)
                             {{ $passed->performed_at->format('F j, Y') }}
+                        @elseif($doc->status == 'Active')
+                            {{  date("m/d/Y", strtotime($doc->effective_date)) }}
                         @else
                             -
                         @endif
@@ -521,6 +525,8 @@
                         Date:
                         @if($approved)
                             {{ $approved->performed_at->format('F j, Y') }}
+                        @elseif($doc->status == 'Active')
+                            {{  date("m/d/Y", strtotime($doc->effective_date)) }}
                         @else
                             -
                         @endif
