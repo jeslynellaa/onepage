@@ -475,42 +475,90 @@
             updateHiddenJsonFields();
         }
 
+        // Helper function to safely escape strings for dynamic HTML rendering
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
         function editStep(index) {
             const selectedStep = steps[index];
             editingIndex = index;
-
             document.getElementById('responsibility').value = selectedStep.responsibility;
             document.getElementById('activities').value = selectedStep.activities;
             document.getElementById('note').value = selectedStep.note;
-            quill.root.innerHTML = selectedStep.note || '';
+            
+            if (typeof quill !== 'undefined') {
+                quill.root.innerHTML = selectedStep.note || '';
+            }
 
-            const inputRows = document.querySelectorAll('#interfaces-inputs-wrapper');
-            inputRows.forEach((row, i) => {
-                const cat = row.querySelector('.interface-input-category');
-                const name = row.querySelector('.interface-input-name');
+            const inputsWrapper = document.getElementById('interfaces-inputs-wrapper');
+                if (inputsWrapper) {
+                    inputsWrapper.innerHTML = ''; // Wipe clean to build exact rows
+                    const inputsArray = selectedStep.interfaces_input || [];
+                    // console.log(inputsArray);
+                    // Always render at least 3 rows, or more if data demands it
+                    const rowCount = Math.max(3, inputsArray.length);
 
-                if (selectedStep.interfaces_input?.[i]) {
-                    cat.value = selectedStep.interfaces_input[i].category || '';
-                    name.value = selectedStep.interfaces_input[i].name || '';
-                } else {
-                    cat.value = '';
-                    name.value = '';
+                    for (let i = 0; i < rowCount; i++) {
+                        const dataItem = inputsArray[i] || {};
+                        const itemRow = document.createElement('div');
+                        itemRow.className = 'flex gap-1.5 items-center w-full';
+                        itemRow.innerHTML = `
+                            <select class="interface-input-category flex-1 rounded-md border-gray-200 text-xs p-1.5 bg-gray-50 focus:bg-white transition">
+                                <option value="">Type</option>
+                                <option value="Form" ${dataItem.category === 'Form' ? 'selected' : ''}>Form</option>
+                                <option value="Procedure" ${dataItem.category === 'Procedure' ? 'selected' : ''}>Procedure</option>
+                                <option value="MS Manual" ${dataItem.category === 'MS Manual' ? 'selected' : ''}>MS Manual</option>
+                                <option value="Support Document" ${dataItem.category === 'Support Document' ? 'selected' : ''}>Support Doc</option>
+                                <option value="Work Instruction" ${dataItem.category === 'Work Instruction' ? 'selected' : ''}>Work Instruction</option>
+                                <option value="Document" ${dataItem.category === 'Document' ? 'selected' : ''}>Document</option>
+                            </select>
+                            <div class="relative flex-2">
+                                <input type="text" class="interface-input-name w-full rounded-md border-gray-200 text-xs p-1.5 placeholder-gray-300 autocomplete-interface" placeholder="Doc Code / Name #${i + 1}" value="${escapeHtml(dataItem.name || '')}" autocomplete="off"/>
+                                <div class="autocomplete-suggestions absolute z-50 left-0 mt-1 hidden max-h-48 overflow-y-auto bg-white border border-gray-200 rounded-md shadow-xl"></div>
+                            </div>
+                            <button type="button" class="remove-interface-btn shrink-0 text-gray-400 hover:text-red-500 text-xs px-1 font-bold transition">✖</button>
+                        `;
+                        inputsWrapper.appendChild(itemRow);
+                    }
                 }
-            });
 
-            const outputRows = document.querySelectorAll('#interfaces-outputs-wrapper');
-            outputRows.forEach((row, i) => {
-                const cat = row.querySelector('.interface-output-category');
-                const name = row.querySelector('.interface-output-name');
+                // 3. Sync Process Outputs Matrix Layout
+                const outputsWrapper = document.getElementById('interfaces-outputs-wrapper');
+                if (outputsWrapper) {
+                    outputsWrapper.innerHTML = ''; // Wipe clean to build exact rows
+                    const outputsArray = selectedStep.interfaces_output || [];
+                    const rowCount = Math.max(3, outputsArray.length);
 
-                if (selectedStep.interfaces_output?.[i]) {
-                    cat.value = selectedStep.interfaces_output[i].category || '';
-                    name.value = selectedStep.interfaces_output[i].name || '';
-                } else {
-                    cat.value = '';
-                    name.value = '';
+                    for (let i = 0; i < rowCount; i++) {
+                        const dataItem = outputsArray[i] || {};
+                        const itemRow = document.createElement('div');
+                        itemRow.className = 'flex gap-1.5 items-center w-full';
+                        itemRow.innerHTML = `
+                            <select class="interface-output-category flex-1 rounded-md border-gray-200 text-xs p-1.5 bg-gray-50 focus:bg-white transition">
+                                <option value="">Type</option>
+                                <option value="Form" ${dataItem.category === 'Form' ? 'selected' : ''}>Form</option>
+                                <option value="Procedure" ${dataItem.category === 'Procedure' ? 'selected' : ''}>Procedure</option>
+                                <option value="MS Manual" ${dataItem.category === 'MS Manual' ? 'selected' : ''}>MS Manual</option>
+                                <option value="Support Document" ${dataItem.category === 'Support Document' ? 'selected' : ''}>Support Doc</option>
+                                <option value="Work Instruction" ${dataItem.category === 'Work Instruction' ? 'selected' : ''}>Work Instruction</option>
+                                <option value="Document" ${dataItem.category === 'Document' ? 'selected' : ''}>Document</option>
+                            </select>
+                            <div class="relative flex-2">
+                                <input type="text" class="interface-output-name w-full rounded-md border-gray-200 text-xs p-1.5 placeholder-gray-300 autocomplete-interface" placeholder="Generated Form / Record #${i + 1}" value="${escapeHtml(dataItem.name || '')}" autocomplete="off" />
+                                <div class="autocomplete-suggestions absolute z-50 left-0 mt-1 hidden max-h-48 overflow-y-auto bg-white border border-gray-200 rounded-md shadow-xl"></div>
+                            </div>
+                            <button type="button" class="remove-interface-btn shrink-0 text-gray-400 hover:text-red-500 text-xs px-1 font-bold transition">✖</button>
+                        `;
+                        outputsWrapper.appendChild(itemRow);
+                    }
                 }
-            });
             
             document.getElementById('submit-step-btn').innerText = "Update Matrix Step";
             document.getElementById('procedure-steps-form').scrollIntoView({ behavior: 'smooth' });
@@ -521,10 +569,76 @@
             updateProcedureTable();
             updateHiddenJsonFields();
         }
-
+        
         function clearStepsForm() {
+            // 1. Reset standard native form element states
             document.getElementById('procedure-steps-form').reset();
-            quill.setContents([]);
+            
+            // 2. Clear rich text editor contents safely
+            if (typeof quill !== 'undefined') {
+                quill.setContents([]);
+            }
+
+            // 3. Reset References (Inputs) Wrapper back to 3 empty baseline rows
+            const inputsWrapper = document.getElementById('interfaces-inputs-wrapper');
+            if (inputsWrapper) {
+                inputsWrapper.innerHTML = ''; // Clear dynamic fields or lingering entries
+                for (let i = 0; i < 3; i++) {
+                    const itemRow = document.createElement('div');
+                    itemRow.className = 'flex gap-1.5 items-center w-full';
+                    itemRow.innerHTML = `
+                        <select class="interface-input-category flex-1 rounded-md border-gray-200 text-xs p-1.5 bg-gray-50 focus:bg-white transition">
+                            <option value="">Type</option>
+                            <option value="Form">Form</option>
+                            <option value="Procedure">Procedure</option>
+                            <option value="MS Manual">MS Manual</option>
+                            <option value="Support Document">Support Doc</option>
+                            <option value="Work Instruction">Work Instruction</option>
+                            <option value="Document">Document</option>
+                        </select>
+                        <div class="relative flex-2">
+                            <input type="text" class="interface-input-name w-full rounded-md border-gray-200 text-xs p-1.5 placeholder-gray-300 autocomplete-interface" placeholder="Doc Code / Name #${i + 1}" autocomplete="off"/>
+                            <div class="autocomplete-suggestions absolute z-50 left-0 mt-1 hidden max-h-48 overflow-y-auto bg-white border border-gray-200 rounded-md shadow-xl"></div>
+                        </div>
+                        <button type="button" class="remove-interface-btn shrink-0 text-gray-400 hover:text-red-500 text-xs px-1 font-bold transition">✖</button>
+                    `;
+                    inputsWrapper.appendChild(itemRow);
+                }
+            }
+
+            // 4. Reset Process Outputs Wrapper back to 3 empty baseline rows
+            const outputsWrapper = document.getElementById('interfaces-outputs-wrapper');
+            if (outputsWrapper) {
+                outputsWrapper.innerHTML = ''; // Clear dynamic fields or lingering entries
+                for (let i = 0; i < 3; i++) {
+                    const itemRow = document.createElement('div');
+                    itemRow.className = 'flex gap-1.5 items-center w-full';
+                    itemRow.innerHTML = `
+                        <select class="interface-output-category flex-1 rounded-md border-gray-200 text-xs p-1.5 bg-gray-50 focus:bg-white transition">
+                            <option value="">Type</option>
+                            <option value="Form">Form</option>
+                            <option value="Procedure">Procedure</option>
+                            <option value="MS Manual">MS Manual</option>
+                            <option value="Support Document">Support Doc</option>
+                            <option value="Work Instruction">Work Instruction</option>
+                            <option value="Document">Document</option>
+                        </select>
+                        <div class="relative flex-2">
+                            <input type="text" class="interface-output-name w-full rounded-md border-gray-200 text-xs p-1.5 placeholder-gray-300 autocomplete-interface" placeholder="Generated Form / Record #${i + 1}" autocomplete="off" />
+                            <div class="autocomplete-suggestions absolute z-50 left-0 mt-1 hidden max-h-48 overflow-y-auto bg-white border border-gray-200 rounded-md shadow-xl"></div>
+                        </div>
+                        <button type="button" class="remove-interface-btn shrink-0 text-gray-400 hover:text-red-500 text-xs px-1 font-bold transition">✖</button>
+                    `;
+                    outputsWrapper.appendChild(itemRow);
+                }
+            }
+
+            // 5. Revert the submission trigger state rules back to baseline tracking states
+            const submitBtn = document.getElementById('submit-step-btn');
+            if (submitBtn) {
+                submitBtn.innerText = "Add Step to Matrix";
+            }
+            editingIndex = null;
         }
 
         // ================= PHASE 3: AFFECTED DOCUMENTS LOGIC =================
