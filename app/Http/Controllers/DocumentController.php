@@ -45,7 +45,7 @@ class DocumentController extends Controller
     public function system_procedures() {
         $documents = Document::all();
         $sections = Section::where('company_id', auth()->user()->company_id)->with(['processOwner', 'reviewer', 'approver'])->get();
-        $user_list = User::all();
+        $user_list = User::where('company_id', auth()->user()->company_id)->get();
         $users = User::orderBy('last_name', 'ASC')
             ->get(['id', 'first_name', 'middle_name', 'last_name']);
         $user_list = $users->map(function ($user) {
