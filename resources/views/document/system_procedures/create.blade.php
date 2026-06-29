@@ -627,10 +627,18 @@
         function updateHiddenJsonField() {
             document.getElementById('procedure-steps-json').value = JSON.stringify(steps);
         }
-
+        
         function clearStepsForm() {
             document.getElementById('procedure-steps-form').reset();
-            quill.setContents([]);
+            if (typeof quill !== 'undefined') {
+                quill.setContents([]);
+            }
+
+            populateInterfaceRows('interfaces-inputs-wrapper', [], { type: 'input', placeholder: 'Doc Code / Name' });
+            populateInterfaceRows('interfaces-outputs-wrapper', [], { type: 'output', placeholder: 'Generated Form / Record' });
+
+            document.getElementById('submit-step-btn').innerText = "Add Step to Matrix";
+            editingIndex = null;
         }
 
         function removeStep(index) {
@@ -639,21 +647,48 @@
             updateHiddenJsonField();
         }
 
-        function populateInterfaceRows(wrapperId, interfaceArray) {
-            const rows = document.querySelectorAll(`#${wrapperId}`);
-            rows.forEach((row, i) => {
-                const categorySelect = row.querySelector('[class*="category"]');
-                const nameInput = row.querySelector('[class*="name"]');
+        function populateInterfaceRows(wrapperId, interfaceArray, config = { type: 'input', placeholder: 'Doc Code / Name' }) {
+            const wrapper = document.getElementById(wrapperId);
+            if (!wrapper) return;
 
-                if (interfaceArray && interfaceArray[i]) {
-                    const { category, name } = interfaceArray[i];
-                    categorySelect.value = category || '';
-                    nameInput.value = name || '';
-                } else {
-                    categorySelect.value = '';
-                    nameInput.value = '';
-                }
-            });
+            wrapper.innerHTML = ''; // Wipe clean to handle dynamic sizing resets
+            const dataArray = interfaceArray || [];
+            const rowCount = Math.max(3, dataArray.length);
+
+            for (let i = 0; i < rowCount; i++) {
+                const dataItem = dataArray[i] || {};
+                const itemRow = document.createElement('div');
+                itemRow.className = 'flex gap-1.5 items-center w-full';
+                
+                itemRow.innerHTML = `
+                    <select class="interface-${config.type}-category flex-1 rounded-md border-gray-200 text-xs p-1.5 bg-gray-50 focus:bg-white transition">
+                        <option value="">Type</option>
+                        <option value="Form" ${dataItem.category === 'Form' ? 'selected' : ''}>Form</option>
+                        <option value="Procedure" ${dataItem.category === 'Procedure' ? 'selected' : ''}>Procedure</option>
+                        <option value="MS Manual" ${dataItem.category === 'MS Manual' ? 'selected' : ''}>MS Manual</option>
+                        <option value="Support Document" ${dataItem.category === 'Support Document' ? 'selected' : ''}>Support Doc</option>
+                        <option value="Work Instruction" ${dataItem.category === 'Work Instruction' ? 'selected' : ''}>Work Instruction</option>
+                        <option value="Document" ${dataItem.category === 'Document' ? 'selected' : ''}>Document</option>
+                    </select>
+                    <div class="relative flex-2">
+                        <input type="text" class="interface-${config.type}-name w-full rounded-md border-gray-200 text-xs p-1.5 placeholder-gray-300 autocomplete-interface" placeholder="${config.placeholder} #${i + 1}" value="${escapeHtml(dataItem.name || '')}" autocomplete="off"/>
+                        <div class="autocomplete-suggestions absolute z-50 left-0 mt-1 hidden max-h-48 overflow-y-auto bg-white border border-gray-200 rounded-md shadow-xl"></div>
+                    </div>
+                    <button type="button" class="remove-interface-btn shrink-0 text-gray-400 hover:text-red-500 text-xs px-1 font-bold transition">✖</button>
+                `;
+                wrapper.appendChild(itemRow);
+            }
+        }
+
+        // Helper function to safely escape strings for dynamic HTML rendering
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
         }
 
         function editStep(index) {
@@ -663,10 +698,18 @@
             document.getElementById('responsibility').value = selectedStep.responsibility;
             document.getElementById('activities').value = selectedStep.activities;
             document.getElementById('note').value = selectedStep.note;
-            quill.root.innerHTML = selectedStep.note || '';
-
-            populateInterfaceRows('interfaces-inputs-wrapper', selectedStep.interfaces_input);
-            populateInterfaceRows('interfaces-outputs-wrapper', selectedStep.interfaces_output);
+            
+            if (typeof quill !== 'undefined') {
+                quill.root.innerHTML = selectedStep.note || '';
+            }
+            populateInterfaceRows('interfaces-inputs-wrapper', selectedStep.interfaces_input, {
+                type: 'input',
+                placeholder: 'Doc Code / Name'
+            });
+            populateInterfaceRows('interfaces-outputs-wrapper', selectedStep.interfaces_output, {
+                type: 'output',
+                placeholder: 'Generated Form / Record'
+            });
             
             
             document.getElementById('submit-step-btn').innerText = "Update Matrix Step";

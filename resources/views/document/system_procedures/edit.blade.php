@@ -489,6 +489,7 @@
         function editStep(index) {
             const selectedStep = steps[index];
             editingIndex = index;
+            
             document.getElementById('responsibility').value = selectedStep.responsibility;
             document.getElementById('activities').value = selectedStep.activities;
             document.getElementById('note').value = selectedStep.note;
@@ -498,67 +499,67 @@
             }
 
             const inputsWrapper = document.getElementById('interfaces-inputs-wrapper');
-                if (inputsWrapper) {
-                    inputsWrapper.innerHTML = ''; // Wipe clean to build exact rows
-                    const inputsArray = selectedStep.interfaces_input || [];
-                    // console.log(inputsArray);
-                    // Always render at least 3 rows, or more if data demands it
-                    const rowCount = Math.max(3, inputsArray.length);
+            if (inputsWrapper) {
+                inputsWrapper.innerHTML = ''; // Wipe clean to build exact rows
+                const inputsArray = selectedStep.interfaces_input || [];
+                // console.log(inputsArray);
+                // Always render at least 3 rows, or more if data demands it
+                const rowCount = Math.max(3, inputsArray.length);
 
-                    for (let i = 0; i < rowCount; i++) {
-                        const dataItem = inputsArray[i] || {};
-                        const itemRow = document.createElement('div');
-                        itemRow.className = 'flex gap-1.5 items-center w-full';
-                        itemRow.innerHTML = `
-                            <select class="interface-input-category flex-1 rounded-md border-gray-200 text-xs p-1.5 bg-gray-50 focus:bg-white transition">
-                                <option value="">Type</option>
-                                <option value="Form" ${dataItem.category === 'Form' ? 'selected' : ''}>Form</option>
-                                <option value="Procedure" ${dataItem.category === 'Procedure' ? 'selected' : ''}>Procedure</option>
-                                <option value="MS Manual" ${dataItem.category === 'MS Manual' ? 'selected' : ''}>MS Manual</option>
-                                <option value="Support Document" ${dataItem.category === 'Support Document' ? 'selected' : ''}>Support Doc</option>
-                                <option value="Work Instruction" ${dataItem.category === 'Work Instruction' ? 'selected' : ''}>Work Instruction</option>
-                                <option value="Document" ${dataItem.category === 'Document' ? 'selected' : ''}>Document</option>
-                            </select>
-                            <div class="relative flex-2">
-                                <input type="text" class="interface-input-name w-full rounded-md border-gray-200 text-xs p-1.5 placeholder-gray-300 autocomplete-interface" placeholder="Doc Code / Name #${i + 1}" value="${escapeHtml(dataItem.name || '')}" autocomplete="off"/>
-                                <div class="autocomplete-suggestions absolute z-50 left-0 mt-1 hidden max-h-48 overflow-y-auto bg-white border border-gray-200 rounded-md shadow-xl"></div>
-                            </div>
-                            <button type="button" class="remove-interface-btn shrink-0 text-gray-400 hover:text-red-500 text-xs px-1 font-bold transition">✖</button>
-                        `;
-                        inputsWrapper.appendChild(itemRow);
-                    }
+                for (let i = 0; i < rowCount; i++) {
+                    const dataItem = inputsArray[i] || {};
+                    const itemRow = document.createElement('div');
+                    itemRow.className = 'flex gap-1.5 items-center w-full';
+                    itemRow.innerHTML = `
+                        <select class="interface-input-category flex-1 rounded-md border-gray-200 text-xs p-1.5 bg-gray-50 focus:bg-white transition">
+                            <option value="">Type</option>
+                            <option value="Form" ${dataItem.category === 'Form' ? 'selected' : ''}>Form</option>
+                            <option value="Procedure" ${dataItem.category === 'Procedure' ? 'selected' : ''}>Procedure</option>
+                            <option value="MS Manual" ${dataItem.category === 'MS Manual' ? 'selected' : ''}>MS Manual</option>
+                            <option value="Support Document" ${dataItem.category === 'Support Document' ? 'selected' : ''}>Support Doc</option>
+                            <option value="Work Instruction" ${dataItem.category === 'Work Instruction' ? 'selected' : ''}>Work Instruction</option>
+                            <option value="Document" ${dataItem.category === 'Document' ? 'selected' : ''}>Document</option>
+                        </select>
+                        <div class="relative flex-2">
+                            <input type="text" class="interface-input-name w-full rounded-md border-gray-200 text-xs p-1.5 placeholder-gray-300 autocomplete-interface" placeholder="Doc Code / Name #${i + 1}" value="${escapeHtml(dataItem.name || '')}" autocomplete="off"/>
+                            <div class="autocomplete-suggestions absolute z-50 left-0 mt-1 hidden max-h-48 overflow-y-auto bg-white border border-gray-200 rounded-md shadow-xl"></div>
+                        </div>
+                        <button type="button" class="remove-interface-btn shrink-0 text-gray-400 hover:text-red-500 text-xs px-1 font-bold transition">✖</button>
+                    `;
+                    inputsWrapper.appendChild(itemRow);
                 }
+            }
 
-                // 3. Sync Process Outputs Matrix Layout
-                const outputsWrapper = document.getElementById('interfaces-outputs-wrapper');
-                if (outputsWrapper) {
-                    outputsWrapper.innerHTML = ''; // Wipe clean to build exact rows
-                    const outputsArray = selectedStep.interfaces_output || [];
-                    const rowCount = Math.max(3, outputsArray.length);
+            // 3. Sync Process Outputs Matrix Layout
+            const outputsWrapper = document.getElementById('interfaces-outputs-wrapper');
+            if (outputsWrapper) {
+                outputsWrapper.innerHTML = ''; // Wipe clean to build exact rows
+                const outputsArray = selectedStep.interfaces_output || [];
+                const rowCount = Math.max(3, outputsArray.length);
 
-                    for (let i = 0; i < rowCount; i++) {
-                        const dataItem = outputsArray[i] || {};
-                        const itemRow = document.createElement('div');
-                        itemRow.className = 'flex gap-1.5 items-center w-full';
-                        itemRow.innerHTML = `
-                            <select class="interface-output-category flex-1 rounded-md border-gray-200 text-xs p-1.5 bg-gray-50 focus:bg-white transition">
-                                <option value="">Type</option>
-                                <option value="Form" ${dataItem.category === 'Form' ? 'selected' : ''}>Form</option>
-                                <option value="Procedure" ${dataItem.category === 'Procedure' ? 'selected' : ''}>Procedure</option>
-                                <option value="MS Manual" ${dataItem.category === 'MS Manual' ? 'selected' : ''}>MS Manual</option>
-                                <option value="Support Document" ${dataItem.category === 'Support Document' ? 'selected' : ''}>Support Doc</option>
-                                <option value="Work Instruction" ${dataItem.category === 'Work Instruction' ? 'selected' : ''}>Work Instruction</option>
-                                <option value="Document" ${dataItem.category === 'Document' ? 'selected' : ''}>Document</option>
-                            </select>
-                            <div class="relative flex-2">
-                                <input type="text" class="interface-output-name w-full rounded-md border-gray-200 text-xs p-1.5 placeholder-gray-300 autocomplete-interface" placeholder="Generated Form / Record #${i + 1}" value="${escapeHtml(dataItem.name || '')}" autocomplete="off" />
-                                <div class="autocomplete-suggestions absolute z-50 left-0 mt-1 hidden max-h-48 overflow-y-auto bg-white border border-gray-200 rounded-md shadow-xl"></div>
-                            </div>
-                            <button type="button" class="remove-interface-btn shrink-0 text-gray-400 hover:text-red-500 text-xs px-1 font-bold transition">✖</button>
-                        `;
-                        outputsWrapper.appendChild(itemRow);
-                    }
+                for (let i = 0; i < rowCount; i++) {
+                    const dataItem = outputsArray[i] || {};
+                    const itemRow = document.createElement('div');
+                    itemRow.className = 'flex gap-1.5 items-center w-full';
+                    itemRow.innerHTML = `
+                        <select class="interface-output-category flex-1 rounded-md border-gray-200 text-xs p-1.5 bg-gray-50 focus:bg-white transition">
+                            <option value="">Type</option>
+                            <option value="Form" ${dataItem.category === 'Form' ? 'selected' : ''}>Form</option>
+                            <option value="Procedure" ${dataItem.category === 'Procedure' ? 'selected' : ''}>Procedure</option>
+                            <option value="MS Manual" ${dataItem.category === 'MS Manual' ? 'selected' : ''}>MS Manual</option>
+                            <option value="Support Document" ${dataItem.category === 'Support Document' ? 'selected' : ''}>Support Doc</option>
+                            <option value="Work Instruction" ${dataItem.category === 'Work Instruction' ? 'selected' : ''}>Work Instruction</option>
+                            <option value="Document" ${dataItem.category === 'Document' ? 'selected' : ''}>Document</option>
+                        </select>
+                        <div class="relative flex-2">
+                            <input type="text" class="interface-output-name w-full rounded-md border-gray-200 text-xs p-1.5 placeholder-gray-300 autocomplete-interface" placeholder="Generated Form / Record #${i + 1}" value="${escapeHtml(dataItem.name || '')}" autocomplete="off" />
+                            <div class="autocomplete-suggestions absolute z-50 left-0 mt-1 hidden max-h-48 overflow-y-auto bg-white border border-gray-200 rounded-md shadow-xl"></div>
+                        </div>
+                        <button type="button" class="remove-interface-btn shrink-0 text-gray-400 hover:text-red-500 text-xs px-1 font-bold transition">✖</button>
+                    `;
+                    outputsWrapper.appendChild(itemRow);
                 }
+            }
             
             document.getElementById('submit-step-btn').innerText = "Update Matrix Step";
             document.getElementById('procedure-steps-form').scrollIntoView({ behavior: 'smooth' });
