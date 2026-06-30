@@ -340,6 +340,12 @@
                     <tr>
                         <td colspan="4" style="height:5px;"></td>
                     </tr>
+                    
+                    @php
+                        $connectors = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
+                        $counter = 0;
+                    @endphp
+
                     @foreach ($steps as $key => $step)
                     @if ($key !== 0 && $key % 5 === 0)
                         {{-- connector before breaking --}}
@@ -347,7 +353,7 @@
                             <td></td>
                             <td style="text-align:center;">
                                 <div class="connector" style="background-image: url('data:image/png;base64,{{ base64_encode(file_get_contents($connector)) }}');">
-                                    A
+                                    {{ $connectors[$counter] }}
                                 </div>
                             </td>
                             <td></td>
@@ -362,7 +368,10 @@
                             <td></td>
                             <td style="text-align:center;">
                                 <div class="connector" style="margin-top: 8px; background-image: url('data:image/png;base64,{{ base64_encode(file_get_contents($connector)) }}');">
-                                    A
+                                    {{ $connectors[$counter] }}
+                                    @php
+                                        $counter++;
+                                    @endphp
                                 </div>
                             </td>
                             <td></td>
