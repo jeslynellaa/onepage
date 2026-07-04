@@ -5,84 +5,102 @@
             padding: 10px 15px;
             background-color: #f1f1f1;
         }
+        
         .status{
-            padding: 5px 18px;
+            padding: 5px 10px;
             border-radius: 15px;
+            width: 140px;
         }
         .Active{
-            color: #f1f1f1;
-            background-color: #50C878;
+            color: #2db68e;
+            background-color: #3de3b150;
         }
         .Draft{
-            color: #f1f1f1;
-            background-color: #96DED1;
+            color: #6b7280;
+            background-color: #f3f4f6;
         }
         .For_Review{
-            color: #f1f1f1;
-            background-color: #E1C16E;
+            color: #575df9;
+            background-color: #575df910;
+        }
+        .For_Revision{
+            color: #6b7280;
+            background-color: #f3f4f6;
         }
         .For_Approval{
-            color: #f1f1f1;
-            background-color: #DAA520;
+            color: #575df9;
+            background-color: #575df910;
         }
         .Review_not_Passed{
-            color: #f1f1f1;
-            background-color: #96DED1;
+            color: #6b7280;
+            background-color: #f3f4f6;
+        }
+        .Pending_Code{
+            color: #6b7280;
+            background-color: #f3f4f6;
         }
         .Not_Approved{
-            color: #f1f1f1;
-            background-color: #96DED1;
+            color: #6b7280;
+            background-color: #f3f4f6;
         }
         input:read-only{
             background-color: lightgray;
         }
     </style>
-    <div class="mx-auto w-full px-5 py-1">
-        <!-- Header -->
-        <div class="flex justify-between items-center mb-4">
-            <h1 class="font-semibold text-gray-800">
-                <a href="{{ route('document.index') }}">Document Management</a> > Management System Manual
-            </h1>
+    <div class="mx-auto w-full px-5 py-3">
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest">Management System Manual</h3>
             <div>
-            <a href="{{ route('document.ms_manual.create')}}"
-            class="inline-block bg-sky-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-sky-700 transition">
-                Create
-            </a>
+                <a href="{{ route('document.ms_manual.create')}}"
+                class="inline-flex items-center gap-2 bg-[#575df9] text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow hover:bg-[#464bd4] hover:shadow-[#575df9]/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200">
+                    <i class="fa-solid fa-plus text-[10px]"></i>
+                    <span>Create Document</span>
+                </a>
             </div>
         </div>
 
         <!-- Table -->
-        <div class="overflow-x-auto bg-white rounded-2xl shadow-lg px-5 py-2">
-            <table id="sections-table" class="w-full border border-gray-200 text-sm text-left text-gray-700">
-                <thead class="bg-gray-100 text-gray-600 uppercase text-xs">
-                    <tr>
-                        <th class="px-4 py-3">Section #</th>
-                        <th class="px-4 py-3">Section Title</th>
-                        <th class="px-4 py-3">Pages</th>
-                        <th class="px-4 py-3">Revision Number</th>
-                        <th class="px-4 py-3">Effective Date</th>
-                        <th class="px-4 py-3">Status</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($ms_manuals as $manual)
+        <div class="overflow-hidden bg-white rounded-3xl shadow-sm px-5">
+            <div class="overflow-x-auto">
+                <table id="sections-table" class="w-full text-sm text-left border-separate border-spacing-0">
+                    <thead class="bg-gray-50/50">
                         <tr>
-                            <td>{{$manual->section_number}}</td>
-                            <td>{{$manual->title}}</td>
-                            <td>{{$manual->pages}}</td>
-                            <td>{{$manual->revision_number ?? 'N/A'}}</td>
-                            <td>{{$manual->effective_date ?? 'N/A'}}</td>
-                            <td>{{$manual->status}}</td>
-                            <td class="py-2 text-center items-center space-x-2">
-                                <a href="{{ route('document.ms_manual.view', $manual->id) }}" class="text-gray-600 hover:text-sky-700">
-                                    <i class="fa-solid fa-eye"></i>
-                                </a>
-                            </td>
+                            <th class="px-4 py-5 border-b border-gray-100 font-bold text-gray-400 uppercase text-[10px] tracking-widest">No.</th>
+                            <th class="px-4 py-5 border-b border-gray-100 font-bold text-gray-400 uppercase text-[10px] tracking-widest">Section Title</th>
+                            <th class="px-4 py-5 border-b border-gray-100 font-bold text-gray-400 uppercase text-[10px] tracking-widest">Status</th>
+                            <th class="px-4 py-5 border-b border-gray-100 font-bold text-gray-400 uppercase text-[10px] tracking-widest">Rev</th>
+                            <th class="px-4 py-5 border-b border-gray-100 font-bold text-gray-400 uppercase text-[10px] tracking-widest">Effective Date</th>
+                            <th class="px-4 py-5 border-b border-gray-100 w-16"></th>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
+                    </thead>
+                    
+                    <tbody class="divide-y divide-gray-50">
+                        @foreach ($ms_manuals as $manual)
+                            <tr class="group hover:bg-slate-50/50 transition-colors">
+                                <td class="px-4 py-4 font-bold text-gray-900">{{$manual->section_number}}</td>
+                                <td class="px-4 py-4">
+                                    <div class="flex flex-col">
+                                        <span class="block font-bold text-gray-800 group-hover:text-[#575df9] transition-colors">
+                                            {{$manual->title}}
+                                        </span>
+                                        <span class="text-[9pt] text-gray-400 font-medium">{{$manual->pages>1 ? $manual->pages." pages" : $manual->pages." page"}}</span>
+                                    </div>
+                                </td>
+                                <td class="py-2 text-center items-center space-x-2">
+                                    <span class="px-2 py-0.5 rounded-full font-bold text-[9pt] uppercase {{$manual->status}}">{{$manual->status}}</span>
+                                </td>
+                                <td class="px-4 py-4 text-center text-gray-600 font-bold">{{$manual->revision_number ?? '—'}}</td>
+                                <td class="px-4 py-4 text-center text-gray-500">{{$manual->effective_date ?? 'N/A'}}</td>
+                                <td class="py-2 text-center items-center space-x-2">
+                                    <a href="{{ route('document.ms_manual.view', $manual->id) }}" class="p-2 h-8 w-8 rounded-lg text-gray-400 hover:text-[#575df9] hover:bg-white hover:shadow-sm transition">
+                                        <i class="fa-solid fa-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
@@ -127,7 +145,7 @@
                     lengthMenu: 'Show _MENU_ rows'
                 },
                 columnDefs: [
-                    {targets: [6], orderable: false}
+                    {targets: [5], orderable: false}
                 ],
             });
 
