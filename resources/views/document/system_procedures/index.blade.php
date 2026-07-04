@@ -137,7 +137,7 @@
                             <th class="px-6 py-5 border-b border-gray-100 text-center w-16">
                                 <button id="toggleAll" type="button"
                                     class="inline-flex items-center justify-center w-8 h-8 rounded-xl border border-gray-200 bg-white text-gray-500 hover:text-[#575df9] hover:border-[#575df9] transition shadow-sm" title="Expand / Collapse all">
-                                    <span id="toggleIcon" class="text-lg font-bold leading-none">+</span>
+                                    <span id="toggleIcon" class="text-lg leading-none">+</span>
                                 </button>
                             </th>
                             <th class="px-4 py-5 border-b border-gray-100 font-bold text-gray-400 uppercase text-[10px] tracking-widest">No.</th>
@@ -457,7 +457,6 @@
                 const tr = $(this).closest('tr');
                 const row = table.row(tr);
                 const sectionId = tr.data('id');
-                console.log(sectionId);
 
                 if (row.child.isShown()) {
                     row.child.hide();
@@ -533,6 +532,15 @@
                                 </td>
                                 <td class="px-4 py-4 text-center text-gray-600 font-bold">
                                     ${details.status === 'Active' ? details.revision_number : '—'}
+                                    ${
+                                        details.can.viewRevisionHistory
+                                            ? `<a href="${details.revHistoryUrl}"
+                                                class="ml-1 text-gray-600 hover:text-sky-700"
+                                                title="View Revision History">
+                                                <i class="fa-solid fa-clock-rotate-left"></i>
+                                            </a>`
+                                            : ''
+                                    }
                                 </td>
                                 <td class="px-4 py-4 text-center text-gray-500">
                                     ${formatDate(details.effective_date)}
@@ -634,7 +642,7 @@
                 }
 
                 itemsTable += `
-                </tbody></table>`;
+                </tbody></table></div>`;
                 
                 return `<div class="collapse-content">${itemsTable}</div>`;
             }
