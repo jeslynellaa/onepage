@@ -66,6 +66,11 @@ Route::middleware(['auth', 'nocache'])->group(function () {
     Route::get('/documents/system-procedures/{doc}/preview', [DocumentController::class, 'preview'])->name('document.system_procedures.sp_preview');
     Route::post('/documents/system-procedures/{doc}/comment', [DocumentController::class, 'storeComment'])->name('document.system_procedures.storeComment');
 
+    Route::post('/documents/system-procedures/{doc}/acknowledge-receipt', [DocumentController::class, 'acknowledgeReceipt'])->name('document.system_procedures.acknowledge_receipt');
+    Route::post('/documents/system-procedures/{doc}/acknowledge-orientation', [DocumentController::class, 'acknowledgeOrientation'])->name('document.system_procedures.acknowledge_orientation');
+    Route::post('/documents/{doc}/distribution/sync', [DocumentController::class, 'syncDistributionUsers'])
+    ->name('document.distribution.sync');
+
     Route::get('/users/search', [UserController::class, 'search']);
 
     Route::put('/document/system-procedures/{section}', [SectionsController::class, 'update'])->name('document.system_procedures_section.update');
