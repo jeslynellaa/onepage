@@ -15,6 +15,7 @@ use App\Models\Section;
 use App\Models\StepDocuments;
 use App\Models\SupportDocument;
 use App\Models\User;
+use App\Models\DocumentDistribution;
 use App\Services\DocumentPdfService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -210,8 +211,29 @@ class DocumentController extends Controller
             'interfaces' => 'Interfaces',
             'remarks' => 'Other Remarks',
         ];
+        
+        // 1. Eager load the distribution list with user details
+        $doc->load(['distributions.user']);
+        
+        // 2. Get IDs of people already on the list
+        $existingUserIds = $doc->distributions->pluck('user_id')->toArray();
 
-        return view('document.system_procedures.view', compact('doc', 'reviewComments', 'approvalComments', 'sectionOrder', 'sectionLabels'));
+        // 3. Fetch all potential users who are NOT yet assigned to this distribution list
+        $availableUsers = \App\Models\User::whereNotIn('id', $existingUserIds)
+            ->orderBy('first_name')
+            ->get();
+
+        $userDistribution = $doc->distributions->firstWhere('user_id', auth()->id());
+
+        return view('document.system_procedures.view', compact(
+            'doc', 
+            'reviewComments', 
+            'approvalComments', 
+            'sectionOrder', 
+            'sectionLabels',
+            'userDistribution',
+            'availableUsers' // Sent to the view for the management modal
+        ));
     }
 
     public function sp_edit(Document $doc) {
@@ -816,4 +838,47 @@ class DocumentController extends Controller
 
         return redirect()->back()->with('success','Comments saved.');
     }
+
+    public function acknowledgeReceipt(Document $doc){
+        $dist = DocumentDistribution::where('document_id', $doc->id)
+            ->where('user_id', auth()->id())
+            ->firstOrFail();
+
+        $dist->update(['received_at' => now()]);
+
+        return redirect()->back()->with('success', 'Document receipt confirmed!');
+    }
+
+    public function acknowledgeOrientation(Request $request, Document $doc)
+    {
+        $request->validate([
+            'purge_confirmation' => 'required|accepted'
+        ]);
+
+        $dist = DocumentDistribution::where('document_id', $doc->id)
+            ->where('user_id', auth()->id())
+            ->whereNotNull('received_at')
+            ->firstOrFail();
+
+        $dist->update(['oriented_and_retrieved_at' => now()]);
+
+        return redirect()->back()->with('success', 'Orientation and retrieval checklist complete.');
+    }
+    public function syncDistributionUsers(Request $request, Document $doc)
+{
+    $request->validate([
+        'user_ids' => 'required|array',
+        'user_ids.*' => 'exists:users,id'
+    ]);
+
+    // Loop through the selected IDs and only add them if they don't exist yet
+    foreach ($request->user_ids as $userId) {
+        \App\Models\DocumentDistribution::firstOrCreate([
+            'document_id' => $doc->id,
+            'user_id' => $userId,
+        ]);
+    }
+
+    return redirect()->back()->with('success', 'Distribution list updated successfully!');
+}
 }
