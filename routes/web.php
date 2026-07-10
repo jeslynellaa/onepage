@@ -79,6 +79,14 @@ Route::middleware(['auth', 'nocache'])->group(function () {
     Route::get('/documents/ms-manual/create', [MsManualController::class, 'create'])->name('document.ms_manual.create');
     Route::post('/documents/ms-manual', [MsManualController::class, 'store'])->name('document.ms_manual.store');
     Route::get('/documents/ms-manual/{doc}', [MsManualController::class, 'view'])->name('document.ms_manual.view');
+    Route::get('/documents/ms-manual/{doc}/edit', [MsManualController::class, 'edit'])->name('document.ms_manual.edit');
+    Route::put('/documents/ms-manual/{doc}', [MsManualController::class, 'update'])->name('document.ms_manual.update');
+    Route::put('/documents/ms-manual/{doc}/sendForReview', [MsManualController::class, 'sp_forReview'])->name('document.ms_manual.forReview');
+    Route::put('/documents/ms-manual/{doc}/reviewDecision', [MsManualController::class, 'sp_reviewPassOrFail'])->name('document.ms_manual.reviewPassOrFail');
+    Route::put('/documents/ms-manual/{doc}/approvalDecision', [MsManualController::class, 'sp_approveOrNot'])->name('document.ms_manual.approveOrNot');
+
+    Route::get('/documents/ms-manual/{doc}/revision-history', [MsManualController::class, 'ms_document_history'])->name('document.ms_manual.rev_history');
+    Route::delete('/documents/ms-manual/{doc}/destroy', [MsManualController::class, 'destroy'])->name('document.ms_manual.destroy');
 
     Route::get('/documents/support-documents', [SupportDocumentController::class, 'index'])->name('document.support_document.index');
     Route::get('/documents/support-documents/create', [SupportDocumentController::class, 'create'])->name('document.support_document.create');

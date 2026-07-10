@@ -75,31 +75,153 @@
                     </thead>
                     
                     <tbody class="divide-y divide-gray-50">
-                        @foreach ($ms_manuals as $manual)
+                        @foreach ($docs as $manual)
                             <tr class="group hover:bg-slate-50/50 transition-colors">
-                                <td class="px-4 py-4 font-bold text-gray-900">{{$manual->section_number}}</td>
+                                <td class="px-4 py-4 font-bold text-gray-900">{{$manual['section_number']}}</td>
                                 <td class="px-4 py-4">
                                     <div class="flex flex-col">
                                         <span class="block font-bold text-gray-800 group-hover:text-[#575df9] transition-colors">
-                                            {{$manual->title}}
+                                            {{$manual["title"]}}
                                         </span>
-                                        <span class="text-[9pt] text-gray-400 font-medium">{{$manual->pages>1 ? $manual->pages." pages" : $manual->pages." page"}}</span>
+                                        <span class="text-[9pt] text-gray-400 font-medium">{{$manual['pages']>1 ? $manual["pages"]." pages" : $manual['pages']." page"}}</span>
                                     </div>
                                 </td>
                                 <td class="py-2 text-center items-center space-x-2">
-                                    <span class="px-2 py-0.5 rounded-full font-bold text-[9pt] uppercase {{$manual->status}}">{{$manual->status}}</span>
+                                    <span class="px-2 py-0.5 rounded-full font-bold text-[9pt] uppercase {{$manual['status']}}">{{$manual['status']}}</span>
                                 </td>
-                                <td class="px-4 py-4 text-center text-gray-600 font-bold">{{$manual->revision_number ?? '—'}}</td>
-                                <td class="px-4 py-4 text-center text-gray-500">{{$manual->effective_date ?? 'N/A'}}</td>
-                                <td class="py-2 text-center items-center space-x-2">
-                                    <a href="{{ route('document.ms_manual.view', $manual->id) }}" class="p-2 h-8 w-8 rounded-lg text-gray-400 hover:text-[#575df9] hover:bg-white hover:shadow-sm transition">
+                                <td class="px-4 py-4 text-center text-gray-600 font-bold">{{$manual['revision_number'] ?? '—'}}</td>
+                                <td class="px-4 py-4 text-center text-gray-500">{{$manual['effective_date'] ?? 'N/A'}}</td>
+                                <td class="py-2 items-center space-x-2 w-38">
+                                    <a href="{{ route('document.ms_manual.view', $manual['id']) }}" class="inline-flex items-center justify-center text-gray-600 hover:text-sky-700" title="View Document">
                                         <i class="fa-solid fa-eye"></i>
                                     </a>
+                                    @if ($manual['status'] !== 'For Review' && $manual['status'] !== 'For Approval' && $manual['can']['edit'])
+                                        <a href="{{$manual['editUrl']}}" class="inline-flex items-center justify-center text-gray-600 hover:text-sky-700" title="Edit Document">
+                                            <i class="fa-solid fa-pen"></i>
+                                        </a>
+                                    @endif
+                                    
+                                    @if ($manual['can']['delete'])
+                                        <button type="button" onclick="openDeleteModal({{$manual['id']}}, {{$manual['id']}})" class="inline-flex text-red-600 hover:text-red-900 font-medium text-sm flex items-center justify-center transition-colors" title="Archive Document">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    @endif
+
+                                    @if (($manual['status'] !== 'Draft' || $manual['status'] !== 'For Revision') && $manual['can']['edit'])
+                                        <span class="text-gray-400">|</span>
+                                        <form action="{{$manual['sendForReviewUrl']}}" method="POST" onsubmit="return confirm(\'Are you sure you want to send this document for review? You will not be able to make changes.\');" class="inline">
+                                            <input type="hidden" name="_token" value="${data.csrf}">
+                                            <input type="hidden" name="_method" value="PUT">
+
+                                            <button type="submit" class="text-gray-600 hover:text-sky-700 cursor-pointer" title="Send For Review">
+                                                <i class="fa-solid fa-paper-plane"></i>
+                                            </button>
+                                        </form>
+                                    @endif
+                                    
+                                    @if ($manual['can']['review'])
+                                        <span class="text-gray-400">|</span>
+                                        <div class="inline-flex rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                                            <form action="${details.reviewDecisionUrl}" method="POST" onsubmit="return confirm(\'Are you sure you want to send this document for approval? You will not be able to make changes.\');" class="inline">
+                                                <input type="hidden" name="_token" value="${data.csrf}">
+                                                <input type="hidden" name="_method" value="PUT">
+                                                <input type="hidden" name="decision" value="pass">
+
+                                                <button type="submit" class="px-2 py-1 bg-white hover:bg-green-50 text-green-600 border-r border-gray-200 cursor-pointer" title="Pass and Send For Approval">
+                                                    <i class="fa-solid fa-check"></i>
+                                                </button>
+                                            </form>
+                                            <form action="${details.reviewDecisionUrl}" method="POST" onsubmit="return confirm(\'Are you sure you want to fail document review and send back? You will not be able to make changes.\');" class="inline">
+                                                <input type="hidden" name="_token" value="${data.csrf}">
+                                                <input type="hidden" name="_method" value="PUT">
+                                                <input type="hidden" name="decision" value="fail">
+
+                                                <button type="submit" class="px-2 py-1 bg-white hover:bg-red-50 text-red-600 cursor-pointer" title="Fail Review">
+                                                    <i class="fa-solid fa-xmark"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    @endif
+                                    
+                                    @if ($manual['can']['approve'])
+                                        <span class="text-gray-400">|</span>
+                                        <div class="inline-flex rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                                            <form action="${details.approveDecisionUrl}" method="POST" onsubmit="return confirm(\'Are you sure you want to approve this document? You will not be able to make changes and this will mark the document as Active.\');" class="inline">
+                                                <input type="hidden" name="_token" value="${data.csrf}">
+                                                <input type="hidden" name="_method" value="PUT">
+                                                <input type="hidden" name="decision" value="pass">
+
+                                                <button type="submit" class="px-2 py-1 bg-white hover:bg-green-50 text-green-600 border-r border-gray-200 cursor-pointer" title="Document Approved and Make Active">
+                                                    <i class="fa-solid fa-check-double"></i>
+                                                </button>
+                                            </form>
+                                            <form action="${details.approveDecisionUrl}" method="POST" onsubmit="return confirm(\'Are you sure you want to not approve this document? You will not be able to make changes.\');" class="inline">
+                                                <input type="hidden" name="_token" value="${data.csrf}">
+                                                <input type="hidden" name="_method" value="PUT">
+                                                <input type="hidden" name="decision" value="fail">
+
+                                                <button type="submit" class="px-2 py-1 bg-white hover:bg-red-50 text-red-600 cursor-pointer" title="Document Not Approved">
+                                                    <i class="fa-solid fa-xmark"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    @endif
+                                    
+                                    @if ($manual['can']['review'] || $manual['can']['approve'])
+                                        <a href="" class="text-gray-600 hover:text-blue-700 cursor-pointer" title="Leave Comments and Send Back">
+                                            <i class="fa-solid fa-comment"></i>
+                                        </a>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach
                     </tbody>
                 </table>
+            </div>
+        </div>
+    </div>
+    
+    <div id="deleteModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-gray-500/50 transition-opacity" aria-hidden="true" onclick="closeDeleteModal()"></div>
+
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+            <div class="relative inline-block align-bottom bg-white rounded-2xl px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
+                <div class="sm:flex sm:items-start">
+                    <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                        <svg class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 15c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                    </div>
+                    <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+                            Archive Document: <span id="modalDocCode" class="text-red-600"></span>
+                        </h3>
+            
+                        <p class="mt-2 text-sm text-gray-500">
+                            Please provide a justification for archiving this document. This will be stored in the audit trail.
+                        </p>
+                        <div class="mt-4">
+                            <form id="deleteForm" method="POST" action="">
+                                @csrf
+                                @method('DELETE')
+                
+                                <label class="block text-sm font-medium text-gray-700">Justification</label>
+                                <textarea name="delete_justification" id="justificationInput" required rows="3" class="w-full mt-1 border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500" placeholder="e.g. This procedure will be moved/combined with another procedure"></textarea>
+                                
+                                <div class="mt-6 flex justify-end space-x-3">
+                                    <button type="button" onclick="closeDeleteModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 cursor-pointer">
+                                        Cancel
+                                    </button>
+                                    <button type="submit" id="confirmDeleteBtn" disabled class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer">
+                                        Confirm Archive
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -138,7 +260,7 @@
             const loadedSections = {};
 
             let table = new DataTable('#sections-table', {
-                order: [[1, 'asc']],
+                order: [[0, 'asc']],
                 "autoWidth": false,
                 "responsive": true,
                 language: {
@@ -279,6 +401,35 @@
                     messageBox.classList.remove('hidden');
                 });
             });
+            /**
+             * Opens the Delete Modal and sets the target document context
+             * @param {string|number} docId - The primary key of the document
+             * @param {string} docCode - The readable code (e.g., SP-BPL-01)
+             */
+            function openDeleteModal(docId, docCode) {
+                const modal = document.getElementById('deleteModal');
+                const form = document.getElementById('deleteForm');
+                const input = document.getElementById('justificationInput');
+                const btn = document.getElementById('confirmDeleteBtn');
+                
+                form.action = `/documents/ms-manual/${docId}/destroy`;
+                
+                input.value = '';
+                btn.disabled = true;
+                
+                modal.classList.remove('hidden');
+                
+                setTimeout(() => input.focus(), 100);
+                
+                document.getElementById('justificationInput').addEventListener('input', function(e) {
+                    const btn = document.getElementById('confirmDeleteBtn');
+                    btn.disabled = e.target.value.trim().length < 0;
+                });
+            }
+
+            function closeDeleteModal() {
+                document.getElementById('deleteModal').classList.add('hidden');
+            }
         </script>
     </x-slot:scripts>
 </x-layout>
