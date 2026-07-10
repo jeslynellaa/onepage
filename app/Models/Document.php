@@ -46,6 +46,16 @@ class Document extends Model
         return $this->hasMany(AffectedDocument::class, 'parent_document_id');
     }
 
+    public function distributions()
+    {
+        return $this->hasMany(DocumentDistribution::class, 'document_id');
+    }
+
+    public function currentUserDistribution()
+    {
+        return $this->hasOne(DocumentDistribution::class)->where('user_id', auth()->id());
+    }
+
     protected static function booted()
     {
         static::addGlobalScope(new CompanyScope);
