@@ -14,7 +14,8 @@ class FormsManualController extends Controller
 {
     public function index() {
         $documents = Form::all();
-        $sections = Section::with(['processOwner', 'reviewer', 'approver'])->get();
+        
+        $sections = Section::where('company_id', auth()->user()->company_id)->with(['processOwner', 'reviewer', 'approver'])->get();
         $user_list = User::all();
         $users = User::orderBy('last_name', 'ASC')
             ->get(['id', 'first_name', 'middle_name', 'last_name']);
