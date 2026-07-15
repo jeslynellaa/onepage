@@ -39,8 +39,8 @@ class MsManualPolicy
     {
         return
             $msManual->status != 'Active' ||
-            $user->id === $msManual->section->process_owner_id ||
-            $user->role === 'Document Controller';
+            $user->role === 'Document Controller' ||
+            $user->role === 'Top Management';
     }
     
     public function sendForReview(User $user, MsManual $msManual)
