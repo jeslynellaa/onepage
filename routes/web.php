@@ -12,6 +12,8 @@ use App\Http\Controllers\SectionsController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\SupportDocumentController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Auth\ResetPasswordController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
@@ -24,6 +26,18 @@ Route::middleware('guest')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
     Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
     Route::post('/register', [AuthController::class, 'register']);
+
+    Route::get('/forgot-password', [ForgotPasswordController::class, 'create'])
+        ->name('password.request');
+
+    Route::post('/forgot-password', [ForgotPasswordController::class, 'store'])
+        ->name('password.email');
+
+    Route::get('/reset-password/{token}', [ResetPasswordController::class, 'create'])
+        ->name('password.reset');
+
+    Route::post('/reset-password', [ResetPasswordController::class, 'store'])
+        ->name('password.update');
 });
 
 Route::get('/auth-check', function () {

@@ -16,51 +16,62 @@
                 <a href="{{ route('welcome') }}" class="text-[#0047AB] hover:text-blue-500 pl-1 duration-300 w-36">
                     <i class="fa-solid fa-arrow-left mr-3"></i>Back to Home
                 </a>
-                <form method="POST" action="/login" class="bg-white p-6 rounded-3xl shadow-xl">
+                <form method="POST" action="{{ route('password.email') }}" class="bg-white p-6 rounded-3xl shadow-xl">
                     @csrf
+
                     <div class="mb-5">
                         <div class="rounded-lg bg-blue-300 w-12 h-12 justify-center mx-auto shadow-md mb-1">
-                            <img src="{{ asset('onepage-blue.png') }}" alt="OnePage Logo">
+                            <img src="{{ asset('onepage-blue.png') }}">
                         </div>
-                        <h2 class="text-2xl font-semibold text-center">Welcome back</h2>
-                        <div class="text-center font-extralight">Sign in to your OnePage account</div>
-                    </div>
-                    <div class="flex flex-col gap-1 mb-3">
-                        @error('email')
-                            <div class="text-red-600 text-sm mb-2">{{ $message }}</div>
-                        @enderror
-                        <label for="email" class="text-xs pl-1">Email Address</label>
-                        <div class="flex flex-row h-8">
-                            <div class="flex items-center justify-center rounded-tl-lg rounded-bl-lg border-gray-400 border-t border-l border-b w-9">
-                                <i class="fa-regular fa-envelope text-gray-600"></i>
-                            </div>
-                            <input type="email" name="email" class="h-8 w-full border !border-gray-400 !border-l-0 !rounded-none !rounded-tr-lg !rounded-br-lg px-3 py-2 mb-3 outline-none focus:ring-0 focus:border-blue-500" required>
-                        </div>
+
+                        <h2 class="text-2xl font-semibold text-center">
+                            Forgot your password?
+                        </h2>
+
+                        <p class="text-center font-extralight text-sm mt-2">
+                            Enter your email address and we'll send you a password reset link.
+                        </p>
                     </div>
 
-                    <div class="flex flex-col gap-1">
-                        <label for="password" class="text-xs pl-1">Password</label>
-                        <div class="flex flex-row h-8">
-                            <div class="flex items-center justify-center rounded-tl-lg rounded-bl-lg border-gray-400 border-t border-l border-b w-9">
-                                <i class="fa-solid fa-lock text-gray-600"></i>
-                            </div>
-                            <input type="password" id="password" name="password" class="h-8 w-full border !border-gray-400 !border-l-0 !border-r-0 !rounded-none px-3 py-2 mb-3 outline-none focus:ring-0 focus:border-blue-500" required>
-                            <button type="button" id="togglePassword" class="border border-l-0 border-gray-400 rounded-r-lg px-2 flex items-center justify-center cursor-pointer">
-                                <i id="eyeIcon" class="fa-regular fa-eye text-gray-600"></i>
-                            </button>
+                    @if (session('status'))
+                        <div class="mb-4 rounded-lg bg-green-100 text-green-700 p-3 text-sm">
+                            {{ session('status') }}
                         </div>
+                    @endif
+
+                    @error('email')
+                        <div class="text-red-600 text-sm mb-2">
+                            {{ $message }}
+                        </div>
+                    @enderror
+
+                    <label class="text-xs pl-1">
+                        Email Address
+                    </label>
+
+                    <div class="flex h-8 mb-5">
+                        <div class="flex items-center justify-center rounded-l-lg border border-r-0 border-gray-400 w-9">
+                            <i class="fa-regular fa-envelope text-gray-600"></i>
+                        </div>
+
+                        <input
+                            type="email"
+                            name="email"
+                            value="{{ old('email') }}"
+                            required
+                            class="h-8 w-full border border-gray-400 rounded-r-lg px-3 outline-none focus:ring-0 focus:border-blue-500">
                     </div>
 
-                    <div class="flex justify-end mt-2">
-                        <a href="{{ route('password.request') }}" class="text-sm text-[#0047AB] hover:underline">
-                            Forgot Password?
+                    <button
+                        type="submit"
+                        class="w-full bg-[#0047AB] hover:bg-blue-500 text-white py-2 rounded-lg font-semibold duration-300">
+                        Send Password Reset Link
+                    </button>
+
+                    <div class="text-center mt-4">
+                        <a href="{{ route('login') }}" class="text-sm text-[#0047AB] hover:underline">
+                            ← Back to Sign In
                         </a>
-                    </div>
-
-                    <div class="text-sm text-center mt-6">
-                        <button type="submit" class="w-full bg-[#0047AB] hover:bg-blue-500 text-white py-2 rounded-lg font-semibold cursor-pointer duration-300">
-                            Sign in
-                        </button>
                     </div>
                 </form>
             </div>

@@ -160,11 +160,11 @@
     @endauth
 
     <!-- Main content area -->
-    <main class="flex-1 transition-all duration-300 {{ request()->routeIs('login', 'register') ? 'ml-0' : '' }}" :class="!{{ request()->routeIs('login', 'register') ? 'true' : 'false' }} ? (collapsed ? 'ml-16' : 'ml-56') : ''">
+    <main class="flex-1 transition-all duration-300 {{ request()->routeIs('login', 'register', 'password.request', 'password.reset') ? 'ml-0' : '' }}" :class="!{{ request()->routeIs('login', 'register', 'password.request', 'password.reset') ? 'true' : 'false' }} ? (collapsed ? 'ml-16' : 'ml-56') : ''">
 
 
       <!-- Page Content -->
-      <section class="{{!(request()->routeIs('login', 'register')) ? 'pt-14' : ''}} min-h-full flex-grow relative overflow-hidden">
+      <section class="{{!(request()->routeIs('login', 'register', 'password.request', 'password.reset')) ? 'pt-14' : ''}} min-h-full flex-grow relative overflow-hidden">
 
         <!-- Flash Messages -->
         @if (session()->has('success'))
