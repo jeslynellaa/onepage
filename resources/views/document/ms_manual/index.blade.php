@@ -90,7 +90,7 @@
                                     <span class="px-2 py-0.5 rounded-full font-bold text-[9pt] uppercase {{$manual['status']}}">{{$manual['status']}}</span>
                                 </td>
                                 <td class="px-4 py-4 text-center text-gray-600 font-bold">{{$manual['revision_number'] ?? '—'}}</td>
-                                <td class="px-4 py-4 text-center text-gray-500">{{$manual['effective_date'] ?? 'N/A'}}</td>
+                                <td class="px-4 py-4 text-center text-gray-500">{{$manual['effective_date'] ? $manual['effective_date']->format('M d, H:i') : 'N/A'}}</td>
                                 <td class="py-2 items-center space-x-2 w-38">
                                     <a href="{{ route('document.ms_manual.view', $manual['id']) }}" class="inline-flex items-center justify-center text-gray-600 hover:text-sky-700" title="View Document">
                                         <i class="fa-solid fa-eye"></i>
