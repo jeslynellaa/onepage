@@ -6,6 +6,7 @@ use App\Models\ActivityLog;
 use App\Models\MsManual;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class MsManualController extends Controller
 {
@@ -127,7 +128,10 @@ class MsManualController extends Controller
 
             // Conditionally add the file path if a new file exists
             if ($request->hasFile('file')) {
-                // Delete old file here if desired
+                // Delete old physical file if it exists
+                if ($doc->file_path) {
+                    Storage::disk('public')->delete($doc->file_path);
+                }
                 $updateData['file_path'] = $request->file('file')->store('manuals', 'public');
             }
 
