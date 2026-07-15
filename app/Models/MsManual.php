@@ -13,7 +13,9 @@ class MsManual extends Model
     use SoftDeletes;
 
     protected $guarded = [];
-    
+    protected $casts = [
+        'effective_date' => 'datetime', 
+    ];
     public function company() {
         return $this->belongsTo(Company::class);
     }
