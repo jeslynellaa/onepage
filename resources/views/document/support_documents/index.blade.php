@@ -96,7 +96,7 @@
                     
                     <tbody class="divide-y divide-gray-50">
                         @foreach($sections as $section)
-                        <tr class="group hover:bg-slate-50/50 transition-colors" data-id="{{$section->section_number}}">
+                        <tr class="group hover:bg-slate-50/50 transition-colors" data-id="{{$section->id}}">
                             <td class="details-control dt-control px-6 py-4 text-center"></td>
 
                             <td class="px-4 py-4 font-bold text-gray-900">{{$section->section_number}}</td>
@@ -658,6 +658,38 @@
                     messageBox.classList.remove('hidden');
                 });
             });
+
+            /**
+             * Opens the Delete Modal and sets the target document context
+             * @param {string|number} docId - The primary key of the document
+             * @param {string} docCode - The readable code (e.g., SP-BPL-01)
+             */
+            function openDeleteModal(docId, docCode) {
+                const modal = document.getElementById('deleteModal');
+                const form = document.getElementById('deleteForm');
+                const codeSpan = document.getElementById('modalDocCode');
+                const input = document.getElementById('justificationInput');
+                const btn = document.getElementById('confirmDeleteBtn');
+                
+                form.action = `/documents/${docId}`;
+                
+                codeSpan.innerText = docCode;
+                input.value = '';
+                btn.disabled = true;
+                
+                modal.classList.remove('hidden');
+                
+                setTimeout(() => input.focus(), 100);
+                
+            document.getElementById('justificationInput').addEventListener('input', function(e) {
+                const btn = document.getElementById('confirmDeleteBtn');
+                btn.disabled = e.target.value.trim().length < 0;
+            });
+            }
+
+            function closeDeleteModal() {
+                document.getElementById('deleteModal').classList.add('hidden');
+            }
         </script>
     </x-slot:scripts>
 </x-layout>
