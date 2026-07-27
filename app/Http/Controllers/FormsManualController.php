@@ -80,7 +80,8 @@ class FormsManualController extends Controller
 
     public function create()
     {
-        return view('document.forms_manual.create');
+        $process_names = Section::where('company_id', auth()->user()->company_id)->get();
+        return view('document.forms_manual.create', compact('process_names'));
     }
 
     public function store(Request $request)
