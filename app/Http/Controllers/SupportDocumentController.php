@@ -80,7 +80,8 @@ class SupportDocumentController extends Controller
 
     public function create()
     {
-        return view('document.support_documents.create');
+        $process_names = Section::where('company_id', auth()->user()->company_id)->get();
+        return view('document.support_documents.create', compact('process_names'));
     }
 
     public function store(Request $request)
