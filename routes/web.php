@@ -107,6 +107,15 @@ Route::middleware(['auth', 'nocache', 'client-context'])->group(function () {
     Route::get('/documents/support-documents/create', [SupportDocumentController::class, 'create'])->name('document.support_document.create');
     Route::post('/documents/support-documents', [SupportDocumentController::class, 'store'])->name('document.support_document.store');
     Route::get('/documents/support-documents/{doc}', [SupportDocumentController::class, 'view'])->name('document.support_document.view');
+    Route::get('/documents/support-documents/{doc}/edit', [SupportDocumentController::class, 'edit'])->name('document.support_document.edit');
+    Route::put('/documents/support-documents/{doc}', [SupportDocumentController::class, 'update'])->name('document.support_document.update');
+    Route::put('/documents/support-documents/{doc}/sendForReview', [SupportDocumentController::class, 'sp_forReview'])->name('document.support_document.forReview');
+    Route::put('/documents/support-documents/{doc}/reviewDecision', [SupportDocumentController::class, 'sp_reviewPassOrFail'])->name('document.support_document.reviewPassOrFail');
+    Route::put('/documents/support-documents/{doc}/approvalDecision', [SupportDocumentController::class, 'sp_approveOrNot'])->name('document.support_document.approveOrNot');
+
+
+    Route::get('/documents/support-documents/{doc}/revision-history', [SupportDocumentController::class, 'ms_document_history'])->name('document.support_document.rev_history');
+    Route::delete('/documents/support-documents/{doc}/destroy', [SupportDocumentController::class, 'destroy'])->name('document.support_document.destroy');
     Route::get('section/sp/documents', [SupportDocumentController::class, 'getSpSectionDocuments']);
 
     Route::get('/documents/forms', [FormsManualController::class, 'index'])->name('document.forms.index');
