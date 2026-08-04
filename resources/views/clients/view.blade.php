@@ -61,8 +61,46 @@
         </div>
 
         <div class="shadow-md rounded-xl bg-white p-5 mt-4">
-            <div class="font-bold mb-2">
-                Process Names
+            <div class="flex justify-between items-center mb-2">
+                <div class="font-bold">
+                    Process Names
+                </div>
+                <div x-data="{ openAddSectionModal: false }">
+                    <button @click="openAddSectionModal = true" class="hover:bg-blue-600 hover:text-white duration-300 bg-blue-300 px-3 py-2 rounded-lg cursor-pointer">
+                        Add Section
+                    </button>
+                    <div x-show="openAddSectionModal" x-cloak class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                        <div @click.away="openAddSectionModal = false" class="bg-white rounded-xl shadow-lg w-full max-w-md p-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <h2 class="font-bold text-lg">Add Process Name</h2>
+                                <button @click="openAddSectionModal = false" class="text-gray-500 hover:text-black">✕</button>
+                            </div>
+
+                            <form method="POST" action="{{ route('admin.client.sections.store', $client->id) }}" class="space-y-4">
+                                @csrf
+
+                                <div>
+                                    <label class="block text-sm font-medium mb-1">Title</label>
+                                    <input type="text" name="title" required class="w-full border rounded-lg p-2">
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium mb-1">Acronym</label>
+                                    <input type="text" name="description" maxlength="20" class="w-full border rounded-lg p-2 uppercase">
+                                </div>
+
+                                <div class="flex justify-end gap-2 pt-3">
+                                    <button type="button" @click="openAddSectionModal = false" class="px-4 py-2 rounded-lg border">
+                                        Cancel
+                                    </button>
+                                    <button type="submit" class="px-4 py-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600">
+                                        Save
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <table class="w-full border-collapse">
@@ -80,7 +118,43 @@
                         <td>{{$process->section_number}}</td>
                         <td>{{$process->title}}</td>
                         <td class="capitalize">{{$process->description}}</td>
-                        <td></td>
+                        <td x-data="{ openEditSectionModal: false }">
+                            <button @click="openEditSectionModal = true" class="text-gray-500 hover:text-blue-600 cursor-pointer" title="Edit">
+                                <i class="fa-solid fa-pen"></i>
+                            </button>
+                            <div x-show="openEditSectionModal" x-cloak class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                                <div @click.away="openEditSectionModal = false" class="bg-white rounded-xl shadow-lg w-full max-w-md p-6">
+                                    <div class="flex justify-between items-center mb-4">
+                                        <h2 class="font-bold text-lg">Edit Process Name</h2>
+                                        <button @click="openEditSectionModal = false" class="text-gray-500 hover:text-black">✕</button>
+                                    </div>
+
+                                    <form method="POST" action="{{ route('admin.client.sections.update', [$client->id, $process->id]) }}" class="space-y-4">
+                                        @csrf
+                                        @method('PUT')
+
+                                        <div>
+                                            <label class="block text-sm font-medium mb-1">Title</label>
+                                            <input type="text" name="title" value="{{ $process->title }}" required class="w-full border rounded-lg p-2">
+                                        </div>
+
+                                        <div>
+                                            <label class="block text-sm font-medium mb-1">Acronym</label>
+                                            <input type="text" name="description" value="{{ $process->description }}" maxlength="20" class="w-full border rounded-lg p-2 uppercase">
+                                        </div>
+
+                                        <div class="flex justify-end gap-2 pt-3">
+                                            <button type="button" @click="openEditSectionModal = false" class="px-4 py-2 rounded-lg border">
+                                                Cancel
+                                            </button>
+                                            <button type="submit" class="px-4 py-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600">
+                                                Save
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </td>
                     </tr>
                     @empty
                     <tr>

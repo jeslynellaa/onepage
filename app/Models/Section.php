@@ -8,7 +8,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Section extends Model
 {
     use HasFactory;
-    
+
+    protected $guarded = [];
+
     public function company() {
         return $this->belongsTo(Company::class);
     }

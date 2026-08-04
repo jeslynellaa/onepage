@@ -30,6 +30,9 @@ class ClientController extends Controller
             'subscription_status' => 'required',
             'logo' => ['nullable', 'image', 'mimes:png', 'max:2048'],
             'hex_code' => '',
+            'sections' => 'nullable|array',
+            'sections.*.title' => 'nullable|string|max:255',
+            'sections.*.description' => 'nullable|string|max:20',
         ]);
 
         if ($request->hasFile('logo'))
@@ -48,6 +51,23 @@ class ClientController extends Controller
             'logo_path' => $path ?? null,
             'hex_code' => $validated['hex_code'],
         ]);
+
+        $sectionNumber = 1;
+        foreach ($validated['sections'] ?? [] as $section) {
+            if (trim($section['title'] ?? '') === '') {
+                continue;
+            }
+
+            Section::create([
+                'company_id' => $company->id,
+                'manual' => 'System Procedures',
+                'section_number' => str_pad($sectionNumber, 2, '0', STR_PAD_LEFT),
+                'title' => $section['title'],
+                'description' => $section['description'] ?? null,
+            ]);
+
+            $sectionNumber++;
+        }
 
         return redirect()->back()->with('success', 'Company client has been successfully created.');
     }
@@ -106,6 +126,40 @@ class ClientController extends Controller
         }
 
         return redirect()->back()->with('success', 'Company client data has been successfully updated.');
+    }
+
+    public function storeSection(Request $request, Company $client)
+    {
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string|max:20',
+        ]);
+
+        $nextNumber = Section::where('company_id', $client->id)->count() + 1;
+
+        Section::create([
+            'company_id' => $client->id,
+            'manual' => 'System Procedures',
+            'section_number' => str_pad($nextNumber, 2, '0', STR_PAD_LEFT),
+            'title' => $validated['title'],
+            'description' => $validated['description'] ?? null,
+        ]);
+
+        return redirect()->back()->with('success', 'Process name added successfully.');
+    }
+
+    public function updateSection(Request $request, Company $client, Section $section)
+    {
+        abort_unless($section->company_id === $client->id, 404);
+
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string|max:20',
+        ]);
+
+        $section->update($validated);
+
+        return redirect()->back()->with('success', 'Process name updated successfully.');
     }
 
     public function invite(Company $client, Request $request)

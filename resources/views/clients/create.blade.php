@@ -55,6 +55,30 @@
                     </div>
                 </div>
                 
+                <div x-data="{ sections: [{ title: '', description: '' }] }">
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="font-medium">Process/Section Names</label>
+                        <button type="button" @click="sections.push({ title: '', description: '' })"
+                            class="text-sm text-blue-600 hover:underline cursor-pointer">
+                            <i class="fa-solid fa-plus"></i> Add Section
+                        </button>
+                    </div>
+
+                    <template x-for="(section, index) in sections" :key="index">
+                        <div class="flex gap-2 items-center mb-2">
+                            <span class="w-8 text-sm text-gray-500 text-right" x-text="String(index + 1).padStart(2, '0')"></span>
+                            <input type="text" :name="`sections[${index}][title]`" x-model="section.title"
+                                placeholder="Section title" class="flex-1 border rounded px-2 py-1">
+                            <input type="text" :name="`sections[${index}][description]`" x-model="section.description"
+                                placeholder="Acronym" maxlength="10" class="flex-1 border rounded px-2 py-1 uppercase">
+                            <button type="button" @click="sections.splice(index, 1)" x-show="sections.length > 1"
+                                class="text-red-500 hover:text-red-700 cursor-pointer">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    </template>
+                </div>
+
                 <button type="submit" class="rounded-xl bg-blue-400 hover:bg-blue-700 hover:text-white p-3 block mx-auto justify-center duration-300 cursor-pointer">Submit</button>
             </form>
         </div>

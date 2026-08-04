@@ -137,6 +137,8 @@ Route::middleware(['auth', 'nocache', 'client-context'])->group(function () {
     Route::get('/admin/clients/{client}/view', [ClientController::class, 'view'])->name('admin.client.view');
     Route::get('/admin/clients/{client}/edit', [ClientController::class, 'edit'])->name('admin.client.edit');
     Route::put('/admin/clients/{client}', [ClientController::class, 'update'])->name('admin.client.update');
+    Route::post('/admin/clients/{client}/sections', [ClientController::class, 'storeSection'])->name('admin.client.sections.store');
+    Route::put('/admin/clients/{client}/sections/{section}', [ClientController::class, 'updateSection'])->name('admin.client.sections.update');
 
     Route::post('/admin/clients/{client}/invite', [ClientController::class, 'invite'])->name('admin.client.invite');
     Route::post('/invitations/{invitation}/send', [ClientController::class, 'send'])->name('admin.client.send-invite');
