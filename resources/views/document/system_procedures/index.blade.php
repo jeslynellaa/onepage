@@ -164,12 +164,16 @@
                             
                             <td class="px-4 py-4">
                                 <div class="flex items-center gap-2">
-                                    <div class="h-7 w-7 rounded-full bg-indigo-50 text-[#575df9] flex items-center justify-center text-[10px] font-bold border border-indigo-100">
-                                        {{ substr($section->processOwner->first_name ?? 'U', 0, 1) }}
-                                    </div>
-                                    <span class="text-gray-600 font-medium">
-                                        {{ $section->processOwner->last_name ?? '' }}, {{ $section->processOwner->first_name ?? '' }}
-                                    </span>
+                                    @if($section->processOwner)
+                                        <div class="h-7 w-7 rounded-full bg-indigo-50 text-[#575df9] flex items-center justify-center text-[10px] font-bold border border-indigo-100">
+                                            {{ substr($section->processOwner->first_name, 0, 1) }}
+                                        </div>
+                                        <span class="text-gray-600 font-medium">
+                                            {{ $section->processOwner->last_name }}, {{ $section->processOwner->first_name }}
+                                        </span>
+                                    @else
+                                        <span class="text-xs text-gray-400 italic">Not set</span>
+                                    @endif
                                 </div>
                             </td>
 
@@ -177,11 +181,23 @@
                                 <div class="flex flex-col gap-1">
                                     <div class="flex items-center gap-2">
                                         <span class="text-[9px] font-black text-gray-400 uppercase w-12">Reviewer:</span>
-                                        <span class="text-xs text-gray-600">{{ $section->reviewer->last_name}}, {{ $section->reviewer->first_name}}</span>
+                                        <span class="text-xs text-gray-600">
+                                            @if($section->reviewer)
+                                                {{ $section->reviewer->last_name }}, {{ $section->reviewer->first_name }}
+                                            @else
+                                                <span class="italic text-gray-400">Not set</span>
+                                            @endif
+                                        </span>
                                     </div>
                                     <div class="flex items-center gap-2">
                                         <span class="text-[9px] font-black text-gray-400 uppercase w-12">Approver:</span>
-                                        <span class="text-xs text-gray-600">{{ $section->approver->last_name}}, {{ $section->approver->first_name}}</span>
+                                        <span class="text-xs text-gray-600">
+                                            @if($section->approver)
+                                                {{ $section->approver->last_name }}, {{ $section->approver->first_name }}
+                                            @else
+                                                <span class="italic text-gray-400">Not set</span>
+                                            @endif
+                                        </span>
                                     </div>
                                 </div>
                             </td>
@@ -198,11 +214,11 @@
                                     {{ $section->id }},
                                     '{{ addslashes($section->section_number) }}',
                                     '{{ addslashes($section->title) }}',
-                                    '{{ addslashes($section->processOwner->last_name ?? '') }}, {{ addslashes($section->processOwner->first_name ?? '') }}{{ $section->processOwner->middle_name ? ' ' . addslashes($section->processOwner->middle_name) : '' }}',
+                                    '{{ addslashes($section->processOwner->last_name ?? '') }}, {{ addslashes($section->processOwner->first_name ?? '') }}{{ $section->processOwner?->middle_name ? ' ' . addslashes($section->processOwner->middle_name) : '' }}',
                                     '{{ $section->processOwner->id ?? '' }}',
-                                    '{{ addslashes($section->reviewer->last_name ?? '') }}, {{ addslashes($section->reviewer->first_name ?? '') }}{{ $section->reviewer->middle_name ? ' ' . addslashes($section->reviewer->middle_name) : '' }}',
+                                    '{{ addslashes($section->reviewer->last_name ?? '') }}, {{ addslashes($section->reviewer->first_name ?? '') }}{{ $section->reviewer?->middle_name ? ' ' . addslashes($section->reviewer->middle_name) : '' }}',
                                     '{{ $section->reviewer->id ?? '' }}',
-                                    '{{ addslashes($section->approver->last_name ?? '') }}, {{ addslashes($section->approver->first_name ?? '') }}{{ $section->approver->middle_name ? ' ' . addslashes($section->approver->middle_name) : '' }}',
+                                    '{{ addslashes($section->approver->last_name ?? '') }}, {{ addslashes($section->approver->first_name ?? '') }}{{ $section->approver?->middle_name ? ' ' . addslashes($section->approver->middle_name) : '' }}',
                                     '{{ $section->approver->id ?? '' }}'
                                 )">
                                     <i class="fa-solid fa-pen-to-square"></i>
