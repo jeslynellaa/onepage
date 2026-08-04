@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Company;
+use App\Support\CompanyContext;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -24,7 +25,7 @@ class SettingsController extends Controller
             'pdf_font'     => 'required|in:Helvetica,Times-Roman,Courier',
             'logo'         => 'nullable|image|mimes:jpeg,png,jpg,svg|max:2048',
         ]);
-        $company = Company::firstOrFail();
+        $company = Company::findOrFail(CompanyContext::id());
 
         if ($request->hasFile('logo')) {
             // Delete old logo if it exists
