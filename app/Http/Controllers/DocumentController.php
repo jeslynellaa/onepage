@@ -45,8 +45,8 @@ class DocumentController extends Controller
 
     public function system_procedures() {
         $documents = Document::all();
-        $sections = Section::where('company_id', auth()->user()->company_id)->with(['processOwner', 'reviewer', 'approver'])->get();
-        $user_list = User::where('company_id', auth()->user()->company_id)->get();
+        $sections = Section::where('company_id', \App\Support\CompanyContext::id())->with(['processOwner', 'reviewer', 'approver'])->get();
+        $user_list = User::where('company_id', \App\Support\CompanyContext::id())->get();
         $users = User::orderBy('last_name', 'ASC')
             ->get(['id', 'first_name', 'middle_name', 'last_name']);
         $user_list = $users->map(function ($user) {
@@ -68,7 +68,7 @@ class DocumentController extends Controller
     }
 
     public function sp_create() {
-        $process_names = Section::where('company_id', auth()->user()->company_id)->get();
+        $process_names = Section::where('company_id', \App\Support\CompanyContext::id())->get();
         $all_documents = Document::where('status', 'Active')->get();
         $existing_inputs = StepDocuments::where('type', 'input')->distinct()->pluck('title');
         $existing_outputs = StepDocuments::where('type', 'output')->distinct()->pluck('title');
@@ -219,7 +219,8 @@ class DocumentController extends Controller
         $existingUserIds = $doc->distributions->pluck('user_id')->toArray();
 
         // 3. Fetch all potential users who are NOT yet assigned to this distribution list
-        $availableUsers = \App\Models\User::whereNotIn('id', $existingUserIds)
+        $availableUsers = \App\Models\User::where('company_id', \App\Support\CompanyContext::id())
+            ->whereNotIn('id', $existingUserIds)
             ->orderBy('first_name')
             ->get();
 
@@ -241,7 +242,7 @@ class DocumentController extends Controller
         $doc->scope = $converter->convert($doc->scope);
         $doc->objective = $converter->convert($doc->objective);
 
-        $process_names = Section::where('company_id', auth()->user()->company_id)->get();
+        $process_names = Section::where('company_id', \App\Support\CompanyContext::id())->get();
 
         $all_documents = Document::where('status', 'Active')
                             ->where('id', '!=', $doc->id)->get();

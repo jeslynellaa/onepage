@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Mail\InvitationMail;
+use App\Models\ClientUser;
 use App\Models\Company;
 use App\Models\Invitation;
 use App\Models\Section;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -55,8 +57,13 @@ class ClientController extends Controller
         $userAccounts = User::where('company_id', $client->id)->get();
         $invitations = Invitation::where('company_id', $client->id)->get();
         $processes = Section::where('company_id', $client->id)->get();
-        
-        return view('clients.view', compact('client', 'userAccounts', 'invitations', 'processes'));
+        $consultantAssignments = ClientUser::where('company_id', $client->id)
+            ->active()
+            ->with(['user', 'assignedBy'])
+            ->get();
+        $availableConsultants = User::where('company_id', 1)->get();
+
+        return view('clients.view', compact('client', 'userAccounts', 'invitations', 'processes', 'consultantAssignments', 'availableConsultants'));
     }
 
     public function edit(Company $client)
@@ -124,6 +131,56 @@ class ClientController extends Controller
 
         // 4. Redirect back with success message
         return redirect()->back()->with('success', 'Invitation saved successfully!');
+    }
+
+    public function assignConsultant(Company $client, Request $request)
+    {
+        if (! Gate::allows('enter-admin')) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'user_id' => 'required|exists:users,id',
+        ]);
+
+        $consultant = User::where('id', $validated['user_id'])
+            ->where('company_id', 1)
+            ->firstOrFail();
+
+        $existing = ClientUser::where('user_id', $consultant->id)
+            ->where('company_id', $client->id)
+            ->first();
+
+        if ($existing) {
+            $existing->update([
+                'status' => 'active',
+                'revoked_at' => null,
+                'assigned_by_user_id' => auth()->id(),
+            ]);
+        } else {
+            ClientUser::create([
+                'user_id' => $consultant->id,
+                'company_id' => $client->id,
+                'status' => 'active',
+                'assigned_by_user_id' => auth()->id(),
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Consultant assigned to client.');
+    }
+
+    public function revokeConsultant(ClientUser $clientUser)
+    {
+        if (! Gate::allows('enter-admin')) {
+            abort(403);
+        }
+
+        $clientUser->update([
+            'status' => 'revoked',
+            'revoked_at' => now(),
+        ]);
+
+        return redirect()->back()->with('success', 'Consultant access revoked.');
     }
 
     public function send(Invitation $invitation)

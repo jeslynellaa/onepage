@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Company extends Model
 {
@@ -40,6 +41,19 @@ class Company extends Model
     public function logs(): HasMany
     {
         return $this->hasMany(ActivityLog::class);
+    }
+    
+    public function clientUsers(): HasMany
+    {
+        return $this->hasMany(ClientUser::class);
+    }
+
+    public function consultants()
+    {
+        return $this->belongsToMany(User::class, 'client_users')
+            ->wherePivot('status', 'active')
+            ->withPivot(['status', 'revoked_at', 'assigned_by_user_id'])
+            ->withTimestamps();
     }
 
     public function isSubscriptionActive(): bool

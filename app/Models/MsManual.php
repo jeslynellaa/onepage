@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Scopes\CompanyScope;
+use App\Support\CompanyContext;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -29,7 +30,7 @@ class MsManual extends Model
 
         static::creating(function ($model) {
             if (auth()->check()) {
-                $model->company_id = auth()->user()->company_id;
+                $model->company_id = CompanyContext::id();
             }
         });
     }

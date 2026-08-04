@@ -116,6 +116,24 @@
           <div x-show="collapsed && showTooltip" class="fixed left-13 ml-3 px-2 py-1 text-sm bg-gray-800 text-white rounded shadow-lg whitespace-nowrap z-[9999]">Admin</div>
         </a>
         @endcan
+
+        <!-- CONSULTANT -->
+        @can('consultant-access')
+        <a href="{{ route('consultant.clients') }}" x-data="{ showTooltip: false }"
+          @mouseenter="showTooltip = true"
+          @mouseleave="showTooltip = false"
+          class="relative flex h-10 items-center px-4 py-2 rounded-2xl transition-colors duration-300
+            {{ request()->routeIs('consultant.*')
+              ? 'bg-gradient-to-br from-white/15 to-white/60 text-[#001f3f]'
+              : 'text-white hover:text-white hover:border hover:border-white'
+          }}"
+            :class="collapsed ? 'justify-center w-10' : 'w-full'"
+        >
+          <i class="fa-solid fa-handshake"></i>
+          <span x-show="!collapsed" class="ml-3">Clients</span>
+          <div x-show="collapsed && showTooltip" class="fixed left-13 ml-3 px-2 py-1 text-sm bg-gray-800 text-white rounded shadow-lg whitespace-nowrap z-[9999]">Clients</div>
+        </a>
+        @endcan
       </nav>
     </aside>
 
@@ -165,6 +183,18 @@
 
       <!-- Page Content -->
       <section class="{{!(request()->routeIs('login', 'register', 'password.request', 'password.reset')) ? 'pt-14' : ''}} min-h-full flex-grow relative overflow-hidden">
+
+        <!-- Consultant Mode Banner -->
+        @if (\App\Support\CompanyContext::isConsultantMode())
+          <div class="bg-amber-100 border border-amber-300 text-amber-900 px-4 py-3 mb-2 flex items-center justify-center gap-3">
+            <i class="fa-solid fa-user-tie"></i>
+            <span>Working in: <strong>{{ \App\Support\CompanyContext::activeClient()?->name }}</strong></span>
+            <form method="POST" action="{{ route('consultant.exit') }}">
+              @csrf
+              <button type="submit" class="underline font-semibold cursor-pointer">Exit</button>
+            </form>
+          </div>
+        @endif
 
         <!-- Flash Messages -->
         @if (session()->has('success'))

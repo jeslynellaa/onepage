@@ -15,9 +15,9 @@ class FormsManualController extends Controller
     public function index() {
         $documents = Form::all();
         
-        $sections = Section::where('company_id', auth()->user()->company_id)->with(['processOwner', 'reviewer', 'approver'])->get();
-        $user_list = User::all();
-        $users = User::orderBy('last_name', 'ASC')
+        $sections = Section::where('company_id', \App\Support\CompanyContext::id())->with(['processOwner', 'reviewer', 'approver'])->get();
+        $users = User::where('company_id', \App\Support\CompanyContext::id())
+            ->orderBy('last_name', 'ASC')
             ->get(['id', 'first_name', 'middle_name', 'last_name']);
         $user_list = $users->map(function ($user) {
             return [
@@ -80,7 +80,7 @@ class FormsManualController extends Controller
 
     public function create()
     {
-        $process_names = Section::where('company_id', auth()->user()->company_id)->get();
+        $process_names = Section::where('company_id', \App\Support\CompanyContext::id())->get();
         return view('document.forms_manual.create', compact('process_names'));
     }
 

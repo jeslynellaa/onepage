@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookDemoController;
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\ConsultantController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\FormsManualController;
 use App\Http\Controllers\HomeController;
@@ -44,7 +45,7 @@ Route::get('/auth-check', function () {
     return response()->json(['ok' => true]);
 })->middleware('auth');
 
-Route::middleware(['auth', 'nocache'])->group(function () {
+Route::middleware(['auth', 'nocache', 'client-context'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard')->middleware('auth');
@@ -130,6 +131,14 @@ Route::middleware(['auth', 'nocache'])->group(function () {
 
     Route::post('/admin/clients/{client}/invite', [ClientController::class, 'invite'])->name('admin.client.invite');
     Route::post('/invitations/{invitation}/send', [ClientController::class, 'send'])->name('admin.client.send-invite');
+
+    Route::post('/admin/clients/{client}/consultants', [ClientController::class, 'assignConsultant'])->name('admin.client.consultants.assign');
+    Route::put('/admin/clients/consultants/{clientUser}/revoke', [ClientController::class, 'revokeConsultant'])->name('admin.client.consultants.revoke');
+
+    // CONSULTANT ROUTES
+    Route::get('/consultant/clients', [ConsultantController::class, 'index'])->name('consultant.clients');
+    Route::post('/consultant/clients/{client}/enter', [ConsultantController::class, 'enter'])->name('consultant.clients.enter');
+    Route::post('/consultant/exit', [ConsultantController::class, 'exit'])->name('consultant.exit');
 
     Route::get('/activity-logs', [HomeController::class, 'showLogs'])->name('activity.index');
 

@@ -2,12 +2,26 @@
 
 namespace App\Policies;
 
+use App\Models\ClientUser;
 use App\Models\MsManual;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 
 class MsManualPolicy
 {
+    /**
+     * An FCU consultant with a live assignment to the document's company may set up
+     * (create/edit) documents on the client's behalf, but never review/approve —
+     * those stay gated to the client's own role-holders.
+     */
+    private function isAssignedConsultant(User $user, int $companyId): bool
+    {
+        return $user->company_id === 1
+            && ClientUser::where('user_id', $user->id)
+                ->where('company_id', $companyId)
+                ->active()
+                ->exists();
+    }
     /**
      * Determine whether the user can view any models.
      */
@@ -40,7 +54,8 @@ class MsManualPolicy
         return
             $msManual->status != 'Active' ||
             $user->role === 'Document Controller' ||
-            $user->role === 'Top Management';
+            $user->role === 'Top Management' ||
+            $this->isAssignedConsultant($user, $msManual->company_id);
     }
     
     public function sendForReview(User $user, MsManual $msManual)

@@ -21,7 +21,14 @@
                             <td class="p-2">{{ $log->performed_at->format('d M Y - g:i A') }}</td>
                             <td class="p-2">{{strtoupper($log->action)}}</td>
                             <td class="p-2">{{$log->description}}</td>
-                            <td class="p-2">{{$log->user->first_name}} {{$log->user->last_name}}</td>
+                            <td class="p-2">
+                                {{$log->user->first_name}} {{$log->user->last_name}}
+                                @if($log->acting_as_consultant)
+                                    <span class="ml-1 text-xs bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full whitespace-nowrap">
+                                        via consultant &mdash; {{ $log->homeCompany->name ?? 'FCU' }}
+                                    </span>
+                                @endif
+                            </td>
                         </tr>
                     @empty
                         <tr>

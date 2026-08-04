@@ -73,8 +73,16 @@ class User extends Authenticatable
         return $this->hasMany(ProcedureComments::class);
     }
 
+    public function clientAssignments()
+    {
+        return $this->hasMany(ClientUser::class);
+    }
+
     public function clients()
     {
-        return $this->belongsToMany(Company::class);
+        return $this->belongsToMany(Company::class, 'client_users')
+            ->wherePivot('status', 'active')
+            ->withPivot(['status', 'revoked_at', 'assigned_by_user_id'])
+            ->withTimestamps();
     }
 }
