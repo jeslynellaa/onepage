@@ -103,7 +103,7 @@ class HomeController extends Controller
 
     public function showLogs()
     {
-        $logs = ActivityLog::orderBy('performed_at')->get();
+        $logs = ActivityLog::latest('performed_at')->get();
         // dd($logs);
         return view('activity.index', compact('logs'));
     }
