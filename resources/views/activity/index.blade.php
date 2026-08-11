@@ -18,7 +18,7 @@
                 <tbody>
                     @forelse ($logs as $log)
                         <tr>
-                            <td class="p-2">{{ $log->performed_at->format('d M Y - g:i A') }}</td>
+                            <td class="p-2" data-order="{{ $log->performed_at->timestamp }}">{{ $log->performed_at->format('d M Y - g:i A') }}</td>
                             <td class="p-2">{{strtoupper($log->action)}}</td>
                             <td class="p-2">{{$log->description}}</td>
                             <td class="p-2">

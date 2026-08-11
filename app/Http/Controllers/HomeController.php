@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Document;
 use App\Models\ActivityLog;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
