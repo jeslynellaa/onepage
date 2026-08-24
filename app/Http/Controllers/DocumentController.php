@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\ActivityLog;
 use App\Models\AffectedDocument;
+use App\Models\DefinitionOfTerm;
 use App\Models\Dirf;
 use App\Models\Document;
 use App\Models\Form;
@@ -98,13 +99,15 @@ class DocumentController extends Controller
                 'procedure_steps_json' => 'At least one procedure step is required.'
             ])->withInput();
         }
-        
+
+        $definitionOfTerms = json_decode($request->input('definition_of_terms_json'), true);
+
         // Transaction - all or nothing
         DB::beginTransaction();
 
         try {
             unset($incomingFields['procedure_steps_json']);
-            
+
             // Extract the affected documents payload so it doesn't try to save directly to the Document model
             $affectedDocsData = $incomingFields['affected_documents'] ?? [];
             unset($incomingFields['affected_documents']);
@@ -161,6 +164,21 @@ class DocumentController extends Controller
                         'code' => $affectedData['code'],
                         'revision_number' => $affectedData['revision_number'] ?? null,
                         'details' => $affectedData['details'] ?? null,
+                    ]);
+                }
+            }
+
+            // --- Save Definition of Terms
+            if (!empty($definitionOfTerms) && is_array($definitionOfTerms)) {
+                foreach ($definitionOfTerms as $termRow) {
+                    if (empty($termRow['term']) && empty($termRow['definition'])) {
+                        continue;
+                    }
+
+                    DefinitionOfTerm::create([
+                        'document_id' => $newDocument->id,
+                        'term' => $termRow['term'] ?? null,
+                        'definition' => $termRow['definition'] ?? null,
                     ]);
                 }
             }
@@ -247,7 +265,7 @@ class DocumentController extends Controller
         $all_documents = Document::where('status', 'Active')
                             ->where('id', '!=', $doc->id)->get();
 
-        $doc->load(['steps.interfaces', 'affectedDocuments']);
+        $doc->load(['steps.interfaces', 'affectedDocuments', 'definitionOfTerms']);
 
         // Transform expense details to include interfaces title
         $steps = $doc->steps->map(function ($detail) {
@@ -282,6 +300,13 @@ class DocumentController extends Controller
         $existing_inputs = StepDocuments::where('type', 'input')->distinct()->pluck('title');
         $existing_outputs = StepDocuments::where('type', 'output')->distinct()->pluck('title');
 
+        $definitionOfTermsJson = $doc->definitionOfTerms->map(function ($term) {
+            return [
+                'term' => $term->term,
+                'definition' => $term->definition,
+            ];
+        })->toJson();
+
         return view('document.system_procedures.edit', [
             'doc' => $doc,
             'procedureStepsJson' => $steps->toJson(),
@@ -289,7 +314,8 @@ class DocumentController extends Controller
             'all_documents' => $all_documents,
             'affectedDocsJson'   => $affectedDocsJson,
             'existing_inputs' => $existing_inputs,
-            'existing_outputs' => $existing_outputs
+            'existing_outputs' => $existing_outputs,
+            'definitionOfTermsJson' => $definitionOfTermsJson
         ]);
     }
 
@@ -311,13 +337,16 @@ class DocumentController extends Controller
         ]);
         
         $procedureSteps = json_decode($request->input('procedure_steps_json'), true);
-        
+
         // Ensure it's an array with at least one entry
         if (!is_array($procedureSteps) || count($procedureSteps) === 0) {
             return back()->withErrors([
                 'procedure_steps_json' => 'At least one procedure step is required.'
             ])->withInput();
         }
+
+        $definitionOfTerms = json_decode($request->input('definition_of_terms_json'), true);
+
         // Transaction - all or nothing
         DB::beginTransaction();
 
@@ -386,6 +415,23 @@ class DocumentController extends Controller
                         'title' => $targetMasterDoc ? $targetMasterDoc->title : 'System Document',
                         'revision_number'  => $affectedRow['revision_number'],
                         'details'          => $affectedRow['details'] ?? null,
+                    ]);
+                }
+            }
+
+            // --- SECTION C: Sync Definition of Terms ---
+            $doc->definitionOfTerms()->delete();
+
+            if (!empty($definitionOfTerms) && is_array($definitionOfTerms)) {
+                foreach ($definitionOfTerms as $termRow) {
+                    if (empty($termRow['term']) && empty($termRow['definition'])) {
+                        continue;
+                    }
+
+                    DefinitionOfTerm::create([
+                        'document_id' => $doc->id,
+                        'term' => $termRow['term'] ?? null,
+                        'definition' => $termRow['definition'] ?? null,
                     ]);
                 }
             }

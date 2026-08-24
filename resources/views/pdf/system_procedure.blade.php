@@ -323,6 +323,26 @@
                 </tbody>
             </table>
 
+            @if($definitionOfTerms->isNotEmpty())
+                <div style="font-weight: 700; margin: 10px 0 4px;">DEFINITION OF TERMS</div>
+                <table id="definition_of_terms_table" style="page-break-inside: avoid; margin-bottom: 8px;">
+                    <thead>
+                        <tr>
+                            <th style="border: 1px solid black; padding: 3px; width: 30%;">Term</th>
+                            <th style="border: 1px solid black; padding: 3px;">Definition</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($definitionOfTerms as $item)
+                            <tr>
+                                <td style="border: 1px solid black; padding: 5px; vertical-align: top;"><strong>{{ $item->term }}</strong></td>
+                                <td style="border: 1px solid black; padding: 5px; text-align: justify;">{{ $item->definition }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            @endif
+
             @php
                 $note = 1;
             @endphp

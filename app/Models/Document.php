@@ -23,6 +23,10 @@ class Document extends Model
         return $this->hasMany(ProcedureSteps::class, 'document_id');
     }
 
+    public function definitionOfTerms() {
+        return $this->hasMany(DefinitionOfTerm::class, 'document_id');
+    }
+
     public function logs() {
         return $this->hasMany(ActivityLog::class, 'document_id');
     }
@@ -72,6 +76,8 @@ class Document extends Model
             foreach ($document->steps as $step) {
                 $step->delete();
             }
+
+            $document->definitionOfTerms()->delete();
         });
     }
 }

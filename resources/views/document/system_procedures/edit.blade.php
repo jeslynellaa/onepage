@@ -89,14 +89,71 @@
                 </div>
 
                 <input type="text" id="procedure-steps-json" name="procedure_steps_json" hidden />
+                <input type="text" id="definition-of-terms-json" name="definition_of_terms_json" hidden />
                 <div id="hidden-affected-inputs-container"></div>
             </form>
 
-            <!-- PHASE 2: Dynamic Operational Steps Matrix Form -->
+            <!-- PHASE 2: Definition of Terms -->
             <div class="bg-white rounded-2xl border border-gray-200/80 shadow-sm overflow-hidden transition-all duration-200 hover:shadow-md/50">
                 <div class="bg-gradient-to-r from-gray-50 to-white px-6 py-4 border-b border-gray-100 flex items-center justify-between">
                     <div class="flex items-center gap-3">
-                        <span class="flex h-7 w-7 items-center justify-center rounded-full bg-blue-50 text-xs font-bold text-blue-600">2</span>
+                        <span class="flex h-7 w-7 items-center justify-center rounded-full bg-purple-50 text-xs font-bold text-purple-600">2</span>
+                        <h2 class="text-sm font-bold uppercase tracking-wider text-gray-700 flex items-center gap-2">
+                            Definition of Terms
+                            <span class="normal-case text-xs font-semibold bg-gray-200/80 text-gray-600 px-2 py-0.5 rounded-full font-sans tracking-normal">Optional</span>
+                        </h2>
+                    </div>
+                </div>
+
+                <div class="p-6 space-y-5">
+                    <p class="text-xs text-gray-400 italic bg-gray-50 p-3 rounded-lg border border-gray-200/60 leading-relaxed">
+                        Define key terms and their meanings as used within this procedure.
+                    </p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end bg-purple-50/40 p-4 rounded-xl border border-purple-200/50">
+                        <div class="md:col-span-4">
+                            <label for="term_input" class="block text-xs font-bold uppercase text-purple-700 mb-1.5 tracking-wide">Term</label>
+                            <input type="text" id="term_input" placeholder="e.g., Nonconformity" class="w-full rounded-lg border-gray-200 text-sm p-2.5 bg-white shadow-sm focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 transition" />
+                        </div>
+                        <div class="md:col-span-8">
+                            <label for="definition_input" class="block text-xs font-bold uppercase text-purple-700 mb-1.5 tracking-wide">Definition</label>
+                            <div class="flex gap-3">
+                                <input type="text" id="definition_input" placeholder="State the meaning of this term as used in this procedure..." class="flex-1 rounded-lg border-gray-200 text-sm p-2.5 bg-white shadow-sm focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 transition" />
+                                <button type="button" id="add-term-btn" class="py-2.5 px-6 bg-purple-700 hover:bg-purple-800 text-white font-bold rounded-lg text-xs uppercase tracking-wider shadow-sm transition duration-150 whitespace-nowrap">Add Term</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto rounded-xl border border-gray-200/80 shadow-sm">
+                        <table class="min-w-full divide-y divide-gray-200 text-sm">
+                            <thead class="bg-gray-50 text-gray-500 uppercase text-xs font-bold tracking-wider">
+                                <tr>
+                                    <th class="px-3 py-3 text-center w-12 border-r border-gray-200/60">#</th>
+                                    <th class="px-4 py-3 text-left w-1/4">Term</th>
+                                    <th class="px-4 py-3 text-left">Definition</th>
+                                    <th class="px-4 py-3 text-center w-20">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="definition-of-terms-tbody" class="bg-white divide-y divide-gray-100">
+                                <tr id="no-terms-row">
+                                    <td colspan="4" class="text-center py-10 bg-gray-50/30">
+                                        <div class="max-w-sm mx-auto flex flex-col items-center justify-center border-2 border-dashed border-gray-200 rounded-xl p-5">
+                                            <span class="text-xl mb-1">📖</span>
+                                            <p class="text-gray-400 font-medium text-xs italic">No terms defined yet.</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PHASE 3: Dynamic Operational Steps Matrix Form -->
+            <div class="bg-white rounded-2xl border border-gray-200/80 shadow-sm overflow-hidden transition-all duration-200 hover:shadow-md/50">
+                <div class="bg-gradient-to-r from-gray-50 to-white px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <span class="flex h-7 w-7 items-center justify-center rounded-full bg-blue-50 text-xs font-bold text-blue-600">3</span>
                         <h2 class="text-sm font-bold uppercase tracking-wider text-gray-700">Procedural Matrix Builder</h2>
                     </div>
                 </div>
@@ -219,11 +276,11 @@
                 </div>
             </div>
 
-            <!-- PHASE 3: Affected Documents Tagging (Optional Impact Assessment) -->
+            <!-- PHASE 4: Affected Documents Tagging (Optional Impact Assessment) -->
             <div class="bg-white rounded-2xl border border-gray-200/80 shadow-sm overflow-hidden transition-all duration-200 hover:shadow-md/50">
                 <div class="bg-gradient-to-r from-gray-50 to-white px-6 py-4 border-b border-gray-100 flex items-center justify-between">
                     <div class="flex items-center gap-3">
-                        <span class="flex h-7 w-7 items-center justify-center rounded-full bg-slate-100 text-xs font-bold text-slate-600">3</span>
+                        <span class="flex h-7 w-7 items-center justify-center rounded-full bg-slate-100 text-xs font-bold text-slate-600">4</span>
                         <h2 class="text-sm font-bold uppercase tracking-wider text-gray-700 flex items-center gap-2">
                             Affected Documents Tagging
                             <span class="normal-case text-xs font-semibold bg-gray-200/80 text-gray-600 px-2 py-0.5 rounded-full font-sans tracking-normal">Optional</span>
@@ -308,6 +365,7 @@
         let quill;
         let steps = [];
         let affectedDocs = [];
+        let terms = [];
         let editingIndex = null;
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -321,17 +379,19 @@
                     ]
                 }
             });
-            
+
             // Sync initial state data interfaces safely
             updateProcedureTable();
             updateAffectedDocsTable();
+            renderTermsTable();
             updateHiddenJsonFields();
-            
+
             // event listeners
             document.getElementById('procedure-steps-form').addEventListener('submit', function (e) {
                 e.preventDefault();
                 addStep();
             });
+            document.getElementById('add-term-btn').addEventListener('click', addTerm);
         });
 
         // Hydrate Steps Matrix Pipeline
@@ -341,6 +401,15 @@
             try { steps = {!! $procedureStepsJson !!}; } catch (e) { steps = []; }
         @else
             steps = [];
+        @endif
+
+        // Hydrate Definition of Terms From Existing Record or Validation Context
+        @if (old('definition_of_terms_json'))
+            try { terms = JSON.parse(@json(old('definition_of_terms_json'))); } catch (e) { terms = []; }
+        @elseif (!empty($definitionOfTermsJson))
+            try { terms = {!! $definitionOfTermsJson !!}; } catch (e) { terms = []; }
+        @else
+            terms = [];
         @endif
 
         // Hydrate Affected Documents State From Existing Record or Validation Context
@@ -728,10 +797,75 @@
             updateHiddenJsonFields();
         }
 
+        // ================= PHASE 2: DEFINITION OF TERMS LOGIC =================
+        function addTerm() {
+            const termInput = document.getElementById('term_input');
+            const definitionInput = document.getElementById('definition_input');
+
+            const term = termInput.value.trim();
+            const definition = definitionInput.value.trim();
+
+            if (!term || !definition) {
+                alert('Please provide both a term and its definition.');
+                return;
+            }
+
+            terms.push({ term, definition });
+
+            termInput.value = '';
+            definitionInput.value = '';
+
+            renderTermsTable();
+            updateHiddenJsonFields();
+        }
+
+        function removeTerm(index) {
+            terms.splice(index, 1);
+            renderTermsTable();
+            updateHiddenJsonFields();
+        }
+
+        function renderTermsTable() {
+            const tbody = document.getElementById('definition-of-terms-tbody');
+            if (!tbody) return;
+
+            tbody.innerHTML = '';
+
+            if (terms.length === 0) {
+                tbody.innerHTML = `
+                    <tr id="no-terms-row">
+                        <td colspan="4" class="text-center py-10 bg-gray-50/30">
+                            <div class="max-w-sm mx-auto flex flex-col items-center justify-center border-2 border-dashed border-gray-200 rounded-xl p-5">
+                                <span class="text-xl mb-1">📖</span>
+                                <p class="text-gray-400 font-medium text-xs italic">No terms defined yet.</p>
+                            </div>
+                        </td>
+                    </tr>`;
+                return;
+            }
+
+            terms.forEach((item, index) => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50/50 transition duration-150 align-top";
+                tr.innerHTML = `
+                    <td class="px-3 py-3.5 text-center text-gray-400 font-bold border-r border-gray-100">${index + 1}</td>
+                    <td class="px-4 py-3.5 text-gray-900 font-semibold tracking-tight whitespace-normal break-words">${escapeHtml(item.term)}</td>
+                    <td class="px-4 py-3.5 text-gray-600 whitespace-normal break-words leading-relaxed">${escapeHtml(item.definition)}</td>
+                    <td class="px-4 py-3.5 text-center">
+                        <button type="button" class="text-gray-400 hover:text-red-500 p-1 rounded-md hover:bg-gray-100 transition text-sm" title="Remove" onclick="removeTerm(${index})"><i class="fa-solid fa-xmark"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
         // ================= GLOBAL STATE BOUNDARY STORAGE HANDLING =================
         function updateHiddenJsonFields() {
             // Master operational builder json pipeline
             document.getElementById('procedure-steps-json').value = JSON.stringify(steps);
+
+            // Definition of terms json pipeline
+            document.getElementById('definition-of-terms-json').value = JSON.stringify(terms);
 
             // Phase 3 dynamic payload fields generated sequentially for array submit validation inside Request lifecycle
             const container = document.getElementById('hidden-affected-inputs-container');

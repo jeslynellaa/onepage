@@ -9,8 +9,9 @@ class DocumentPdfService
 {
     public function generate($doc)
     {
-        $doc->load(['steps.interfaces', 'section.processOwner', 'section.reviewer', 'section.approver']);
+        $doc->load(['steps.interfaces', 'section.processOwner', 'section.reviewer', 'section.approver', 'definitionOfTerms']);
         $steps = $doc->steps;
+        $definitionOfTerms = $doc->definitionOfTerms;
         
         $submitted = $doc->logs->firstWhere('action', 'submitted for review');
         $passed = $doc->logs->firstWhere('action', 'review passed');
@@ -65,7 +66,7 @@ class DocumentPdfService
             ->values();
 
         // 1️⃣ Load your Blade view into Dompdf
-        $pdf = Pdf::loadView('pdf.system_procedure', compact('doc', 'steps', 'uniqueInputs', 'uniqueOutputs', 'connector', 'submitted', 'passed', 'approved', 'owner_sign', 'reviewer_sign', 'approver_sign', 'logo', 'color', 'text_color', 'font'))->setPaper($size, 'portrait');
+        $pdf = Pdf::loadView('pdf.system_procedure', compact('doc', 'steps', 'definitionOfTerms', 'uniqueInputs', 'uniqueOutputs', 'connector', 'submitted', 'passed', 'approved', 'owner_sign', 'reviewer_sign', 'approver_sign', 'logo', 'color', 'text_color', 'font'))->setPaper($size, 'portrait');
 
         // 3. Render and Page Counting
         $pdf->output();
