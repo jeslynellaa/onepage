@@ -14,7 +14,10 @@
             font-size: 11pt;
             margin: 0;
             padding-top: 150px;   /* same as header height */
-            padding-bottom: 120px; /* same as footer height + signatory table height */
+            padding-bottom: 30px; /* small buffer above the fixed footer only — the
+                signatory block's own space is reserved per-document by
+                forceSignatoryBreak (see DocumentPdfService::calculatePageLayout),
+                not by padding every page for a table that only renders once */
             /* border: 3px solid red; */
         }
         header {
@@ -367,7 +370,7 @@
                     @endphp
 
                     @foreach ($steps as $key => $step)
-                    @if ($key !== 0 && $key % 5 === 0)
+                    @if (in_array($key, $stepBreakpoints))
                         {{-- connector before breaking --}}
                         <tr style="border-bottom: 1px solid black;">
                             <td></td>
@@ -488,7 +491,7 @@
             </table>
         <div>
     </main>
-    <div class="signatory">
+    <div class="signatory" @if($forceSignatoryBreak) style="page-break-before: always;" @endif>
         <table id="signatory_table">
             <tbody>
                 <tr>
