@@ -8,6 +8,10 @@
 
     <title>OnePage</title>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
     {{-- Vite compiled CSS & JS (Tailwind, Alpine, etc.) --}}
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('scripts')
@@ -21,6 +25,7 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/2.3.4/css/dataTables.dataTables.css" />
 
     <style>
+      .jakarta { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; }
       .text-xs {
         font-size: 13px;
       }
@@ -30,18 +35,18 @@
     </style>
   </head>
 
-  <body x-data="{ collapsed: true, mobileOpen: false }" class="flex bg-gray-100">
+  <body x-data="{ collapsed: true, mobileOpen: false }" class="jakarta flex bg-[#F5F7FA] text-[#0B1020]">
     @auth
     <!-- Sidebar -->
-    <aside 
-      :class="collapsed ? 'w-16 rounded-tr-3xl rounded-br-3xl' : 'w-56'" 
-      class="fixed top-0 left-0 h-screen bg-gradient-to-tr from-[#3de3b1] to-[#575df9] text-white transition-all duration-300 shadow-md flex flex-col z-20 overflow-y-auto">
+    <aside
+      :class="collapsed ? 'w-16 rounded-tr-3xl rounded-br-3xl' : 'w-60'"
+      class="fixed top-0 left-0 h-screen bg-[#141A33] text-white transition-all duration-300 shadow-[0_0_40px_rgba(11,16,32,.15)] flex flex-col z-20 overflow-y-auto">
       <!-- Sidebar Header -->
-      <div class="flex mx-auto w-10/12 items-center justify-between px-4 py-3 border-b border-gray-300 text-center h-14">
-        <h2 x-show="!collapsed" class="text-xl font-semibold text-white">OnePage</h2>
-        <button 
-          @click="collapsed = !collapsed" 
-          class="text-white cursor-pointer transition-colors duration-200 hover:text-gray-200"
+      <div class="flex mx-auto w-10/12 items-center justify-between px-4 py-3 border-b border-white/10 text-center h-14">
+        <h2 x-show="!collapsed" class="text-lg font-extrabold text-white tracking-[-0.02em]">OnePage</h2>
+        <button
+          @click="collapsed = !collapsed"
+          class="text-white/70 cursor-pointer transition-colors duration-200 hover:text-white"
           :class="collapsed ? 'justify-center w-full py-1' : ''"
         >
           <i class="fa-solid fa-bars text-lg"></i>
@@ -53,67 +58,67 @@
 
         <!-- DASHBOARD -->
         <a href="{{ route('dashboard') }}" x-data="{ showTooltip: false }"
-          @mouseenter="showTooltip = true" 
-          @mouseleave="showTooltip = false" 
-          class="relative flex h-10 items-center px-4 py-2 rounded-2xl transition-colors duration-300 
-            {{ request()->routeIs('dashboard')
-            ? 'bg-gradient-to-br from-white/15 to-white/60 text-[#001f3f]'
-            : 'text-white hover:text-white hover:border hover:border-white'
+          @mouseenter="showTooltip = true"
+          @mouseleave="showTooltip = false"
+          class="relative flex h-10 items-center px-4 py-2 rounded-xl transition-colors duration-300
+            {{ request()->routeIs('dashboard', 'dashboard')
+            ? 'bg-white/10 text-white'
+            : 'text-white/55 hover:text-white hover:bg-white/5'
           }}"
             :class="collapsed ? 'justify-center w-10' : 'w-full'"
         >
-          <i class="fa-solid fa-house text-lg"></i>
-          <span x-show="!collapsed" class="ml-3">Dashboard</span>
-          <div x-show="collapsed && showTooltip" class="fixed left-13 ml-3 px-2 py-1 text-sm bg-gray-800 text-white rounded shadow-lg whitespace-nowrap z-[9999]">Dashboard</div>
+          <i class="fa-solid fa-house text-lg {{ request()->routeIs('dashboard', 'dashboard') ? 'text-[#3DE0C8]' : '' }}"></i>
+          <span x-show="!collapsed" class="ml-3 text-[14px] font-medium">Dashboard</span>
+          <div x-show="collapsed && showTooltip" class="fixed left-13 ml-3 px-2 py-1 text-sm bg-[#0B1020] text-white rounded-lg shadow-lg whitespace-nowrap z-[9999]">Dashboard</div>
         </a>
 
         <!-- DOCUMENTS -->
         <a href="{{ route('document.index') }}" x-data="{ showTooltip: false }"
-          @mouseenter="showTooltip = true" 
+          @mouseenter="showTooltip = true"
           @mouseleave="showTooltip = false"
-          class="relative flex h-10 items-center px-4 py-2 rounded-2xl transition-colors duration-300 
-            {{ request()->routeIs('document.*') 
-              ? 'bg-gradient-to-br from-white/15 to-white/60 text-[#001f3f]' 
-              : 'text-white hover:text-white hover:border hover:border-white' 
+          class="relative flex h-10 items-center px-4 py-2 rounded-xl transition-colors duration-300
+            {{ request()->routeIs('document.*')
+              ? 'bg-white/10 text-white'
+              : 'text-white/55 hover:text-white hover:bg-white/5'
           }}"
             :class="collapsed ? 'justify-center w-10' : 'w-full'"
         >
-          <i class="fa-solid fa-file-lines text-lg"></i>
-          <span x-show="!collapsed" class="ml-3">Documents</span>
-          <div x-show="collapsed && showTooltip" class="fixed left-13 ml-3 px-2 py-1 text-sm bg-gray-800 text-white rounded shadow-lg whitespace-nowrap z-[9999]">Documents</div>
+          <i class="fa-solid fa-file-lines text-lg {{ request()->routeIs('document.*') ? 'text-[#3DE0C8]' : '' }}"></i>
+          <span x-show="!collapsed" class="ml-3 text-[14px] font-medium">Documents</span>
+          <div x-show="collapsed && showTooltip" class="fixed left-13 ml-3 px-2 py-1 text-sm bg-[#0B1020] text-white rounded-lg shadow-lg whitespace-nowrap z-[9999]">Documents</div>
         </a>
 
         <!-- SETTINGS -->
         <a href="{{ route('settings.index') }}" x-data="{ showTooltip: false }"
-          @mouseenter="showTooltip = true" 
-          @mouseleave="showTooltip = false" 
-          class="relative flex h-10 items-center px-4 py-2 rounded-2xl transition-colors duration-300 
-            {{ request()->routeIs('settings.*') 
-              ? 'bg-gradient-to-br from-white/15 to-white/60 text-[#001f3f]' 
-              : 'text-white hover:text-white hover:border hover:border-white' 
+          @mouseenter="showTooltip = true"
+          @mouseleave="showTooltip = false"
+          class="relative flex h-10 items-center px-4 py-2 rounded-xl transition-colors duration-300
+            {{ request()->routeIs('settings.*')
+              ? 'bg-white/10 text-white'
+              : 'text-white/55 hover:text-white hover:bg-white/5'
           }}"
             :class="collapsed ? 'justify-center w-10' : 'w-full'"
         >
-          <i class="fa-solid fa-gear text-lg"></i>
-          <span x-show="!collapsed" class="ml-3">Settings</span>
-          <div x-show="collapsed && showTooltip" class="fixed left-13 ml-3 px-2 py-1 text-sm bg-gray-800 text-white rounded shadow-lg whitespace-nowrap z-[9999]">Settings</div>
+          <i class="fa-solid fa-gear text-lg {{ request()->routeIs('settings.*') ? 'text-[#3DE0C8]' : '' }}"></i>
+          <span x-show="!collapsed" class="ml-3 text-[14px] font-medium">Settings</span>
+          <div x-show="collapsed && showTooltip" class="fixed left-13 ml-3 px-2 py-1 text-sm bg-[#0B1020] text-white rounded-lg shadow-lg whitespace-nowrap z-[9999]">Settings</div>
         </a>
 
         <!-- ADMIN -->
         @can('enter-admin')
         <a href="{{ route('admin.index') }}" x-data="{ showTooltip: false }"
-          @mouseenter="showTooltip = true" 
-          @mouseleave="showTooltip = false" 
-          class="relative flex h-10 items-center px-4 py-2 rounded-2xl transition-colors duration-300 
-            {{ request()->routeIs('admin.*') 
-              ? 'bg-gradient-to-br from-white/15 to-white/60 text-[#001f3f]' 
-              : 'text-white hover:text-white hover:border hover:border-white' 
+          @mouseenter="showTooltip = true"
+          @mouseleave="showTooltip = false"
+          class="relative flex h-10 items-center px-4 py-2 rounded-xl transition-colors duration-300
+            {{ request()->routeIs('admin.*')
+              ? 'bg-white/10 text-white'
+              : 'text-white/55 hover:text-white hover:bg-white/5'
           }}"
             :class="collapsed ? 'justify-center w-10' : 'w-full'"
         >
-          <i class="fa-solid fa-user-tie"></i>
-          <span x-show="!collapsed" class="ml-3">Admin</span>
-          <div x-show="collapsed && showTooltip" class="fixed left-13 ml-3 px-2 py-1 text-sm bg-gray-800 text-white rounded shadow-lg whitespace-nowrap z-[9999]">Admin</div>
+          <i class="fa-solid fa-user-tie {{ request()->routeIs('admin.*') ? 'text-[#3DE0C8]' : '' }}"></i>
+          <span x-show="!collapsed" class="ml-3 text-[14px] font-medium">Admin</span>
+          <div x-show="collapsed && showTooltip" class="fixed left-13 ml-3 px-2 py-1 text-sm bg-[#0B1020] text-white rounded-lg shadow-lg whitespace-nowrap z-[9999]">Admin</div>
         </a>
         @endcan
 
@@ -122,25 +127,25 @@
         <a href="{{ route('consultant.clients') }}" x-data="{ showTooltip: false }"
           @mouseenter="showTooltip = true"
           @mouseleave="showTooltip = false"
-          class="relative flex h-10 items-center px-4 py-2 rounded-2xl transition-colors duration-300
+          class="relative flex h-10 items-center px-4 py-2 rounded-xl transition-colors duration-300
             {{ request()->routeIs('consultant.*')
-              ? 'bg-gradient-to-br from-white/15 to-white/60 text-[#001f3f]'
-              : 'text-white hover:text-white hover:border hover:border-white'
+              ? 'bg-white/10 text-white'
+              : 'text-white/55 hover:text-white hover:bg-white/5'
           }}"
             :class="collapsed ? 'justify-center w-10' : 'w-full'"
         >
-          <i class="fa-solid fa-handshake"></i>
-          <span x-show="!collapsed" class="ml-3">Clients</span>
-          <div x-show="collapsed && showTooltip" class="fixed left-13 ml-3 px-2 py-1 text-sm bg-gray-800 text-white rounded shadow-lg whitespace-nowrap z-[9999]">Clients</div>
+          <i class="fa-solid fa-handshake {{ request()->routeIs('consultant.*') ? 'text-[#3DE0C8]' : '' }}"></i>
+          <span x-show="!collapsed" class="ml-3 text-[14px] font-medium">Clients</span>
+          <div x-show="collapsed && showTooltip" class="fixed left-13 ml-3 px-2 py-1 text-sm bg-[#0B1020] text-white rounded-lg shadow-lg whitespace-nowrap z-[9999]">Clients</div>
         </a>
         @endcan
       </nav>
     </aside>
 
     <!-- Header -->
-    <header 
-      class="fixed top-0 left-0 bg-gray-100 z-19 h-14 flex items-center justify-end transition-all duration-300 w-full"
-      :class="collapsed ? 'pl-16' : 'pl-56'"
+    <header
+      class="fixed top-0 left-0 bg-white border-b border-[#E7EAF0] z-19 h-14 flex items-center justify-end transition-all duration-300 w-full"
+      :class="collapsed ? 'pl-16' : 'pl-60'"
     >
       <div class="hidden lg:flex flex-col justify-center px-5 h-full w-3/4">
         @php
@@ -154,21 +159,21 @@
           }
         @endphp
 
-        <h4 class="text-gray font-semibold text-lg leading-tight m-0">
+        <h4 class="font-bold text-[15px] leading-tight m-0 text-[#0B1020]">
           @auth
             {{ $greeting }}, {{ auth()->user()->first_name }}!
           @else
             {{ $greeting }}!
           @endauth
         </h4>
-        <div class="text-sm leading-none mt-0"> {{ date('M. d, Y - l') }} <span id="clock"></span></div>
+        <div class="text-[12.5px] leading-none mt-1 text-[#8B93A7]"> {{ date('M. d, Y - l') }} <span id="clock"></span></div>
       </div>
       @auth
-      <div class="flex justify-end items-center px-5 h-full w-1/2 gap-2">
-        <a href="{{route('profile.edit', auth()->user()->id)}}" class="text-lg cursor-pointer transition-colors duration-200 text-gray-600 hover:underline"><i class="fa-solid fa-user" title="Profile"></i></a>
+      <div class="flex justify-end items-center px-5 h-full w-1/2 gap-4">
+        <a href="{{route('profile.edit', auth()->user()->id)}}" class="text-[15px] cursor-pointer transition-colors duration-200 text-[#8B93A7] hover:text-[#1F6FEB]"><i class="fa-solid fa-user" title="Profile"></i></a>
         <form method="POST" action="{{ route('logout') }}">
           @csrf
-          <button type="submit" class="text-lg cursor-pointer transition-colors duration-200 text-gray-600 hover:underline" title="Logout">
+          <button type="submit" class="text-[15px] cursor-pointer transition-colors duration-200 text-[#8B93A7] hover:text-[#1F6FEB]" title="Logout">
             <i class="fas fa-sign-out-alt"></i>
           </button>
         </form>
@@ -178,8 +183,7 @@
     @endauth
 
     <!-- Main content area -->
-    <main class="flex-1 transition-all duration-300 {{ request()->routeIs('login', 'register', 'password.request', 'password.reset') ? 'ml-0' : '' }}" :class="!{{ request()->routeIs('login', 'register', 'password.request', 'password.reset') ? 'true' : 'false' }} ? (collapsed ? 'ml-16' : 'ml-56') : ''">
-
+    <main class="flex-1 transition-all duration-300 {{ request()->routeIs('login', 'register', 'password.request', 'password.reset') ? 'ml-0' : '' }}" :class="!{{ request()->routeIs('login', 'register', 'password.request', 'password.reset') ? 'true' : 'false' }} ? (collapsed ? 'ml-16' : 'ml-60') : ''">
 
       <!-- Page Content -->
       <section class="{{!(request()->routeIs('login', 'register', 'password.request', 'password.reset')) ? 'pt-14' : ''}} min-h-full flex-grow relative overflow-hidden">
@@ -199,7 +203,7 @@
         <!-- Flash Messages -->
         @if (session()->has('success'))
           <div class="max-w-4xl mx-auto px-4">
-            <div class="bg-green-100 border border-green-300 text-green-800 text-center px-4 py-3 rounded-2xl mb-2">
+            <div class="bg-[#E6FAF6] border border-[#10C9B6]/30 text-[#0E9E8E] text-center px-4 py-3 rounded-2xl mb-2">
               {{ session('success') }}
             </div>
           </div>
@@ -207,14 +211,14 @@
 
         @if (session()->has('error'))
           <div class="max-w-4xl mx-auto px-4">
-            <div class="bg-red-100 border border-red-300 text-red-800 text-center px-4 py-3 rounded-2xl mb-2">
+            <div class="bg-red-50 border border-red-200 text-red-700 text-center px-4 py-3 rounded-2xl mb-2">
               {{ session('failure') }}
             </div>
           </div>
         @endif
         @if ($errors->any())
           <div class="max-w-4xl mx-auto px-4">
-            <div class="bg-red-100 border border-red-300 text-red-800 px-4 py-3 rounded-2xl mb-2">
+            <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-2xl mb-2">
               <ul class="list-disc list-inside text-left">
                 @foreach ($errors->all() as $error)
                   <li>{{ $error }}</li>
@@ -256,7 +260,7 @@
 
     updateClock();
     setInterval(updateClock, 60000);
-            
+
             window.addEventListener('pageshow', event => {
               if (event.persisted) {
                   window.location.href = '/login';
@@ -268,10 +272,10 @@
       </section>
 
       <!-- Footer -->
-      <footer class="border-t text-center text-sm text-gray-500 py-3">
+      <footer class="border-t border-[#E7EAF0] text-center text-[12.5px] text-[#8B93A7] py-4">
         <p class="m-0">
           &copy; {{ date('Y') }}
-          <a href="/" class="text-gray-500 hover:text-sky-600 transition-colors">OnePage</a>.
+          <a href="/" class="text-[#8B93A7] hover:text-[#1F6FEB] transition-colors">OnePage</a>.
           All rights reserved.
         </p>
       </footer>

@@ -1,114 +1,121 @@
-<x-layout>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In — OnePage</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    <link rel="icon" type="image/png" href="{{ asset('onepage-blue.png') }}">
+
     <style>
-        .img-frame {
-            width: 100%;
-            height: 100%;      /* square frame */
-            background: #f3f4f6;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
+        .jakarta { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; }
     </style>
-    <div class="flex justify-center flex-col lg:flex-row bg-gray-100 h-250 lg:h-screen">
-        <div class="w-full h-1/2 lg:w-9/16 lg:h-screen flex flex-col justify-center py-10">
-            <div class="justify-center mx-auto w-3/4 min-w-min max-w-md flex gap-3 flex-col">
-                <a href="{{ route('welcome') }}" class="text-[#0047AB] hover:text-blue-500 pl-1 duration-300 w-36">
-                    <i class="fa-solid fa-arrow-left mr-3"></i>Back to Home
+</head>
+<body class="jakarta bg-white text-[#0B1020] antialiased">
+
+    <div class="min-h-screen flex flex-col lg:flex-row">
+
+        {{-- LEFT: FORM --}}
+        <div class="w-full lg:w-1/2 flex flex-col justify-center px-6 sm:px-10 lg:px-16 py-10 lg:py-0">
+            <div class="w-full max-w-md mx-auto">
+                <a href="{{ route('welcome') }}" class="inline-flex items-center gap-2 text-[14px] font-medium text-[#6B7280] hover:text-[#0B1020] duration-200 mb-10">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
+                    Back to Home
                 </a>
-                <form method="POST" action="/login" class="bg-white p-6 rounded-3xl shadow-xl">
-                    @csrf
-                    <div class="mb-5">
-                        <div class="rounded-lg bg-blue-300 w-12 h-12 justify-center mx-auto shadow-md mb-1">
-                            <img src="{{ asset('onepage-blue.png') }}" alt="OnePage Logo">
-                        </div>
-                        <h2 class="text-2xl font-semibold text-center">Welcome back</h2>
-                        <div class="text-center font-extralight">Sign in to your OnePage account</div>
+
+                <a href="{{ route('welcome') }}" class="flex justify-center mb-8">
+                    <img src="{{ asset('onepage-name.png') }}" alt="OnePage" class="h-[26px] w-auto">
+                </a>
+
+                <h1 class="m-0 mb-3 font-extrabold text-[32px] md:text-[38px] leading-[1.1] tracking-[-0.03em] text-[#0B1020]">Welcome back</h1>
+                <p class="m-0 mb-9 text-[15px] leading-[1.65] text-[#5B6478]">Sign in to your OnePage account to pick up right where you left off.</p>
+
+                @if (session()->has('error'))
+                    <div class="rounded-2xl bg-red-50 border border-red-200 text-red-700 text-[13.5px] px-4 py-3 mb-6">
+                        {{ session('error') }}
                     </div>
-                    <div class="flex flex-col gap-1 mb-3">
-                        @error('email')
-                            <div class="text-red-600 text-sm mb-2">{{ $message }}</div>
-                        @enderror
-                        <label for="email" class="text-xs pl-1">Email Address</label>
-                        <div class="flex flex-row h-8">
-                            <div class="flex items-center justify-center rounded-tl-lg rounded-bl-lg border-gray-400 border-t border-l border-b w-9">
-                                <i class="fa-regular fa-envelope text-gray-600"></i>
-                            </div>
-                            <input type="email" name="email" class="h-8 w-full border !border-gray-400 !border-l-0 !rounded-none !rounded-tr-lg !rounded-br-lg px-3 py-2 mb-3 outline-none focus:ring-0 focus:border-blue-500" required>
+                @endif
+                @if ($errors->any())
+                    <div class="rounded-2xl bg-red-50 border border-red-200 text-red-700 text-[13.5px] px-4 py-3 mb-6">
+                        <ul class="list-disc list-inside">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
+                <form method="POST" action="/login" class="flex flex-col gap-5">
+                    @csrf
+                    <div>
+                        <label for="email" class="block text-[13px] font-semibold text-[#0B1020] mb-2">Email Address</label>
+                        <div class="flex items-center gap-3 rounded-2xl border border-[#E7EAF0] bg-[#F5F7FA] px-4 h-[52px] focus-within:border-[#1F6FEB] focus-within:bg-white duration-150">
+                            <svg class="w-[18px] h-[18px] text-[#8B93A7] flex-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M2.25 6.75c0-.83.67-1.5 1.5-1.5h16.5c.83 0 1.5.67 1.5 1.5v10.5c0 .83-.67 1.5-1.5 1.5H3.75a1.5 1.5 0 0 1-1.5-1.5V6.75Z" /><path d="m3 7 9 6 9-6" /></svg>
+                            <input type="email" id="email" name="email" required autofocus placeholder="you@company.com"
+                                class="w-full h-full text-[14.5px] outline-none bg-transparent border-none !rounded-none !p-0 placeholder:text-[#8B93A7]">
                         </div>
                     </div>
 
-                    <div class="flex flex-col gap-1">
-                        <label for="password" class="text-xs pl-1">Password</label>
-                        <div class="flex flex-row h-8">
-                            <div class="flex items-center justify-center rounded-tl-lg rounded-bl-lg border-gray-400 border-t border-l border-b w-9">
-                                <i class="fa-solid fa-lock text-gray-600"></i>
-                            </div>
-                            <input type="password" id="password" name="password" class="h-8 w-full border !border-gray-400 !border-l-0 !border-r-0 !rounded-none px-3 py-2 mb-3 outline-none focus:ring-0 focus:border-blue-500" required>
-                            <button type="button" id="togglePassword" class="border border-l-0 border-gray-400 rounded-r-lg px-2 flex items-center justify-center cursor-pointer">
-                                <i id="eyeIcon" class="fa-regular fa-eye text-gray-600"></i>
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <label for="password" class="block text-[13px] font-semibold text-[#0B1020]">Password</label>
+                            <a href="{{ route('password.request') }}" class="text-[13px] font-semibold text-[#1F6FEB] hover:text-[#0B1020] duration-200">Forgot password?</a>
+                        </div>
+                        <div class="flex items-center gap-3 rounded-2xl border border-[#E7EAF0] bg-[#F5F7FA] px-4 h-[52px] focus-within:border-[#1F6FEB] focus-within:bg-white duration-150">
+                            <svg class="w-[18px] h-[18px] text-[#8B93A7] flex-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" /></svg>
+                            <input type="password" id="password" name="password" required placeholder="••••••••"
+                                class="w-full h-full text-[14.5px] outline-none bg-transparent border-none !rounded-none !p-0 placeholder:text-[#8B93A7]">
+                            <button type="button" id="togglePassword" class="flex-none text-[#8B93A7] hover:text-[#0B1020] duration-150" aria-label="Toggle password visibility">
+                                <svg id="eyeIcon" class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" /><path d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /></svg>
                             </button>
                         </div>
                     </div>
 
-                    <div class="flex justify-end mt-2">
-                        <a href="{{ route('password.request') }}" class="text-sm text-[#0047AB] hover:underline">
-                            Forgot Password?
-                        </a>
-                    </div>
-
-                    <div class="text-sm text-center mt-6">
-                        <button type="submit" class="w-full bg-[#0047AB] hover:bg-blue-500 text-white py-2 rounded-lg font-semibold cursor-pointer duration-300">
-                            Sign in
-                        </button>
-                    </div>
+                    <button type="submit" class="mt-3 inline-flex items-center justify-center bg-[#0B1020] text-white text-[15px] font-semibold px-[30px] py-4 rounded-full hover:bg-[#1F6FEB] duration-200">
+                        Sign In
+                    </button>
                 </form>
+
+                <p class="mt-8 text-[13.5px] text-[#8B93A7]">
+                    New to OnePage? <a href="{{ route('demo.index') }}" class="font-semibold text-[#1F6FEB] hover:text-[#0B1020] duration-200">Book a demo</a> to get started.
+                </p>
             </div>
         </div>
-        <div class="w-full h-1/2 lg:w-7/16 lg:h-screen bg-gradient-to-tl from-[#3de3b1] to-[#575df9] text-white p-12 flex justify-center">
-            <div class="h-full flex flex-col justify-center">
-                <div class="gap-2 flex justify-center items-center rounded-lg w-40 py-1 px-3 mb-3 bg-white/75 text-[#0047AB]">
-                    <i class="fa-regular fa-circle-question"></i>
-                    <span class="text-sm">New to OnePage?</span>
-                </div>
-                <h3 class="text-xl font-semibold mb-3">Transform Your ISO Compliance Today</h3>
-                <p class="text-sm">
-                    OnePage takes the complexity out of ISO compliance - streamline your documents, stay organized, and move toward certification with confidence.
-                </p>
-                <div class="flex flex-col gap-3 mt-3 pl-2 text-sm mb-3">
-                    <div>
-                        <div class="flex items-baseline gap-2">
-                            <i class="fa-solid fa-star"></i>
-                            <span>Eliminate manual document tracking</span>
-                        </div>
+
+        {{-- RIGHT: MARKETING PANEL --}}
+        <div class="hidden lg:flex w-full lg:w-1/2 bg-[#141A33] px-10 xl:px-16 py-16 items-center overflow-hidden relative">
+            <div class="max-w-md mx-auto w-full relative z-10">
+                <span class="inline-flex items-center bg-white/10 text-white text-xs font-semibold px-[15px] py-[7px] rounded-full mb-7">New to OnePage?</span>
+                <h2 class="m-0 mb-4 font-extrabold text-[32px] xl:text-[36px] leading-[1.14] tracking-[-0.03em] text-white">One clear process, <span class="text-[#3DE0C8]">from draft to approval.</span></h2>
+                <p class="m-0 mb-10 max-w-[42ch] text-[15px] leading-[1.65] text-white/68">OnePage turns document handling, approvals and corrective actions into one place your whole team can trust.</p>
+
+                <div class="flex flex-col gap-4">
+                    <div class="bg-white rounded-2xl px-[18px] py-4 shadow-[0_16px_38px_rgba(0,0,0,.3)] w-[200px]">
+                        <div class="text-[12.5px] font-bold mb-2.5 text-[#0B1020]">Pending reviews</div>
+                        <div class="text-[28px] font-extrabold tracking-[-0.03em] text-[#1F6FEB]">0</div>
                     </div>
-                    <div>
-                        <div class="flex items-baseline gap-2">
-                            <i class="fa-solid fa-star"></i>
-                            <span>Automate corrective action workflows</span>
-                        </div>
+                    <div class="bg-white rounded-2xl px-[18px] py-4 shadow-[0_16px_38px_rgba(0,0,0,.3)] w-[214px] ml-10">
+                        <div class="text-[12.5px] font-bold mb-2.5 text-[#0B1020]">Pending approvals</div>
+                        <div class="text-[28px] font-extrabold tracking-[-0.03em] text-[#1F6FEB]">2</div>
                     </div>
-                    <div>
-                        <div class="flex items-baseline gap-2">
-                            <i class="fa-solid fa-star"></i>
-                            <span>Real-time approval process monitoring</span>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="flex items-baseline gap-2">
-                            <i class="fa-solid fa-star"></i>
-                            <span>Centralized hub for your documents</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="self-center h-50 w-90 border bg-gradient-to-br from-white/10 to-white/40 rounded-2xl p-3">
-                    <div class="border rounded-xl h-full img-frame justify-center mx-auto">
-                        <img src="{{ asset('/img/login-page-img.PNG') }}" alt="sample-image">
+                    <div class="bg-gradient-to-br from-[#10C9B6] to-[#1F6FEB] rounded-2xl px-[18px] py-3.5 text-white shadow-[0_16px_38px_rgba(0,0,0,.3)] w-[180px] ml-4">
+                        <div class="text-[11.5px] opacity-85 mb-1">Ave. Document Cycle</div>
+                        <div class="text-[22px] font-extrabold tracking-[-0.03em]">21.4 hrs</div>
                     </div>
                 </div>
             </div>
+
+            <div class="absolute -top-24 -right-24 w-[420px] h-[420px] rounded-full bg-[#1F6FEB]/10 blur-3xl"></div>
+            <div class="absolute -bottom-32 -left-16 w-[380px] h-[380px] rounded-full bg-[#10C9B6]/10 blur-3xl"></div>
         </div>
     </div>
+
     <script>
     document.getElementById('togglePassword').addEventListener('click', function () {
         const input = document.getElementById('password');
@@ -116,13 +123,12 @@
 
         if (input.type === 'password') {
             input.type = 'text';
-            icon.classList.remove('fa-eye');
-            icon.classList.add('fa-eye-slash');
+            icon.innerHTML = '<path d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88" />';
         } else {
             input.type = 'password';
-            icon.classList.remove('fa-eye-slash');
-            icon.classList.add('fa-eye');
+            icon.innerHTML = '<path d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" /><path d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />';
         }
     });
     </script>
-</x-layout>
+</body>
+</html>
