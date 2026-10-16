@@ -1,18 +1,19 @@
 <x-layout>
+@php $actingCompany = \App\Support\CompanyContext::company(); @endphp
     <div class="min-h-screen bg-gray-50/50 pb-5">
         <div class="mx-auto px-6 pt-6">
             <div class="mb-5 flex items-center gap-6 border-b border-gray-300 pb-5">
                 <div class="flex-shrink-0">
-                    @if(auth()->user()->company->logo_path)
+                    @if($actingCompany->logo_path)
                         <div class="h-12 sm:h-16 flex items-center justify-start">
-                            <img src="{{ asset('storage/' . auth()->user()->company->logo_path) }}"
-                                alt="{{ auth()->user()->company->name }} Logo"
+                            <img src="{{ asset('storage/' . $actingCompany->logo_path) }}"
+                                alt="{{ $actingCompany->name }} Logo"
                                 class="h-full w-auto object-contain pointer-events-none drop-shadow-sm">
                         </div>
                     @else
                         <div class="h-16 w-16 bg-[#001f3f] rounded-2xl flex items-center justify-center shadow-sm">
                             <span class="text-white font-bold text-2xl uppercase">
-                                {{ substr(auth()->user()->company->name, 0, 1) }}
+                                {{ substr($actingCompany->name, 0, 1) }}
                             </span>
                         </div>
                     @endif
@@ -21,7 +22,7 @@
                 <div class="hidden sm:block h-10 w-px bg-gray-200"></div>
 
                 <h2 class="text-2xl font-black text-gray-900 tracking-tight leading-tight">
-                    {{ auth()->user()->company->name }}
+                    {{ $actingCompany->name }}
                 </h2>
             </div>
             <div class="flex justify-between items-end mb-3">

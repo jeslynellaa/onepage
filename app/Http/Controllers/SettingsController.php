@@ -11,7 +11,7 @@ class SettingsController extends Controller
 {
     public function index()
     {
-        $company = auth()->user()->company;
+        $company = CompanyContext::company();
         
         return view('settings.index', compact('company'));
     }

@@ -41,6 +41,19 @@ class CompanyContext
         return static::isConsultantMode() ? Company::find(session('active_client_id')) : null;
     }
 
+    /**
+     * The company the current request is acting as: the entered client in
+     * consultant mode, otherwise the user's own company.
+     */
+    public static function company(): ?Company
+    {
+        if (! auth()->check()) {
+            return null;
+        }
+
+        return static::activeClient() ?? auth()->user()->company;
+    }
+
     public static function hasActiveAssignment(int $userId, int $companyId): bool
     {
         return ClientUser::where('user_id', $userId)

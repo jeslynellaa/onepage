@@ -1,4 +1,5 @@
 <x-layout>
+@php $actingCompany = \App\Support\CompanyContext::company(); @endphp
     <div class="px-6 pt-6 pb-10">
 
         <div class="flex justify-between items-center mb-6">
@@ -8,18 +9,18 @@
             </div>
 
             <div class="flex items-center gap-3 min-w-0 bg-white p-4 rounded-2xl shadow-[0_8px_26px_rgba(11,16,32,.06)]">
-                @if(auth()->user()->company->logo_path)
+                @if($actingCompany->logo_path)
                     <div class="h-14 flex items-center flex-none">
-                        <img src="{{ asset('storage/' . auth()->user()->company->logo_path) }}"
-                            alt="{{ auth()->user()->company->name }} Logo"
+                        <img src="{{ asset('storage/' . $actingCompany->logo_path) }}"
+                            alt="{{ $actingCompany->name }} Logo"
                             class="h-full w-auto max-w-[240px] object-contain">
                     </div>
                 @else
                     <div class="h-12 w-12 rounded-xl bg-[#0B1020] flex items-center justify-center flex-none">
-                        <span class="text-white font-bold text-base uppercase">{{ substr(auth()->user()->company->name, 0, 1) }}</span>
+                        <span class="text-white font-bold text-base uppercase">{{ substr($actingCompany->name, 0, 1) }}</span>
                     </div>
                 @endif
-                <span class="text-[15px] font-bold text-[#0B1020] truncate max-w-[220px]">{{ auth()->user()->company->name }}</span>
+                <span class="text-[15px] font-bold text-[#0B1020] truncate max-w-[220px]">{{ $actingCompany->name }}</span>
             </div>
         </div>
 
