@@ -118,25 +118,7 @@ class HomeController extends Controller
             ->take(20)
             ->get();
 
-        $pendingReviews = Document::where('status', 'For Review')
-            ->whereHas('section', function ($query) {
-                $query->where('reviewer_id', auth()->id());
-            })
-            ->get();
-        $pendingApprovals = Document::where('status', 'For Approval')
-            ->whereHas('section', function ($query) {
-                $query->where('approver_id', auth()->id());
-            })
-            ->get();
-        $pendingCode = collect();
-        if (auth()->user()->role == 'Document Controller') {
-            $pendingCode = Document::where('status', 'Pending Code')->get();
-        }
-        $allActions = collect()
-            ->concat($pendingReviews)
-            ->concat($pendingApprovals)
-            ->concat($pendingCode)
-            ->sortByDesc('updated_at');
+        $allActions = $this->pendingActions();
 
         // Average end-to-end cycle time (draft -> assigned code) for documents
         // that have completed the full workflow, so this mirrors the
@@ -266,7 +248,7 @@ class HomeController extends Controller
 
         return view('temp_index', compact(
             'activeCount', 'draftCount', 'reviewCount', 'approvalCount',
-            'logs', 'allActions', 'pendingReviews', 'pendingApprovals', 'avgCycleHours',
+            'logs', 'allActions', 'avgCycleHours',
             'totalDocuments', 'codedThisMonth', 'inFlightTotal', 'circumference',
             'draftArcLength', 'reviewArcLength', 'approvalArcLength',
             'reviewArcOffset', 'approvalArcOffset',
@@ -276,6 +258,45 @@ class HomeController extends Controller
             'reviewLifecycleArcOffset', 'approvalLifecycleArcOffset', 'pendingCodeLifecycleArcOffset',
             'draftLifecyclePct', 'reviewLifecyclePct', 'approvalLifecyclePct', 'pendingCodeLifecyclePct'
         ));
+    }
+
+    /**
+     * Workflow steps waiting on the current user across all four document types. Each type's own
+     * policy decides who may act (section reviewer/approver, Document Controller for codes), so this
+     * list matches the review/approve/code buttons on that type's index page.
+     */
+    private function pendingActions()
+    {
+        $user = auth()->user();
+        $abilityByStatus = [
+            'For Review' => 'review',
+            'For Approval' => 'approve',
+            'Pending Code' => 'setCode',
+        ];
+        $documentTypes = [
+            ['model' => Document::class, 'label' => 'System Procedure', 'route' => 'document.system_procedures.view_pdf', 'hasSection' => true],
+            ['model' => MsManual::class, 'label' => 'MS Manual', 'route' => 'document.ms_manual.view', 'hasSection' => false],
+            ['model' => SupportDocument::class, 'label' => 'Support Document', 'route' => 'document.support_document.view', 'hasSection' => true],
+            ['model' => Form::class, 'label' => 'Form', 'route' => 'document.forms.view', 'hasSection' => true],
+        ];
+
+        return collect($documentTypes)
+            ->flatMap(fn (array $type) => $type['model']::query()
+                ->whereIn('status', array_keys($abilityByStatus))
+                // The section-based policies dereference ->section, so skip docs whose section is gone.
+                ->when($type['hasSection'], fn ($query) => $query->has('section')->with('section'))
+                ->get()
+                ->filter(fn ($doc) => $user->can($abilityByStatus[$doc->status], $doc))
+                ->map(fn ($doc) => [
+                    'title' => $doc->title,
+                    'code' => $doc->code ?? $doc->section_number,
+                    'type' => $type['label'],
+                    'status' => $doc->status,
+                    'url' => route($type['route'], $doc),
+                    'updated_at' => $doc->updated_at,
+                ]))
+            ->sortByDesc('updated_at')
+            ->values();
     }
 
     public function showLogs()

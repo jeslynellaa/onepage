@@ -252,8 +252,9 @@
                                     @foreach ($items as $idx => $item)
                                         <div @if($idx >= $actionGroupCap) x-show="expanded" @endif class="p-4 rounded-xl bg-white border border-[#E7EAF0] shadow-sm hover:border-[#1F6FEB]/50 hover:shadow-md transition group">
                                             <p class="text-sm font-bold text-[#0B1020] leading-tight group-hover:text-[#1F6FEB] transition">{{ $item['title'] }}</p>
-                                            <div class="mt-4 flex justify-end">
-                                                <a href="{{ route('document.system_procedures.view_pdf', $item['id'])}}" class="text-xs font-bold text-[#8B93A7] group-hover:text-[#1F6FEB] flex items-center gap-1">
+                                            <div class="mt-4 flex items-center justify-between gap-2">
+                                                <span class="text-[11px] font-semibold text-[#8B93A7] truncate">{{ $item['type'] }}@if($item['code']) · {{ $item['code'] }}@endif</span>
+                                                <a href="{{ $item['url'] }}" class="shrink-0 text-xs font-bold text-[#8B93A7] group-hover:text-[#1F6FEB] flex items-center gap-1">
                                                     View <i class="fas fa-arrow-right text-xs"></i>
                                                 </a>
                                             </div>
