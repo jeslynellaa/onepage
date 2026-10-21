@@ -32,6 +32,11 @@ class ActivityLog extends Model
                 ->where('document_type', 'support_document');
     }
 
+    public function form() {
+        return $this->belongsTo(Form::class, 'document_id')
+                ->where('document_type', 'form');
+    }
+
     public function user() {
         return $this->belongsTo(User::class, 'user_id');
     }

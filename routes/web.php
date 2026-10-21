@@ -122,6 +122,14 @@ Route::middleware(['auth', 'nocache', 'client-context'])->group(function () {
     Route::get('/documents/forms/create', [FormsManualController::class, 'create'])->name('document.forms.create');
     Route::post('/documents/forms', [FormsManualController::class, 'store'])->name('document.forms.store');
     Route::get('/documents/forms/{doc}', [FormsManualController::class, 'view'])->name('document.forms.view');
+    Route::get('/documents/forms/{doc}/edit', [FormsManualController::class, 'edit'])->name('document.forms.edit');
+    Route::put('/documents/forms/{doc}', [FormsManualController::class, 'update'])->name('document.forms.update');
+    Route::put('/documents/forms/{doc}/sendForReview', [FormsManualController::class, 'forReview'])->name('document.forms.forReview');
+    Route::put('/documents/forms/{doc}/reviewDecision', [FormsManualController::class, 'reviewPassOrFail'])->name('document.forms.reviewPassOrFail');
+    Route::put('/documents/forms/{doc}/approvalDecision', [FormsManualController::class, 'approveOrNot'])->name('document.forms.approveOrNot');
+    Route::put('/documents/forms/{doc}/assign-code', [FormsManualController::class, 'assignCode'])->name('document.forms.assignCode');
+    Route::get('/documents/forms/section/{code}/revision-history', [FormsManualController::class, 'revisionHistory'])->name('document.forms.rev_history');
+    Route::delete('/documents/forms/{doc}/destroy', [FormsManualController::class, 'destroy'])->name('document.forms.destroy');
     Route::get('section/form/documents', [FormsManualController::class, 'getFormsSectionDocuments']);
 
     // Profile Routes
