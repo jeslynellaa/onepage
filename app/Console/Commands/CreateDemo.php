@@ -4,13 +4,14 @@ namespace App\Console\Commands;
 
 use App\Services\DemoProvisioner;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Carbon;
 
 class CreateDemo extends Command
 {
     protected $signature = 'demo:create
         {--company= : Name shown for the demo company, e.g. "Acme Corp (Demo)"}
-        {--hours=72 : How long the demo stays open}';
+        {--starts= : When the demo opens, e.g. "2026-11-02 09:00" (app timezone); defaults to now}
+        {--hours=72 : How long the demo stays open, counted from when it opens}';
 
     protected $description = 'Provision a throwaway demo company with sample data and print its sign-in link.';
 
@@ -24,14 +25,25 @@ class CreateDemo extends Command
             return self::FAILURE;
         }
 
-        $company = $provisioner->provision($this->option('company'), $hours);
+        $startsAt = null;
+        if ($this->option('starts')) {
+            try {
+                $startsAt = Carbon::parse($this->option('starts'));
+            } catch (\Throwable) {
+                $this->error('--starts must be a date and time, e.g. "2026-11-02 09:00".');
 
-        $link = URL::temporarySignedRoute('demo.enter', $company->demo_expires_at, ['company' => $company]);
+                return self::FAILURE;
+            }
+        }
 
-        $this->info("Demo company \"{$company->name}\" is ready (expires {$company->demo_expires_at->toDayDateTimeString()}).");
-        $this->line('Share this link — anyone with it can open the demo until it expires:');
+        $company = $provisioner->provision($this->option('company'), $hours, $startsAt);
+
+        $this->info("Demo company \"{$company->name}\" is ready.");
+        $this->line("Opens:   {$company->demo_starts_at->toDayDateTimeString()}");
+        $this->line("Closes:  {$company->demo_expires_at->toDayDateTimeString()}");
+        $this->line('Share this link — anyone with it can open the demo while it is open:');
         $this->newLine();
-        $this->line($link);
+        $this->line(DemoProvisioner::linkFor($company));
 
         return self::SUCCESS;
     }

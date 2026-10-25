@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookDemoController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ConsultantController;
+use App\Http\Controllers\DemoAdminController;
 use App\Http\Controllers\DemoController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\FormsManualController;
@@ -148,6 +149,11 @@ Route::middleware(['auth', 'nocache', 'client-context', 'demo-guard'])->group(fu
 
     // ADMIN ROUTES
     Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
+
+    Route::get('/admin/demos', [DemoAdminController::class, 'index'])->name('admin.demos.index');
+    Route::post('/admin/demos', [DemoAdminController::class, 'store'])->name('admin.demos.store');
+    Route::put('/admin/demos/{demo}/extend', [DemoAdminController::class, 'extend'])->name('admin.demos.extend');
+    Route::put('/admin/demos/{demo}/end', [DemoAdminController::class, 'end'])->name('admin.demos.end');
 
     Route::get('/admin/clients/onboard', [ClientController::class, 'create'])->name('admin.client.create');
     Route::post('/admin/clients/onboard', [ClientController::class, 'store'])->name('admin.client.store');

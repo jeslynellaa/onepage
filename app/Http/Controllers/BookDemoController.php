@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DemoRequest;
 use Illuminate\Http\Request;
 
 class BookDemoController extends Controller
@@ -34,6 +35,16 @@ class BookDemoController extends Controller
                     }
                 },
             ],
+        ]);
+
+        // Keep the request so a demo can be scheduled from it in Admin → Demos.
+        DemoRequest::create([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'company' => $validated['company'],
+            'team_size' => $validated['teamSize'],
+            'demo_date' => $validated['demo_date'],
+            'demo_time' => $validated['demo_time'],
         ]);
 
         try {

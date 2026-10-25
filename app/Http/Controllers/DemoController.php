@@ -14,14 +14,27 @@ class DemoController extends Controller
      * Entry point for a signed demo link (see demo:create). Logs the visitor in as
      * the demo company's landing persona; reopening the link returns them to the
      * same company with their changes intact.
+     *
+     * {company} is looked up by hand rather than route-model-bound, so a link whose
+     * demo demo:prune has already deleted still gets the friendly "expired" redirect
+     * instead of a 404. The `signed` middleware has verified the link by this point,
+     * and signed links are only ever issued for demo companies.
      */
-    public function enter(Request $request, Company $company)
+    public function enter(Request $request, string $company)
     {
-        abort_unless($company->is_demo, 404);
+        $company = Company::find($company);
 
-        if ($company->demoExpired()) {
+        if ($company && ! $company->is_demo) {
+            abort(404);
+        }
+
+        if (! $company || $company->demoExpired()) {
             return redirect()->route('demo.index')
                 ->withErrors(['demo' => 'This demo has expired. Book a session and we\'ll set you up with a fresh one.']);
+        }
+
+        if ($company->demoNotYetOpen()) {
+            return response()->view('demo.not_open', ['company' => $company]);
         }
 
         $persona = User::where('company_id', $company->id)

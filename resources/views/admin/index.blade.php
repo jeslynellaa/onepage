@@ -31,16 +31,18 @@
                 <i class="fa-solid fa-people-group text-3xl text-gray-400"></i>
             </div>
 
-            <div class="bg-white rounded-2xl shadow p-5 flex items-center justify-between">
+            <a href="{{ route('admin.demos.index') }}" class="bg-white rounded-2xl shadow p-5 flex items-center justify-between hover:shadow-lg duration-200">
                 <div>
                     <div class="text-sm font-semibold text-gray-600">
-                        {{-- Draft Documents --}}
+                        Demos (open or scheduled)
                     </div>
                     <div class="text-2xl font-bold text-gray-900">
+                        {{ $openDemoCount }}
                     </div>
+                    <div class="text-[12px] text-[#1F6FEB] font-semibold mt-1">Manage demos &rarr;</div>
                 </div>
-                <i class="fa-solid fa-circle text-3xl text-gray-400"></i>
-            </div>
+                <i class="fa-solid fa-flask text-3xl text-gray-400"></i>
+            </a>
 
             <div class="bg-white rounded-2xl shadow p-5 flex items-center justify-between">
                 <div>

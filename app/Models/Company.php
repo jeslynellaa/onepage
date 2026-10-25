@@ -15,6 +15,7 @@ class Company extends Model
 
     protected $casts = [
         'is_demo' => 'boolean',
+        'demo_starts_at' => 'datetime',
         'demo_expires_at' => 'datetime',
     ];
 
@@ -83,6 +84,17 @@ class Company extends Model
         return $this->is_demo
             && $this->demo_expires_at
             && now()->gte($this->demo_expires_at);
+    }
+
+    /**
+     * A scheduled demo whose opening time hasn't arrived. Its link shows a
+     * "your demo opens on…" page instead of logging the visitor in.
+     */
+    public function demoNotYetOpen(): bool
+    {
+        return $this->is_demo
+            && $this->demo_starts_at
+            && now()->lt($this->demo_starts_at);
     }
 
     protected static function booted()

@@ -35,6 +35,14 @@ class DemoGuard
             return $next($request);
         }
 
+        if ($company->demoNotYetOpen()) {
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return response()->view('demo.not_open', ['company' => $company]);
+        }
+
         if ($company->demoExpired()) {
             Auth::logout();
             $request->session()->invalidate();

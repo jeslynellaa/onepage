@@ -13,6 +13,7 @@ use App\Models\User;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
 /**
@@ -67,6 +68,9 @@ class DemoProvisioner
 
     private Company $company;
 
+    /** "Now" from the prospect's point of view: sample history is dated back from when the demo opens. */
+    private CarbonInterface $opensAt;
+
     /** @var array<string, User> keyed by role */
     private array $people = [];
 
@@ -86,21 +90,40 @@ class DemoProvisioner
         return self::PERSONAS[$role]['blurb'] ?? null;
     }
 
-    public function provision(?string $companyName = null, int $hours = 72): Company
+    /**
+     * The link a prospect is sent. It carries no expiry of its own: the company's
+     * demo_starts_at/demo_expires_at decide when it works, so the link survives
+     * an extension, and it 404s once demo:prune deletes the company.
+     */
+    public static function linkFor(Company $company): string
     {
+        return URL::signedRoute('demo.enter', ['company' => $company]);
+    }
+
+    /**
+     * @param  CarbonInterface|null  $startsAt  when the demo opens; null opens it now
+     * @param  int  $hours  how long it stays open, counted from $startsAt
+     */
+    public function provision(?string $companyName = null, int $hours = 72, ?CarbonInterface $startsAt = null): Company
+    {
+        $this->opensAt = $startsAt && $startsAt->isFuture() ? $startsAt->copy() : now();
+
         // Model events are switched off for the whole build: the tenant models'
         // creating-hooks stamp company_id from CompanyContext, which would point at
         // the *caller's* company if this ever runs inside a logged-in request.
         // Every row below sets company_id explicitly instead.
         return DB::transaction(fn () => Model::withoutEvents(function () use ($companyName, $hours) {
+            $expiresAt = $this->opensAt->copy()->addHours($hours);
+
             $this->company = Company::create([
                 'name' => $companyName ?: 'Northwind Manufacturing (Demo)',
                 'slug' => Company::generateUniqueSlug('demo-'.Str::random(8)),
                 'subscription_plan' => 'demo',
                 'subscription_status' => 'active',
-                'subscription_ends_at' => now()->addHours($hours),
+                'subscription_ends_at' => $expiresAt,
                 'is_demo' => true,
-                'demo_expires_at' => now()->addHours($hours),
+                'demo_starts_at' => $this->opensAt,
+                'demo_expires_at' => $expiresAt,
                 'hex_code' => '#1F6FEB',
             ]);
 
@@ -335,7 +358,7 @@ class DemoProvisioner
 
     private function daysAgo(int $days): CarbonInterface
     {
-        return now()->subDays($days)->setTime(9, 0)->addMinutes(($days * 37) % 420);
+        return $this->opensAt->copy()->subDays($days)->setTime(9, 0)->addMinutes(($days * 37) % 420);
     }
 
     /**

@@ -36,6 +36,10 @@
             </tr>
         </table>
 
+        <p style="text-align: center; margin-top: 24px;">
+            <a href="{{ route('admin.demos.index') }}" style="display: inline-block; background: #1F6FEB; color: #ffffff; text-decoration: none; font-weight: bold; padding: 10px 18px; border-radius: 8px;">Schedule their demo workspace</a>
+        </p>
+
         <p style="font-size: 14px; color: #6b7280; text-align: center; margin-top: 30px;">
             Reply directly to this email to coordinate the calendar invite link.
         </p>

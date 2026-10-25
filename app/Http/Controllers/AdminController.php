@@ -17,8 +17,10 @@ class AdminController extends Controller
         if (! Gate::allows('enter-admin')) {
             abort(403);
         }
-        $clientCount = Company::count();
-        $clients = Company::all();
-        return view('admin.index', compact('clients', 'clientCount'));
+        // Demo workspaces aren't clients; they're listed on the Demos page.
+        $clients = Company::where('is_demo', false)->get();
+        $clientCount = $clients->count();
+        $openDemoCount = Company::where('is_demo', true)->where('demo_expires_at', '>', now())->count();
+        return view('admin.index', compact('clients', 'clientCount', 'openDemoCount'));
     }
 }
