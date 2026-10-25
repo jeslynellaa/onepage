@@ -1,4 +1,5 @@
 <x-layout>
+    <style>[x-cloak] { display: none !important; }</style>
     @php
         $durations = [24 => '1 day', 48 => '2 days', 72 => '3 days', 168 => '1 week'];
         $inputFormat = 'Y-m-d\TH:i';
@@ -114,15 +115,17 @@
                         <th class="py-2">Actions</th>
                     </tr>
                 </thead>
-                <tbody>
-                    @forelse ($demos as $demo)
-                        @php
+                @forelse ($demos as $demo)
+                    @php
                             [$status, $badge] = match (true) {
                                 $demo->demoExpired() => ['Closed', 'bg-gray-100 text-gray-600'],
                                 $demo->demoNotYetOpen() => ['Scheduled', 'bg-[#EEF4FF] text-[#1F6FEB]'],
                                 default => ['Open', 'bg-[#E6FAF6] text-[#0E9E8E]'],
                             };
-                        @endphp
+                        $sendRequest = $requestsByDemo[$demo->id] ?? null;
+                        $reopenSend = (int) old('send_demo_id') === $demo->id;
+                    @endphp
+                    <tbody x-data="{ sending: @js($reopenSend) }">
                         <tr class="align-middle border-t border-[#E7EAF0] {{ session('new_demo_id') === $demo->id ? 'bg-[#FFFBEA]' : '' }}">
                             <td class="py-3 pr-3 font-semibold text-[#0B1020]">{{ $demo->name }}</td>
                             <td class="py-3 pr-3"><span class="px-2 py-0.5 rounded-full text-[12px] font-semibold {{ $badge }}">{{ $status }}</span></td>
@@ -155,6 +158,9 @@
                                         <button type="submit" class="text-[#1F6FEB] font-semibold hover:underline cursor-pointer">{{ $demo->demoExpired() ? 'Reopen' : 'Extend' }}</button>
                                     </form>
                                     @unless ($demo->demoExpired())
+                                        <button type="button" @click="sending = !sending" class="text-[#1F6FEB] font-semibold hover:underline cursor-pointer">
+                                            <i class="fa-regular fa-envelope mr-0.5"></i> Send email
+                                        </button>
                                         <form method="POST" action="{{ route('admin.demos.end', $demo) }}"
                                             onsubmit="return confirm('Close this demo now? The prospect loses access immediately and its data is deleted within the hour.')">
                                             @csrf
@@ -165,10 +171,40 @@
                                 </div>
                             </td>
                         </tr>
-                    @empty
-                        <tr><td colspan="6" class="py-4 text-[#8B93A7]">No demos yet.</td></tr>
-                    @endforelse
-                </tbody>
+                        @unless ($demo->demoExpired())
+                            <tr x-show="sending" x-cloak>
+                                <td colspan="6" class="pb-4">
+                                    <form method="POST" action="{{ route('admin.demos.send', $demo) }}"
+                                        class="flex flex-wrap items-end gap-3 bg-[#F5F7FA] rounded-xl p-4">
+                                        @csrf
+                                        <input type="hidden" name="send_demo_id" value="{{ $demo->id }}">
+                                        <div>
+                                            <label for="send-email-{{ $demo->id }}" class="block text-[11px] font-bold uppercase text-[#8B93A7] tracking-wide mb-1">Send to</label>
+                                            <input id="send-email-{{ $demo->id }}" type="email" name="email" required
+                                                value="{{ $reopenSend ? old('email') : '' }}"
+                                                placeholder="{{ $sendRequest?->email ?? 'name@company.com' }}"
+                                                class="rounded-lg border border-[#D7DBE4] bg-white px-3 py-2 w-72">
+                                        </div>
+                                        <div>
+                                            <label for="send-name-{{ $demo->id }}" class="block text-[11px] font-bold uppercase text-[#8B93A7] tracking-wide mb-1">Greeting name <span class="normal-case font-normal">(optional)</span></label>
+                                            <input id="send-name-{{ $demo->id }}" name="recipient_name"
+                                                value="{{ $reopenSend ? old('recipient_name') : $sendRequest?->name }}"
+                                                placeholder="Hi there"
+                                                class="rounded-lg border border-[#D7DBE4] bg-white px-3 py-2 w-48">
+                                        </div>
+                                        <button type="submit" class="bg-[#1F6FEB] hover:bg-[#1A5FD0] text-white font-semibold px-4 py-2 rounded-lg cursor-pointer duration-200">Send demo email</button>
+                                        <button type="button" @click="sending = false" class="text-[#5B6478] hover:underline cursor-pointer py-2">Cancel</button>
+                                        <p class="basis-full text-[12px] text-[#5B6478] m-0">
+                                            Sends the opening and closing times ({{ $demo->demo_starts_at?->format('M j, g:i A') }} – {{ $demo->demo_expires_at?->format('M j, g:i A') }}), the demo link, and asks them to contact {{ \App\Mail\DemoInvitationMail::CONTACT_EMAIL }}. Replies go to that address.
+                                        </p>
+                                    </form>
+                                </td>
+                            </tr>
+                        @endunless
+                    </tbody>
+                @empty
+                    <tbody><tr><td colspan="6" class="py-4 text-[#8B93A7]">No demos yet.</td></tr></tbody>
+                @endforelse
             </table>
         </div>
     </div>

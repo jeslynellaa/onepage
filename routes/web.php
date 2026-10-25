@@ -154,6 +154,7 @@ Route::middleware(['auth', 'nocache', 'client-context', 'demo-guard'])->group(fu
     Route::post('/admin/demos', [DemoAdminController::class, 'store'])->name('admin.demos.store');
     Route::put('/admin/demos/{demo}/extend', [DemoAdminController::class, 'extend'])->name('admin.demos.extend');
     Route::put('/admin/demos/{demo}/end', [DemoAdminController::class, 'end'])->name('admin.demos.end');
+    Route::post('/admin/demos/{demo}/send', [DemoAdminController::class, 'send'])->name('admin.demos.send');
 
     Route::get('/admin/clients/onboard', [ClientController::class, 'create'])->name('admin.client.create');
     Route::post('/admin/clients/onboard', [ClientController::class, 'store'])->name('admin.client.store');

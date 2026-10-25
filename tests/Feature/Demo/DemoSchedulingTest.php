@@ -193,6 +193,68 @@ class DemoSchedulingTest extends TestCase
         $this->get(str_replace("/demo/{$company->id}/", '/demo/999/', $link))->assertForbidden();
     }
 
+    public function test_admin_sends_the_demo_email_to_the_address_they_type(): void
+    {
+        Mail::fake();
+        $admin = $this->hostAdmin();
+        $demo = $this->scheduled(now()->addDays(3)->setTime(9, 0));
+        DemoRequest::create([
+            'name' => 'Juan', 'email' => 'juan@acme.test', 'company' => 'Acme', 'team_size' => '1-15',
+            'demo_date' => now()->addDays(3)->toDateString(), 'demo_time' => 'morning', 'demo_company_id' => $demo->id,
+        ]);
+
+        // The page suggests the requester's address but doesn't fill it in.
+        $this->actingAs($admin)->get(route('admin.demos.index'))
+            ->assertSee('placeholder="juan@acme.test"', false)
+            ->assertSee('value="Juan"', false);
+
+        $this->actingAs($admin)
+            ->post(route('admin.demos.send', $demo), ['email' => 'it-head@acme.test', 'recipient_name' => 'Maria'])
+            ->assertSessionHasNoErrors()
+            ->assertSessionHas('success');
+
+        Mail::assertSent(\App\Mail\DemoInvitationMail::class, function ($mail) use ($demo) {
+            $html = $mail->render();
+
+            return $mail->hasTo('it-head@acme.test')
+                && ! $mail->hasTo('juan@acme.test')
+                && $mail->hasReplyTo(\App\Mail\DemoInvitationMail::CONTACT_EMAIL)
+                && str_contains($html, 'Hi Maria')
+                && str_contains($html, e(DemoProvisioner::linkFor($demo)))
+                && str_contains($html, $demo->demo_starts_at->format('l, F j, Y'))
+                && str_contains($html, $demo->demo_expires_at->format('l, F j, Y'))
+                && str_contains($html, \App\Mail\DemoInvitationMail::CONTACT_EMAIL);
+        });
+    }
+
+    public function test_sending_requires_a_valid_email_and_an_open_demo(): void
+    {
+        Mail::fake();
+        $admin = $this->hostAdmin();
+        $demo = $this->scheduled(now());
+
+        $this->actingAs($admin)->post(route('admin.demos.send', $demo), ['email' => ''])->assertSessionHasErrors('email');
+        $this->actingAs($admin)->post(route('admin.demos.send', $demo), ['email' => 'not-an-email'])->assertSessionHasErrors('email');
+
+        $this->actingAs($admin)->put(route('admin.demos.end', $demo));
+        $this->actingAs($admin)->post(route('admin.demos.send', $demo), ['email' => 'juan@acme.test'])->assertSessionHasErrors('email');
+
+        Mail::assertNothingSent();
+    }
+
+    public function test_only_host_admins_can_send_demo_emails(): void
+    {
+        Mail::fake();
+        $this->hostAdmin();
+        $demo = $this->scheduled(now());
+
+        $this->actingAs(User::factory()->create(['role' => 'Admin']))
+            ->post(route('admin.demos.send', $demo), ['email' => 'juan@acme.test'])
+            ->assertForbidden();
+
+        Mail::assertNothingSent();
+    }
+
     public function test_only_host_admins_can_manage_demos(): void
     {
         $this->hostAdmin();
