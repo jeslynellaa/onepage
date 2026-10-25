@@ -14,6 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'nocache' => \App\Http\Middleware\NoCache::class,
             'client-context' => \App\Http\Middleware\ResolveClientContext::class,
+            'demo-guard' => \App\Http\Middleware\DemoGuard::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

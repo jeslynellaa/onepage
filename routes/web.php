@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookDemoController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ConsultantController;
+use App\Http\Controllers\DemoController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\FormsManualController;
 use App\Http\Controllers\HomeController;
@@ -41,12 +42,20 @@ Route::middleware('guest')->group(function () {
         ->name('password.update');
 });
 
+// Signed, expiring link printed by `php artisan demo:create`. Deliberately outside
+// the guest group so it also works in a browser that's already logged in.
+Route::get('/demo/{company}/enter', [DemoController::class, 'enter'])
+    ->middleware(['signed', 'throttle:20,1'])
+    ->name('demo.enter');
+
 Route::get('/auth-check', function () {
     return response()->json(['ok' => true]);
 })->middleware('auth');
 
-Route::middleware(['auth', 'nocache', 'client-context'])->group(function () {
+Route::middleware(['auth', 'nocache', 'client-context', 'demo-guard'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+    Route::post('/demo/switch', [DemoController::class, 'switchPersona'])->name('demo.switch');
 
     Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard')->middleware('auth');
     // Route::get('/dashboard', function () {return redirect('/');})->middleware('auth');

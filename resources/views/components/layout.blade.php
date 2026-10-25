@@ -188,6 +188,10 @@
       <!-- Page Content -->
       <section class="{{!(request()->routeIs('login', 'register', 'password.request', 'password.reset')) ? 'pt-14' : ''}} min-h-full flex-grow relative overflow-hidden">
 
+        @auth
+          <x-demo-bar />
+        @endauth
+
         <!-- Consultant Mode Banner -->
         @if (\App\Support\CompanyContext::isConsultantMode())
           <div class="bg-amber-100 border border-amber-300 text-amber-900 px-4 py-3 mb-2 flex items-center justify-center gap-3">

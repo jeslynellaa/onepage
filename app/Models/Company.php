@@ -13,6 +13,11 @@ class Company extends Model
 
     protected $guarded = [];
 
+    protected $casts = [
+        'is_demo' => 'boolean',
+        'demo_expires_at' => 'datetime',
+    ];
+
     public function users(): HasMany
     {
         return $this->hasMany(User::class);
@@ -67,6 +72,17 @@ class Company extends Model
         }
 
         return true;
+    }
+
+    /**
+     * A throwaway demo company whose time is up. Expired demos are locked out
+     * immediately (see DemoGuard) and deleted by the hourly demo:prune run.
+     */
+    public function demoExpired(): bool
+    {
+        return $this->is_demo
+            && $this->demo_expires_at
+            && now()->gte($this->demo_expires_at);
     }
 
     protected static function booted()

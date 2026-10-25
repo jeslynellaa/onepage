@@ -14,9 +14,13 @@ class UserController extends Controller
     public function search(Request $request)
     {
         $query = $request->get('query', '');
-        $users = \App\Models\User::where('first_name', 'like', "%{$query}%")
-            ->orWhere('last_name', 'like', "%{$query}%")
-            ->orWhere('middle_name', 'like', "%{$query}%")
+        // User has no CompanyScope, so limit results to the acting company explicitly.
+        $users = \App\Models\User::where('company_id', \App\Support\CompanyContext::id())
+            ->where(function ($q) use ($query) {
+                $q->where('first_name', 'like', "%{$query}%")
+                    ->orWhere('last_name', 'like', "%{$query}%")
+                    ->orWhere('middle_name', 'like', "%{$query}%");
+            })
             ->limit(10)
             ->get(['id','first_name','middle_name','last_name']);
         return response()->json($users);
