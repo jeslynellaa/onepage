@@ -23,30 +23,18 @@ class DocumentPdfService
         $size = $doc->company->paper_size;
 
         // Path Logic
+        // Section signatories can be unassigned ("Not set"), so every lookup is null-safe.
+
+        $logo = $this->storageFilePath($doc->company->logo_path);
+        $owner_sign = $this->storageFilePath($doc->section?->processOwner?->signature_path);
+        $reviewer_sign = $this->storageFilePath($doc->section?->reviewer?->signature_path);
+        $approver_sign = $this->storageFilePath($doc->section?->approver?->signature_path);
 
         if (app()->environment('production')) {
-            $logo = $doc->company->logo_path
-                ? Storage::disk('public')->path($doc->company->logo_path)
-                : null;
-            $owner_sign = $doc->section->processOwner->signature_path
-                ? Storage::disk('public')->path($doc->section->processOwner->signature_path)
-                : null;
-            $reviewer_sign = $doc->section->reviewer->signature_path
-                ? Storage::disk('public')->path($doc->section->reviewer->signature_path)
-                : null;
-            $approver_sign = $doc->section->approver->signature_path
-                ? Storage::disk('public')->path($doc->section->approver->signature_path)
-                : null;
             $connector = public_path('img/flowchart-connector.png');
         } else {
-            $logo = public_path('storage/' . $doc->company->logo_path);
-            $owner_sign = public_path('storage/' . $doc->section->processOwner->signature_path);
-            $reviewer_sign = public_path('storage/' . $doc->section->reviewer->signature_path);
-            $approver_sign = public_path('storage/' . $doc->section->approver->signature_path);
             $connector = realpath(base_path()).'\public\img\flowchart-connector.png';
         }
-        
-        // ... Load other signatures similarly ...
 
 
         // Flatten all interfaces into one collection
@@ -262,6 +250,17 @@ class DocumentPdfService
             'stepBreakpoints' => $breakpoints,
             'forceSignatoryBreak' => $forceSignatoryBreak,
         ];
+    }
+
+    private function storageFilePath(?string $path): ?string
+    {
+        if (! $path) {
+            return null;
+        }
+
+        return app()->environment('production')
+            ? Storage::disk('public')->path($path)
+            : public_path('storage/' . $path);
     }
 
     private function getTextColorForBackground($hex) {

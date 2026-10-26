@@ -501,35 +501,35 @@
                 </tr>
                 <tr>
                     <td style="height: 70px; vertical-align: bottom;">
-                        @if($submitted)
+                        @if($submitted && $owner_sign)
                             <img src="{{ $owner_sign }}"
                                 style="height: 35px;" >
                             <span style="font-style: italic;">(e-signed)</span><br>
                         @endif
-                        <strong>{{ $doc->section->processOwner->fullname() }}</strong> <br>
+                        <strong>{{ $doc->section?->processOwner?->fullname() ?? 'Not set' }}</strong> <br>
                         Process Owner
                     </td>
                     <td style="height: 70px; vertical-align: bottom;">
-                        @if($passed)
+                        @if($passed && $reviewer_sign)
                             <img src="{{ $reviewer_sign }}"
                                 style="height: 35px;" >
                             <span style="font-style: italic;">(e-signed)</span><br>
                         @else
-                        
+
                         @endif
-                        <strong>{{ $doc->section->reviewer->fullname() }}</strong><br>
-                        {{ $doc->section->reviewer->position ?? 'Reviewer' }}
+                        <strong>{{ $doc->section?->reviewer?->fullname() ?? 'Not set' }}</strong><br>
+                        {{ $doc->section?->reviewer?->position ?? 'Reviewer' }}
                     </td>
                     <td style="height: 70px; vertical-align: bottom;">
-                        @if($approved)
+                        @if($approved && $approver_sign)
                             <img src="{{ $approver_sign }}"
                                 style="height: 35px;" >
                             <span style="font-style: italic;">(e-signed)</span><br>
                         @else
-                        
+
                         @endif
-                        <strong>{{ $doc->section->approver->fullname() }}</strong><br>
-                        {{ $doc->section->approver->position ?? 'Approver' }}
+                        <strong>{{ $doc->section?->approver?->fullname() ?? 'Not set' }}</strong><br>
+                        {{ $doc->section?->approver?->position ?? 'Approver' }}
                     </td>
                 </tr>
                 <tr>
