@@ -134,6 +134,12 @@
                                         @method('PUT')
 
                                         <div>
+                                            <label class="block text-sm font-medium mb-1">Section No.</label>
+                                            <input type="number" name="section_number" value="{{ (int) $process->section_number }}" min="1" max="{{ $processes->count() }}" required class="w-full border rounded-lg p-2">
+                                            <p class="text-xs text-gray-500 mt-1">Other sections shift to make room.</p>
+                                        </div>
+
+                                        <div>
                                             <label class="block text-sm font-medium mb-1">Title</label>
                                             <input type="text" name="title" value="{{ $process->title }}" required class="w-full border rounded-lg p-2">
                                         </div>

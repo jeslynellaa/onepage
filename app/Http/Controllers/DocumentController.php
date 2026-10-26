@@ -46,7 +46,7 @@ class DocumentController extends Controller
 
     public function system_procedures() {
         $documents = Document::all();
-        $sections = Section::where('company_id', \App\Support\CompanyContext::id())->with(['processOwner', 'reviewer', 'approver'])->get();
+        $sections = Section::where('company_id', \App\Support\CompanyContext::id())->with(['processOwner', 'reviewer', 'approver'])->orderBy('section_number')->get();
         $user_list = User::where('company_id', \App\Support\CompanyContext::id())->get();
         $users = User::orderBy('last_name', 'ASC')
             ->get(['id', 'first_name', 'middle_name', 'last_name']);
@@ -69,7 +69,7 @@ class DocumentController extends Controller
     }
 
     public function sp_create() {
-        $process_names = Section::where('company_id', \App\Support\CompanyContext::id())->get();
+        $process_names = Section::where('company_id', \App\Support\CompanyContext::id())->orderBy('section_number')->get();
         $all_documents = Document::where('status', 'Active')->get();
         $existing_inputs = StepDocuments::where('type', 'input')->distinct()->pluck('title');
         $existing_outputs = StepDocuments::where('type', 'output')->distinct()->pluck('title');
@@ -260,7 +260,7 @@ class DocumentController extends Controller
         $doc->scope = $converter->convert($doc->scope);
         $doc->objective = $converter->convert($doc->objective);
 
-        $process_names = Section::where('company_id', \App\Support\CompanyContext::id())->get();
+        $process_names = Section::where('company_id', \App\Support\CompanyContext::id())->orderBy('section_number')->get();
 
         $all_documents = Document::where('status', 'Active')
                             ->where('id', '!=', $doc->id)->get();

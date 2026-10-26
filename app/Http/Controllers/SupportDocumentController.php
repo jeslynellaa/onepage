@@ -17,7 +17,7 @@ class SupportDocumentController extends Controller
 
     public function index() {
         $documents = SupportDocument::all();
-        $sections = Section::where('company_id', \App\Support\CompanyContext::id())->with(['processOwner', 'reviewer', 'approver'])->get();
+        $sections = Section::where('company_id', \App\Support\CompanyContext::id())->with(['processOwner', 'reviewer', 'approver'])->orderBy('section_number')->get();
         $users = User::where('company_id', \App\Support\CompanyContext::id())
             ->orderBy('last_name', 'ASC')
             ->get(['id', 'first_name', 'middle_name', 'last_name']);
@@ -88,7 +88,7 @@ class SupportDocumentController extends Controller
 
     public function create()
     {
-        $process_names = Section::where('company_id', \App\Support\CompanyContext::id())->get();
+        $process_names = Section::where('company_id', \App\Support\CompanyContext::id())->orderBy('section_number')->get();
         return view('document.support_documents.create', compact('process_names'));
     }
 

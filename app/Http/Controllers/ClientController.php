@@ -10,6 +10,7 @@ use App\Models\Invitation;
 use App\Models\Section;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
@@ -76,7 +77,7 @@ class ClientController extends Controller
     {
         $userAccounts = User::where('company_id', $client->id)->get();
         $invitations = Invitation::where('company_id', $client->id)->get();
-        $processes = Section::where('company_id', $client->id)->get();
+        $processes = Section::where('company_id', $client->id)->orderBy('section_number')->get();
         $consultantAssignments = ClientUser::where('company_id', $client->id)
             ->active()
             ->with(['user', 'assignedBy'])
@@ -152,14 +153,49 @@ class ClientController extends Controller
     {
         abort_unless($section->company_id === $client->id, 404);
 
+        $sectionCount = Section::where('company_id', $client->id)->count();
+
         $validated = $request->validate([
+            'section_number' => "required|integer|min:1|max:{$sectionCount}",
             'title' => 'required|string|max:255',
             'description' => 'nullable|string|max:20',
         ]);
 
-        $section->update($validated);
+        DB::transaction(function () use ($client, $section, $validated) {
+            if ((int) $section->section_number !== (int) $validated['section_number']) {
+                $this->moveSection($client, $section, (int) $validated['section_number']);
+            }
+
+            $section->update([
+                'title' => $validated['title'],
+                'description' => $validated['description'] ?? null,
+            ]);
+        });
 
         return redirect()->back()->with('success', 'Process name updated successfully.');
+    }
+
+    /**
+     * Move a section to a new position and renumber the rest of the company's
+     * sections 01..N around it, so inserting at 05 pushes the old 05 to 06, etc.
+     */
+    private function moveSection(Company $client, Section $section, int $newNumber): void
+    {
+        $ordered = Section::where('company_id', $client->id)
+            ->where('id', '!=', $section->id)
+            ->orderBy('section_number')
+            ->orderBy('id')
+            ->get();
+
+        $ordered->splice($newNumber - 1, 0, [$section]);
+
+        foreach ($ordered->values() as $index => $item) {
+            $number = str_pad($index + 1, 2, '0', STR_PAD_LEFT);
+
+            if ($item->section_number !== $number) {
+                $item->update(['section_number' => $number]);
+            }
+        }
     }
 
     public function invite(Company $client, Request $request)

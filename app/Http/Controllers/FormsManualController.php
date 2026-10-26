@@ -16,7 +16,7 @@ class FormsManualController extends Controller
     public function index() {
         $documents = Form::all();
 
-        $sections = Section::where('company_id', \App\Support\CompanyContext::id())->with(['processOwner', 'reviewer', 'approver'])->get();
+        $sections = Section::where('company_id', \App\Support\CompanyContext::id())->with(['processOwner', 'reviewer', 'approver'])->orderBy('section_number')->get();
         $users = User::where('company_id', \App\Support\CompanyContext::id())
             ->orderBy('last_name', 'ASC')
             ->get(['id', 'first_name', 'middle_name', 'last_name']);
@@ -89,7 +89,7 @@ class FormsManualController extends Controller
 
     public function create()
     {
-        $process_names = Section::where('company_id', \App\Support\CompanyContext::id())->get();
+        $process_names = Section::where('company_id', \App\Support\CompanyContext::id())->orderBy('section_number')->get();
         return view('document.forms_manual.create', compact('process_names'));
     }
 
@@ -157,7 +157,7 @@ class FormsManualController extends Controller
             ]);
         }
 
-        $process_names = Section::where('company_id', \App\Support\CompanyContext::id())->get();
+        $process_names = Section::where('company_id', \App\Support\CompanyContext::id())->orderBy('section_number')->get();
         return view('document.forms_manual.edit', compact('doc', 'process_names'));
     }
 
