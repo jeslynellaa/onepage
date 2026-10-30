@@ -230,6 +230,7 @@
                         @php
                             $groupedActions = $allActions->groupBy('status');
                             $actionGroupMeta = [
+                                'For Revision' => ['label' => 'Returned for Revision', 'icon' => 'fa-rotate-left'],
                                 'For Review'   => ['label' => 'Needs Your Review', 'icon' => 'fa-magnifying-glass'],
                                 'For Approval' => ['label' => 'Needs Your Approval', 'icon' => 'fa-check-double'],
                                 'Pending Code' => ['label' => 'Needs Code Assignment', 'icon' => 'fa-hashtag'],

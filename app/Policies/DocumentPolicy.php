@@ -51,13 +51,20 @@ class DocumentPolicy
      */
     public function update(User $user, Document $document): bool
     {
+        // Locked while it's with the reviewer/approver; Review not Passed / Not Approved are final.
+        if (in_array($document->status, ['For Review', 'For Approval', 'Review not Passed', 'Not Approved'], true)) {
+            return false;
+        }
+
         return
-            $document->status != 'Active' ||
             $user->id === $document->section->process_owner_id ||
             $user->role === 'Document Controller' ||
             $this->isAssignedConsultant($user, $document->company_id);
     }
-    
+
+    /**
+     * Only the section's process owner submits — not the reviewer/approver, even while it's a Draft.
+     */
     public function sendForReview(User $user, Document $document)
     {
         return

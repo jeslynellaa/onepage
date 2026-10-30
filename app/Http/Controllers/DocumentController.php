@@ -18,10 +18,13 @@ use App\Models\SupportDocument;
 use App\Models\User;
 use App\Models\DocumentDistribution;
 use App\Services\DocumentPdfService;
+use App\Support\CompanyContext;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use League\HTMLToMarkdown\HtmlConverter;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -65,11 +68,37 @@ class DocumentController extends Controller
             $section->count = $sectionCount;
             $totalCount += $sectionCount;
         }
-        return view('document.system_procedures.index', compact('documents', 'sections', 'totalCount', 'user_list'));
+        $canCreate = $this->ownedSections()->isNotEmpty();
+
+        return view('document.system_procedures.index', compact('documents', 'sections', 'totalCount', 'user_list', 'canCreate'));
+    }
+
+    /**
+     * Sections the current user may file a System Procedure under: a process owner only gets the
+     * sections they own; the Document Controller and an FCU consultant in a client's space get all.
+     */
+    private function ownedSections()
+    {
+        $user = auth()->user();
+
+        return Section::where('company_id', CompanyContext::id())
+            ->when(
+                ! ($user->role === 'Document Controller' || CompanyContext::isConsultantMode()),
+                fn ($query) => $query->where('process_owner_id', $user->id)
+            )
+            ->orderBy('section_number')
+            ->get();
     }
 
     public function sp_create() {
-        $process_names = Section::where('company_id', \App\Support\CompanyContext::id())->orderBy('section_number')->get();
+        $process_names = $this->ownedSections();
+
+        if ($process_names->isEmpty()) {
+            return redirect()->route('document.system_procedures')->withErrors([
+                'error' => 'Only a section\'s process owner can create a System Procedure for it, and you don\'t own any section.'
+            ]);
+        }
+
         $all_documents = Document::where('status', 'Active')->get();
         $existing_inputs = StepDocuments::where('type', 'input')->distinct()->pluck('title');
         $existing_outputs = StepDocuments::where('type', 'output')->distinct()->pluck('title');
@@ -81,7 +110,7 @@ class DocumentController extends Controller
         $incomingFields = $request->validate([
             'title' => 'required',
             'code' => 'required',
-            'section_id' => 'required',
+            'section_id' => ['required', Rule::in($this->ownedSections()->pluck('id'))],
             'revision_number' => 'nullable',
             'effective_date' => 'nullable|date',
             'objective' => 'required',
@@ -217,10 +246,11 @@ class DocumentController extends Controller
             ->groupBy('section');
 
         $sectionOrder = [
-            'title', 'objectives', 'scope', 'flowchart', 'notes', 'interfaces', 'remarks'
+            'rejection', 'title', 'objectives', 'scope', 'flowchart', 'notes', 'interfaces', 'remarks'
         ];
 
         $sectionLabels = [
+            'rejection' => 'Reason for Rejection',
             'title' => 'Title',
             'objectives' => 'Objective/s',
             'scope' => 'Scope',
@@ -256,11 +286,19 @@ class DocumentController extends Controller
     }
 
     public function sp_edit(Document $doc) {
+        Gate::authorize('update', $doc);
+
         $converter = new HtmlConverter();
         $doc->scope = $converter->convert($doc->scope);
         $doc->objective = $converter->convert($doc->objective);
 
-        $process_names = Section::where('company_id', \App\Support\CompanyContext::id())->orderBy('section_number')->get();
+        // Keep the document's current section selectable even if the editor doesn't own it.
+        $process_names = $this->ownedSections()
+            ->push($doc->section)
+            ->filter()
+            ->unique('id')
+            ->sortBy('section_number')
+            ->values();
 
         $all_documents = Document::where('status', 'Active')
                             ->where('id', '!=', $doc->id)->get();
@@ -320,10 +358,12 @@ class DocumentController extends Controller
     }
 
     public function sp_update(Request $request, Document $doc) {
+        Gate::authorize('update', $doc);
+
         $incomingFields = $request->validate([
             'title' => 'required',
             'code' => 'required',
-            'section_id' => 'required',
+            'section_id' => ['required', Rule::in($this->ownedSections()->pluck('id')->push($doc->section_id))],
             'revision_number' => 'nullable',
             'effective_date' => 'nullable|date',
             'objective' => 'required',
@@ -462,7 +502,9 @@ class DocumentController extends Controller
                 'error' => 'Only draft and for revision documents can be sent for review.'
             ]);
         }
-        
+
+        Gate::authorize('sendForReview', $doc);
+
         DB::beginTransaction();
 
         try {
@@ -491,11 +533,16 @@ class DocumentController extends Controller
             ]);
         }
 
+        Gate::authorize('review', $doc);
+
         // Validate reviewer decision
         $validated = $request->validate([
             'decision' => 'required|in:pass,fail',
+            'reason' => 'required_if:decision,fail|nullable|string|max:2000',
+        ], [
+            'reason.required_if' => 'Please give the reason the document failed review.',
         ]);
-        
+
         DB::beginTransaction();
 
         try {
@@ -505,12 +552,16 @@ class DocumentController extends Controller
 
             $doc->update(['status' => $newStatus,]);
 
+            if ($validated['decision'] === 'fail') {
+                $this->recordRejectionReason($doc, 'review', $validated['reason']);
+            }
+
             // create activity log
             ActivityLog::create([
                 'action' => $validated['decision'] === 'pass' ? 'review passed' : 'review failed',
                 'description' => $validated['decision'] === 'pass'
                     ? 'System Procedure document ('. $doc->code .') passed review and was sent for approval.'
-                    : 'System Procedure document ('. $doc->code .') failed review and was sent back.',
+                    : 'System Procedure document ('. $doc->code .') failed review. Reason: '. trim($validated['reason']),
                 'document_id' => $doc->id,
                 'document_type' => 'system_procedure',
                 'user_id' => auth()->id()
@@ -533,9 +584,14 @@ class DocumentController extends Controller
             ]);
         }
 
-        // Validate reviewer decision
+        Gate::authorize('approve', $doc);
+
+        // Validate approver decision
         $validated = $request->validate([
             'decision' => 'required|in:pass,fail',
+            'reason' => 'required_if:decision,fail|nullable|string|max:2000',
+        ], [
+            'reason.required_if' => 'Please give the reason the document was not approved.',
         ]);
         
         DB::beginTransaction();
@@ -580,8 +636,9 @@ class DocumentController extends Controller
                 ]);
                 $successMessage = 'Document has been approved.';
             }else{
-                // Review failed
+                // Approval failed
                 $doc->update(['status' => 'Not Approved',]);
+                $this->recordRejectionReason($doc, 'approval', $validated['reason']);
 
                 $successMessage = 'Document not approved.';
             }
@@ -591,7 +648,7 @@ class DocumentController extends Controller
                 'action' => $validated['decision'] === 'pass' ? 'approved' : 'not approved',
                 'description' => $validated['decision'] === 'pass'
                     ? 'System Procedure document ('. $doc->code .') has been approved.'
-                    : 'System Procedure document ('. $doc->code .') has not been approved.',
+                    : 'System Procedure document ('. $doc->code .') has not been approved. Reason: '. trim($validated['reason']),
                 'document_id' => $doc->id,
                 'document_type' => 'system_procedure',
                 'user_id' => auth()->id()
@@ -605,11 +662,28 @@ class DocumentController extends Controller
         }
     }
 
+    /**
+     * A failed review / non-approval is final, so its reason is kept as a comment on that stage —
+     * the process owner sees it in the document view's Review/Approval Comments panel.
+     */
+    private function recordRejectionReason(Document $doc, string $stage, string $reason): void
+    {
+        ProcedureComments::create([
+            'document_id' => $doc->id,
+            'user_id' => auth()->id(),
+            'section' => 'rejection',
+            'stage' => $stage,
+            'comment' => trim($reason),
+        ]);
+    }
+
     public function assignCode(Request $request, Document $doc)
     {
         if ($doc->status !== 'Pending Code') {
             return back()->withErrors(['error' => 'This document is not ready for code assignment.']);
         }
+
+        Gate::authorize('setCode', $doc);
 
         $validated = $request->validate([
             'document_code' => ['required', 'string', 'max:255'],
@@ -768,13 +842,33 @@ class DocumentController extends Controller
         ]);
     }
 
+    /**
+     * The comment stage for the document's current status, after checking the user is that
+     * stage's reviewer/approver. sp_view groups comments by this stage, so it must always be set.
+     */
+    private function authorizeCommentStage(Document $doc): string
+    {
+        $stage = match ($doc->status) {
+            'For Review' => 'review',
+            'For Approval' => 'approval',
+            default => abort(403, 'Comments can only be given while the document is For Review or For Approval.'),
+        };
+
+        Gate::authorize($stage === 'review' ? 'review' : 'approve', $doc);
+
+        return $stage;
+    }
+
     public function showCommentForm(Document $doc)
     {
+        $stage = $this->authorizeCommentStage($doc);
+
         $existingComments = $doc->comments()
             ->where('user_id', auth()->id())
+            ->where('stage', $stage)
             ->get()
             ->keyBy('section');
-        $pageTitle = $doc->status === 'For Approval' ? 'Approver Comments' : 'Reviewer Comments';
+        $pageTitle = $stage === 'approval' ? 'Approver Comments' : 'Reviewer Comments';
 
         return view('document.system_procedures.comments', compact('doc', 'existingComments', 'pageTitle'));
     }
@@ -797,6 +891,9 @@ class DocumentController extends Controller
 
     public function storeComment(Request $request, Document $doc)
     {
+        $stage = $this->authorizeCommentStage($doc);
+        $commenter = $stage === 'approval' ? 'Approver' : 'Reviewer';
+
         $request->validate([
             'title_comment' => ['nullable', 'string'],
             'objectives_comment' => ['nullable', 'string'],
@@ -831,9 +928,10 @@ class DocumentController extends Controller
         DB::beginTransaction();
 
         try {
-            // remove previous draft comments of this user for this doc
+            // remove previous draft comments of this user for this doc at this stage
             ProcedureComments::where('document_id', $doc->id)
                 ->where('user_id', auth()->id())
+                ->where('stage', $stage)
                 ->delete();
 
             foreach ($comments as $section => $comment) {
@@ -842,6 +940,7 @@ class DocumentController extends Controller
                         'document_id' => $doc->id,
                         'user_id' => auth()->id(),
                         'section' => $section,
+                        'stage' => $stage,
                         'comment' => trim($comment),
                     ]);
 
@@ -852,11 +951,6 @@ class DocumentController extends Controller
             if ($request->action === 'send_back') {
                 $doc->status = 'For Revision';
                 $doc->save();
-            }
-            if ($doc->status === 'For Review'){
-                $commenter = 'Reviewer';
-            }else{
-                $commenter = 'Approver';
             }
 
             // create activity log
@@ -879,8 +973,9 @@ class DocumentController extends Controller
             return back()->withErrors(['error' => 'Something went wrong. Please try again. '.$e])->withInput();
         }
 
+        // The comment form is closed once the document leaves review/approval, so don't go back to it.
         if ($request->action === 'send_back') {
-            return redirect()->back()->with('success','Comments saved and document sent back.');
+            return redirect()->route('document.system_procedures')->with('success','Comments saved and document sent back.');
         }
 
         return redirect()->back()->with('success','Comments saved.');

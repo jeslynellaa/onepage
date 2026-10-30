@@ -116,11 +116,13 @@
         <div class="flex justify-between items-center mb-6">
             <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest">System Procedures</h3>
             <div>
-                <a href="{{ route('document.system_procedures.create') }}" 
+                @if($canCreate)
+                <a href="{{ route('document.system_procedures.create') }}"
                 class="inline-flex items-center gap-2 bg-[#575df9] text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow hover:bg-[#464bd4] hover:shadow-[#575df9]/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200">
                     <i class="fa-solid fa-plus text-[10px]"></i>
                     <span>Create Document</span>
                 </a>
+                @endif
             {{-- <a href="{{ route('document.system_procedures.dirf_generate', 1)}}"
             class="inline-block bg-sky-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-sky-700 transition">
                 DIRFs
@@ -405,8 +407,68 @@
         </div>
     </div>
 
+    {{-- Reject (Fail Review / Not Approved) Modal — rejection is final, so a reason is required --}}
+    <div id="rejectModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="reject-modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-gray-500/50 transition-opacity" aria-hidden="true" onclick="closeRejectModal()"></div>
+
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+            <div class="relative inline-block align-bottom bg-white rounded-2xl px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
+                <div class="sm:flex sm:items-start">
+                    <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                        <i class="fa-solid fa-xmark text-red-600"></i>
+                    </div>
+                    <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900" id="reject-modal-title">
+                            <span id="rejectModalAction"></span>: <span id="rejectModalDocCode" class="text-red-600"></span>
+                        </h3>
+
+                        <p class="mt-2 text-sm text-gray-500">
+                            This is final — the document can no longer be revised or resubmitted. The process owner will see your reason on the document.
+                        </p>
+                        <div class="mt-4">
+                            <form id="rejectForm" method="POST" action="">
+                                @csrf
+                                @method('PUT')
+                                <input type="hidden" name="decision" value="fail">
+
+                                <label for="rejectReasonInput" class="block text-sm font-medium text-gray-700">Reason</label>
+                                <textarea name="reason" id="rejectReasonInput" required rows="3" maxlength="2000" class="w-full mt-1 border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500" placeholder="e.g. Procedure duplicates SP-PUR-02; merge the steps there instead"></textarea>
+
+                                <div class="mt-6 flex justify-end space-x-3">
+                                    <button type="button" onclick="closeRejectModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 cursor-pointer">
+                                        Cancel
+                                    </button>
+                                    <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 cursor-pointer">
+                                        Confirm
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <x-slot:scripts>
         <script>
+            function openRejectModal(actionUrl, docCode, stage) {
+                document.getElementById('rejectForm').action = actionUrl;
+                document.getElementById('rejectModalAction').innerText = stage === 'approval' ? 'Not Approve Document' : 'Fail Review';
+                document.getElementById('rejectModalDocCode').innerText = docCode;
+
+                const input = document.getElementById('rejectReasonInput');
+                input.value = '';
+                document.getElementById('rejectModal').classList.remove('hidden');
+                setTimeout(() => input.focus(), 100);
+            }
+
+            function closeRejectModal() {
+                document.getElementById('rejectModal').classList.add('hidden');
+            }
+
             function openEditModal(id, sectionNumber, title, processOwnerName='', processOwnerId='', reviewerName='', reviewerId='', approverName='', approverId=''){
                 document.getElementById('editSectionForm').action = `/document/system_procedures/${id}`;
                 document.getElementById('edit_section_number').value = sectionNumber;
@@ -565,7 +627,7 @@
                                     <a href="${details.viewUrl}" class="inline-flex items-center justify-center text-gray-600 hover:text-sky-700">
                                         <i class="fa-solid fa-eye"></i>
                                     </a>`;
-                        if(details.status !== 'For Review' && details.status !== 'For Approval' && details.can.edit){
+                        if(details.can.edit){
                             itemsTable += `
                                 <a href="${details.editUrl}" class="inline-flex items-center justify-center text-gray-600 hover:text-sky-700">
                                     <i class="fa-solid fa-pen"></i>
@@ -577,7 +639,7 @@
                                         <i class="fa-solid fa-trash"></i>
                                     </button>`;
                         }
-                        if((details.status === 'Draft' || details.status === 'For Revision') && details.can.edit){
+                        if(details.can.send){
                             itemsTable += `
                             <span class="text-gray-400">|</span>
                             <form action="${details.sendForReviewUrl}" method="POST" onsubmit="return confirm(\'Are you sure you want to send this document for review? You will not be able to make changes.\');" class="inline">
@@ -602,15 +664,9 @@
                                         <i class="fa-solid fa-check"></i>
                                     </button>
                                 </form>
-                                <form action="${details.reviewDecisionUrl}" method="POST" onsubmit="return confirm(\'Are you sure you want to fail document review and send back? You will not be able to make changes.\');" class="inline">
-                                    <input type="hidden" name="_token" value="${data.csrf}">
-                                    <input type="hidden" name="_method" value="PUT">
-                                    <input type="hidden" name="decision" value="fail">
-
-                                    <button type="submit" class="px-2 py-1 bg-white hover:bg-red-50 text-red-600 cursor-pointer" title="Fail Review">
-                                        <i class="fa-solid fa-xmark"></i>
-                                    </button>
-                                </form>
+                                <button type="button" onclick="openRejectModal('${details.reviewDecisionUrl}', '${details.code}', 'review')" class="px-2 py-1 bg-white hover:bg-red-50 text-red-600 cursor-pointer" title="Fail Review">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </button>
                             </div>
                             `;
                         }else if(details.can.approve){
@@ -626,15 +682,9 @@
                                         <i class="fa-solid fa-check-double"></i>
                                     </button>
                                 </form>
-                                <form action="${details.approveDecisionUrl}" method="POST" onsubmit="return confirm(\'Are you sure you want to not approve this document? You will not be able to make changes.\');" class="inline">
-                                    <input type="hidden" name="_token" value="${data.csrf}">
-                                    <input type="hidden" name="_method" value="PUT">
-                                    <input type="hidden" name="decision" value="fail">
-
-                                    <button type="submit" class="px-2 py-1 bg-white hover:bg-red-50 text-red-600 cursor-pointer" title="Document Not Approved">
-                                        <i class="fa-solid fa-xmark"></i>
-                                    </button>
-                                </form>
+                                <button type="button" onclick="openRejectModal('${details.approveDecisionUrl}', '${details.code}', 'approval')" class="px-2 py-1 bg-white hover:bg-red-50 text-red-600 cursor-pointer" title="Document Not Approved">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </button>
                             </div>
                             `;
                         }else if(details.can.setCode){

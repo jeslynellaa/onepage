@@ -111,7 +111,8 @@ class HomeController extends Controller
             ->sum(fn (string $model) => $model::where('status', $status)->count());
 
         $activeCount = $countAcrossTypes('Active');
-        $draftCount = $countAcrossTypes('Draft');
+        // A document sent back with comments is a draft again, back with its process owner.
+        $draftCount = $countAcrossTypes('Draft') + $countAcrossTypes('For Revision');
         $reviewCount = $countAcrossTypes('For Review');
         $approvalCount = $countAcrossTypes('For Approval');
         $logs = ActivityLog::latest('performed_at')
@@ -269,6 +270,7 @@ class HomeController extends Controller
     {
         $user = auth()->user();
         $abilityByStatus = [
+            'For Revision' => 'sendForReview',
             'For Review' => 'review',
             'For Approval' => 'approve',
             'Pending Code' => 'setCode',
