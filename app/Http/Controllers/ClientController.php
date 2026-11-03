@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Mail\ConsultantAssignedMail;
 use App\Mail\InvitationMail;
 use App\Models\ClientUser;
 use App\Models\Company;
@@ -241,6 +242,8 @@ class ClientController extends Controller
             ->where('company_id', $client->id)
             ->first();
 
+        $alreadyActive = $existing?->status === 'active';
+
         if ($existing) {
             $existing->update([
                 'status' => 'active',
@@ -254,6 +257,19 @@ class ClientController extends Controller
                 'status' => 'active',
                 'assigned_by_user_id' => auth()->id(),
             ]);
+        }
+
+        if (! $alreadyActive) {
+            try {
+                Mail::to($consultant->email)->send(new ConsultantAssignedMail($consultant, $client));
+            } catch (\Throwable $e) {
+                // The assignment itself succeeded, so only warn the admin about the email.
+                report($e);
+
+                return redirect()->back()
+                    ->with('success', 'Consultant assigned to client.')
+                    ->withErrors(['email' => "The notification email to {$consultant->email} could not be sent. Please let them know directly."]);
+            }
         }
 
         return redirect()->back()->with('success', 'Consultant assigned to client.');
