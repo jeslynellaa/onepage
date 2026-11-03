@@ -159,7 +159,8 @@ class SupportDocumentController extends Controller
         $doc->scope = $converter->convert($doc->scope);
         $doc->objective = $converter->convert($doc->objective);
 
-        return view('document.support_documents.edit', compact('doc'));
+        $process_names = Section::where('company_id', \App\Support\CompanyContext::id())->orderBy('section_number')->get();
+        return view('document.support_documents.edit', compact('doc', 'process_names'));
     }
 
     public function update(SupportDocument $doc, Request $request)
