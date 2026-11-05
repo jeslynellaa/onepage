@@ -119,12 +119,12 @@ Route::middleware(['auth', 'nocache', 'client-context', 'demo-guard'])->group(fu
     Route::get('/documents/support-documents/{doc}', [SupportDocumentController::class, 'view'])->name('document.support_document.view');
     Route::get('/documents/support-documents/{doc}/edit', [SupportDocumentController::class, 'edit'])->name('document.support_document.edit');
     Route::put('/documents/support-documents/{doc}', [SupportDocumentController::class, 'update'])->name('document.support_document.update');
-    Route::put('/documents/support-documents/{doc}/sendForReview', [SupportDocumentController::class, 'sp_forReview'])->name('document.support_document.forReview');
-    Route::put('/documents/support-documents/{doc}/reviewDecision', [SupportDocumentController::class, 'sp_reviewPassOrFail'])->name('document.support_document.reviewPassOrFail');
-    Route::put('/documents/support-documents/{doc}/approvalDecision', [SupportDocumentController::class, 'sp_approveOrNot'])->name('document.support_document.approveOrNot');
+    Route::put('/documents/support-documents/{doc}/sendForReview', [SupportDocumentController::class, 'forReview'])->name('document.support_document.forReview');
+    Route::put('/documents/support-documents/{doc}/reviewDecision', [SupportDocumentController::class, 'reviewPassOrFail'])->name('document.support_document.reviewPassOrFail');
+    Route::put('/documents/support-documents/{doc}/approvalDecision', [SupportDocumentController::class, 'approveOrNot'])->name('document.support_document.approveOrNot');
+    Route::put('/documents/support-documents/{doc}/assign-code', [SupportDocumentController::class, 'assignCode'])->name('document.support_document.assignCode');
 
-
-    Route::get('/documents/support-documents/{doc}/revision-history', [SupportDocumentController::class, 'ms_document_history'])->name('document.support_document.rev_history');
+    Route::get('/documents/support-documents/section/{code}/revision-history', [SupportDocumentController::class, 'revisionHistory'])->name('document.support_document.rev_history');
     Route::delete('/documents/support-documents/{doc}/destroy', [SupportDocumentController::class, 'destroy'])->name('document.support_document.destroy');
     Route::get('section/sp/documents', [SupportDocumentController::class, 'getSpSectionDocuments']);
 

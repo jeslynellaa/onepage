@@ -269,13 +269,13 @@
                                 @method('DELETE')
                 
                                 <label class="block text-sm font-medium text-gray-700">Justification</label>
-                                <textarea name="delete_justification" id="justificationInput" required rows="3" class="w-full mt-1 border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500" placeholder="e.g. This procedure will be moved/combined with another procedure"></textarea>
+                                <textarea name="delete_justification" id="justificationInput" required minlength="10" rows="3" class="w-full mt-1 border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500" placeholder="e.g. This document has been merged into another document"></textarea>
                                 
                                 <div class="mt-6 flex justify-end space-x-3">
                                     <button type="button" onclick="closeDeleteModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 cursor-pointer">
                                         Cancel
                                     </button>
-                                    <button type="submit" id="confirmDeleteBtn" disabled class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer">
+                                    <button type="submit" id="confirmDeleteBtn" class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer">
                                         Confirm Archive
                                     </button>
                                 </div>
@@ -287,8 +287,73 @@
         </div>
     </div>
 
+    {{-- Assign Code Modal --}}
+    <div id="assignCodeModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 px-4">
+        <div class="w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl">
+            <div class="mb-4 flex items-center justify-between">
+                <h2 class="text-lg font-semibold text-gray-800">Assign Document Code</h2>
+                <button type="button" onclick="closeAssignCodeModal()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form id="assignCodeForm" method="POST" action="">
+                @csrf
+                @method('PUT')
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Document Title</label>
+                        <input type="text" id="modal_document_title" class="mt-1 w-full rounded-lg border border-gray-300 bg-gray-100 px-3 py-2" readonly>
+                    </div>
+                    <div>
+                        <label for="modal_document_code" class="block text-sm font-medium text-gray-700">Final Document Code <span class="text-red-500">*</span></label>
+                        <input id="modal_document_code" type="text" name="document_code" class="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2" required/>
+                    </div>
+                    <div>
+                        <label for="modal_revision_number" class="block text-sm font-medium text-gray-700">Revision Number <span class="text-red-500">*</span></label>
+                        <input id="modal_revision_number" type="text" name="revision_number" class="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2" required/>
+                    </div>
+                </div>
+                <span class="italic text-xs text-gray-400">
+                    * The fields have been pre-filled with suggested code input by the process owner and revision number based from past version/s.
+                </span>
+                <div class="mt-6 flex justify-end gap-2">
+                    <button type="button" onclick="closeAssignCodeModal()" class="rounded-lg border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-50">
+                        Cancel
+                    </button>
+                    <button type="submit" class="rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">
+                        Assign Code
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <x-slot:scripts>
         <script>
+            const EDITABLE_STATUSES = ['Draft', 'For Revision', 'Review not Passed', 'Not Approved', 'Active'];
+            const supportItems = {};
+
+            function openAssignCodeModal(id) {
+                const details = supportItems[id];
+                const modal = document.getElementById('assignCodeModal');
+
+                document.getElementById('modal_document_title').value = details.title || '';
+                document.getElementById('modal_document_code').value = details.code || '';
+                document.getElementById('modal_revision_number').value = details.revision_number ?? '0';
+                document.getElementById('assignCodeForm').action = details.assignCodeUrl;
+
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            }
+
+            function closeAssignCodeModal() {
+                const modal = document.getElementById('assignCodeModal');
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+
             function openEditModal(id, sectionNumber, title, processOwnerName='', processOwnerId='', reviewerName='', reviewerId='', approverName='', approverId=''){
                 document.getElementById('editSectionForm').action = `/document/system_procedures/${id}`;
                 document.getElementById('edit_section_number').value = sectionNumber;
@@ -388,6 +453,7 @@
                     itemsTable += `<tr><td colspan="6" class="text-center py-8 text-gray-400 italic font-medium">No documents currently in this section.</td></tr>`;
                 } else {
                     data.items.forEach((details) => {
+                        supportItems[details.id] = details;
                         let statusStyle = details.status.replace(/\s/g, "_");
                         let statusColor = details.status === 'Active' ? 'bg-[#3de3b1]/10 text-[#2db68e]' : 'bg-gray-100 text-gray-500';
                         if (details.status.includes('Review') || details.status.includes('Approval')) {
@@ -399,7 +465,7 @@
                                 <td class="p-4">
                                     <div class="flex flex-col">
                                         <span class="font-bold text-gray-800 uppercase tracking-tight">${details.title}</span>
-                                        <span class="text-[9pt] text-gray-400 font-medium">${details.pages>1 ? details.pages + ' pages' : details.pages == 1 ? details.pages + ' page' : pageInfo}</span>
+                                        <span class="text-[9pt] text-gray-400 font-medium">${details.pages>1 ? details.pages + ' pages' : details.pages == 1 ? details.pages + ' page' : ''}</span>
                                     </div>
                                 </td>
                                 <td class="px-4 py-4 text-center font-mono text-gray-500">${details.code}</td>
@@ -427,7 +493,7 @@
                                     <a href="${details.viewUrl}" class="inline-flex items-center justify-center text-gray-600 hover:text-sky-700">
                                         <i class="fa-solid fa-eye"></i>
                                     </a>`;
-                        if(details.status !== 'For Review' && details.status !== 'For Approval' && details.can.edit){
+                        if(EDITABLE_STATUSES.includes(details.status) && details.can.edit){
                             itemsTable += `
                                 <a href="${details.editUrl}" class="inline-flex items-center justify-center text-gray-600 hover:text-sky-700">
                                     <i class="fa-solid fa-pen"></i>
@@ -435,11 +501,11 @@
                         }
                         if(details.can.delete){
                             itemsTable += 
-                                `<button type="button" onclick="openDeleteModal('${details.id}', '${details.code}')" class="inline-flex text-red-600 hover:text-red-900 font-medium text-sm flex items-center justify-center transition-colors" title="Archive Document">
+                                `<button type="button" onclick="openDeleteModal(${details.id})" class="inline-flex text-red-600 hover:text-red-900 font-medium text-sm flex items-center justify-center transition-colors" title="Archive Document">
                                     <i class="fa-solid fa-trash"></i>
                                 </button>`;
                         }
-                        if(details.status === 'Draft' && details.can.edit){
+                        if(details.can.send){
                             itemsTable += `
                             <span class="text-gray-400">|</span>
                             <form action="${details.sendForReviewUrl}" method="POST" onsubmit="return confirm(\'Are you sure you want to send this document for review? You will not be able to make changes.\');" class="inline">
@@ -502,17 +568,12 @@
                         }else if(details.can.setCode){
                             itemsTable += `
                                 <span class="text-gray-400">|</span>
-                                <button type="button" class="text-gray-600 hover:text-blue-700" onclick="openAssignCodeModal('${details.id}', '${details.title}', '${details.code}', '${details.code}', '${details.revision_number}')" title="Assign Code">
+                                <button type="button" class="text-gray-600 hover:text-blue-700" onclick="openAssignCodeModal(${details.id})" title="Assign Code">
                                     <i class="fa-solid fa-file-pen"></i>
                                 </button>
                             `;
                         }
 
-                        if(details.can.review || details.can.approve){
-                            itemsTable += `<a href="/documents/system-procedures/${details.id}/comment" class="text-gray-600 hover:text-blue-700 cursor-pointer" title="Leave Comments and Send Back">
-                                <i class="fa-solid fa-comment"></i>
-                            </a>`;
-                        }
                         itemsTable += `
                             </td>
                         </tr>`;
@@ -717,32 +778,16 @@
                 });
             });
 
-            /**
-             * Opens the Delete Modal and sets the target document context
-             * @param {string|number} docId - The primary key of the document
-             * @param {string} docCode - The readable code (e.g., SP-BPL-01)
-             */
-            function openDeleteModal(docId, docCode) {
-                const modal = document.getElementById('deleteModal');
-                const form = document.getElementById('deleteForm');
-                const codeSpan = document.getElementById('modalDocCode');
+            function openDeleteModal(id) {
+                const details = supportItems[id];
                 const input = document.getElementById('justificationInput');
-                const btn = document.getElementById('confirmDeleteBtn');
-                
-                form.action = `/documents/${docId}`;
-                
-                codeSpan.innerText = docCode;
+
+                document.getElementById('deleteForm').action = details.deleteUrl;
+                document.getElementById('modalDocCode').innerText = details.code;
                 input.value = '';
-                btn.disabled = true;
-                
-                modal.classList.remove('hidden');
-                
+
+                document.getElementById('deleteModal').classList.remove('hidden');
                 setTimeout(() => input.focus(), 100);
-                
-            document.getElementById('justificationInput').addEventListener('input', function(e) {
-                const btn = document.getElementById('confirmDeleteBtn');
-                btn.disabled = e.target.value.trim().length < 0;
-            });
             }
 
             function closeDeleteModal() {

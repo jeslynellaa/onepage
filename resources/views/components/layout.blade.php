@@ -32,6 +32,11 @@
       aside {
         overflow-x: visible !important;
       }
+      [x-cloak] { display: none !important; }
+      /* Keep page content clear of the pinned mobile action bar (components/document-actions). */
+      @media (max-width: 767.98px) {
+        body:has(.doc-actions-bar) { padding-bottom: 5rem; }
+      }
     </style>
   </head>
 
