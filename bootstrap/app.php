@@ -11,7 +11,17 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // During `php artisan down`, keep the public marketing pages reachable;
+        // everything else (login, register, the app itself) returns the 503 page.
+        $middleware->preventRequestsDuringMaintenance(except: [
+            '/',
+            'faqs',
+            'pricing',
+            'book-demo',
+        ]);
+
         $middleware->alias([
+            'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
             'nocache' => \App\Http\Middleware\NoCache::class,
             'client-context' => \App\Http\Middleware\ResolveClientContext::class,
             'demo-guard' => \App\Http\Middleware\DemoGuard::class,

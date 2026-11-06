@@ -79,6 +79,12 @@
 </head>
 <body class="jakarta bg-white text-[#0B1020] antialiased" x-data="{ mobileOpen: false, videoOpen: false }">
 
+    @if (app()->isDownForMaintenance())
+        <div role="status" class="fixed bottom-0 inset-x-0 z-[60] bg-[#0B1020] text-white text-center text-[13.5px] font-medium px-5 py-3">
+            OnePage is undergoing scheduled maintenance. Sign-in is temporarily unavailable. Please check back shortly.
+        </div>
+    @endif
+
     {{-- NAV --}}
     @php
         $onWelcome = request()->routeIs('welcome');
