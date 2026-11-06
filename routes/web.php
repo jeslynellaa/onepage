@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AdminEmailController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookDemoController;
 use App\Http\Controllers\ClientController;
@@ -149,6 +150,9 @@ Route::middleware(['auth', 'nocache', 'client-context', 'demo-guard'])->group(fu
 
     // ADMIN ROUTES
     Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
+
+    Route::get('/admin/emails', [AdminEmailController::class, 'create'])->name('admin.emails.create');
+    Route::post('/admin/emails', [AdminEmailController::class, 'send'])->name('admin.emails.send');
 
     Route::get('/admin/demos', [DemoAdminController::class, 'index'])->name('admin.demos.index');
     Route::post('/admin/demos', [DemoAdminController::class, 'store'])->name('admin.demos.store');

@@ -15,6 +15,9 @@
         <!-- Header -->
         <div class="flex justify-between items-center mb-4">
             <h1 class="font-semibold text-gray-800">Admin</h1>
+            <a href="{{ route('admin.emails.create') }}" class="inline-flex items-center gap-2 bg-[#1F6FEB] hover:bg-[#1A5FD0] text-white text-[14px] font-semibold px-4 py-2 rounded-lg duration-200">
+                <i class="fa-regular fa-envelope"></i> Email users
+            </a>
         </div>
 
         <!-- Content Row -->
