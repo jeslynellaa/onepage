@@ -9,6 +9,7 @@
             :status="$doc->status"
             :label="$doc->code ?: $doc->title"
             :open-url="route('document.system_procedures.sp_preview', $doc)"
+            :word-url="$user->can('exportWord', $doc) ? route('document.system_procedures.download_word', $doc) : null"
             :edit-url="$user->can('update', $doc) ? route('document.system_procedures.edit', $doc) : null"
             :history-url="$doc->code && $user->can('viewRevisionHistory', $doc) ? route('document.system_procedures.rev_history', $doc->code) : null"
             :send-url="$user->can('sendForReview', $doc) ? route('document.system_procedures.forReview', $doc) : null"

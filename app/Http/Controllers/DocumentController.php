@@ -18,6 +18,7 @@ use App\Models\SupportDocument;
 use App\Models\User;
 use App\Models\DocumentDistribution;
 use App\Services\DocumentPdfService;
+use App\Services\DocumentWordService;
 use App\Support\CompanyContext;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -883,6 +884,19 @@ class DocumentController extends Controller
         return response($pdf->output(), 200)
             ->header('Content-Type', 'application/pdf')
             ->header('Content-Disposition', 'inline; filename="' . $filename . '"');
+    }
+
+    public function sp_download_word(Document $doc, DocumentWordService $wordService)
+    {
+        Gate::authorize('exportWord', $doc);
+
+        $filename = (trim(preg_replace('/[^A-Za-z0-9\- ]+/', '', $doc->title)) ?: 'System Procedure') . '.docx';
+
+        return response()
+            ->download($wordService->generate($doc), $filename, [
+                'Content-Type' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            ])
+            ->deleteFileAfterSend();
     }
 
     public function sp_pdf_view(Document $doc, DocumentPdfService $pdfService)

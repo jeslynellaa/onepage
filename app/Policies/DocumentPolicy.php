@@ -93,6 +93,16 @@ class DocumentPolicy
             $user->role === 'Document Controller';
     }
 
+    /**
+     * An editable copy sits outside document control, so it's limited to the people who manage
+     * the company's documents rather than everyone who can read the procedure.
+     */
+    public function exportWord(User $user, Document $document): bool
+    {
+        return in_array($user->role, ['Admin', 'Document Controller'], true)
+            || $this->isAssignedConsultant($user, $document->company_id);
+    }
+
     public function viewRevisionHistory(User $user, Document $document)
     {
         return

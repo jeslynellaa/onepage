@@ -90,6 +90,7 @@ Route::middleware(['auth', 'nocache', 'client-context', 'demo-guard'])->group(fu
     Route::get('/documents/system-procedures/{doc}/dirf', [DocumentController::class, 'dirf_generate'])->name('document.system_procedures.dirf_generate');
     Route::get('/documents/system-procedures/{doc}/comment', [DocumentController::class, 'showCommentForm'])->name('document.system_procedures.showComment');
     Route::get('/documents/system-procedures/{doc}/preview', [DocumentController::class, 'preview'])->name('document.system_procedures.sp_preview');
+    Route::get('/documents/system-procedures/{doc}/download-word', [DocumentController::class, 'sp_download_word'])->name('document.system_procedures.download_word');
     Route::post('/documents/system-procedures/{doc}/comment', [DocumentController::class, 'storeComment'])->name('document.system_procedures.storeComment');
 
     Route::post('/documents/system-procedures/{doc}/acknowledge-receipt', [DocumentController::class, 'acknowledgeReceipt'])->name('document.system_procedures.acknowledge_receipt');

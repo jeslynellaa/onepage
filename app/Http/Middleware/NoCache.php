@@ -17,8 +17,13 @@ class NoCache
     {
         $response = $next($request);
 
-        return $response->header('Cache-Control', 'no-cache, no-store, must-revalidate')
-                        ->header('Pragma', 'no-cache')
-                        ->header('Expires', '0');
+        // Symfony's headers->set() (rather than Illuminate\Http\Response's ->header()
+        // fluent helper) works for every response type, including a BinaryFileResponse
+        // (e.g. Maatwebsite\Excel downloads), which doesn't have that Laravel-only method.
+        $response->headers->set('Cache-Control', 'no-cache, no-store, must-revalidate');
+        $response->headers->set('Pragma', 'no-cache');
+        $response->headers->set('Expires', '0');
+
+        return $response;
     }
 }
