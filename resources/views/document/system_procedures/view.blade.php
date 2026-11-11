@@ -3,6 +3,25 @@
         <h1 class="font-semibold text-gray-800">
             <a href="{{ route('document.index') }}">Document Management</a> > <a href="{{ route('document.system_procedures')}}">System Procedures</a> > {{$doc->title}}
         </h1>
+        @php($user = auth()->user())
+        @php($canDecide = $user->can('review', $doc) || $user->can('approve', $doc))
+        <x-document-actions class="mt-3 mb-4"
+            :status="$doc->status"
+            :label="$doc->code ?: $doc->title"
+            :open-url="route('document.system_procedures.sp_preview', $doc)"
+            :edit-url="$user->can('update', $doc) ? route('document.system_procedures.edit', $doc) : null"
+            :history-url="$doc->code && $user->can('viewRevisionHistory', $doc) ? route('document.system_procedures.rev_history', $doc->code) : null"
+            :send-url="$user->can('sendForReview', $doc) ? route('document.system_procedures.forReview', $doc) : null"
+            :review-url="$user->can('review', $doc) ? route('document.system_procedures.reviewPassOrFail', $doc) : null"
+            :approve-url="$user->can('approve', $doc) ? route('document.system_procedures.approveOrNot', $doc) : null"
+            :comment-url="$canDecide ? route('document.system_procedures.showComment', $doc) : null"
+            :assign-code-url="$user->can('setCode', $doc) ? route('document.system_procedures.assignCode', $doc) : null"
+            :suggested-code="$doc->code"
+            :suggested-revision="$doc->revision_number"
+            :archive-url="$user->can('delete', $doc) ? route('document.system_procedures.destroy', $doc) : null"
+            :reject-needs-reason="true"
+            :reject-is-final="true"
+        />
         <div class="flex flex-col lg:flex-row gap-4">
             <div class="w-full lg:w-2/3">
                 @if($userDistribution && (!$userDistribution->received_at || !$userDistribution->oriented_and_retrieved_at))
@@ -39,23 +58,7 @@
                     </div>
                 @endif
                 <div class="w-full h-[600px] overflow-y-auto overflow-x-hidden -webkit-overflow-scrolling-touch">
-                    <iframe src="{{ route('document.system_procedures.sp_preview', $doc->id) }}" class="w-full h-full border rounded-xl"></iframe><div class="lg:hidden">
-                    <div class="bg-white border-2 border-dashed border-blue-200 rounded-[2rem] p-8 text-center shadow-md">
-                        <div class="bg-blue-100 w-16 h-16 rounded-full flex justify-center items-center mx-auto mb-4">
-                            <i class="fa-solid fa-file-pdf text-blue-600 text-2xl"></i>
-                        </div>
-                        <h3 class="text-xl font-bold text-gray-800">Company Profile</h3>
-                        <p class="text-gray-500 mb-6 mt-2">Tap below to view our full documentation in high quality.</p>
-                        
-                        <a href="{{ asset('docs/your-file.pdf') }}" 
-                        target="_blank" 
-                        class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full transition-transform active:scale-95 shadow-lg">
-                            <i class="fa-solid fa-eye mr-2"></i> View Document
-                        </a>
-                        
-                        <p class="text-xs text-gray-400 mt-4 italic">Best viewed on mobile via native PDF reader</p>
-                    </div>
-                </div>
+                    <iframe src="{{ route('document.system_procedures.sp_preview', $doc->id) }}" class="w-full h-full border rounded-xl"></iframe>
                 </div>
                 <div>
                     <div>Justification</div>

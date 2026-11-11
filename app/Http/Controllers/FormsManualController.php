@@ -144,7 +144,9 @@ class FormsManualController extends Controller
 
     public function view(Form $doc)
     {
-        return view('document.forms_manual.view', compact('doc'));
+        $canEdit = $this->isEditable($doc) && auth()->user()->can('update', $doc);
+
+        return view('document.forms_manual.view', compact('doc', 'canEdit'));
     }
 
     public function edit(Form $doc)
@@ -504,7 +506,8 @@ class FormsManualController extends Controller
             $doc->delete();
         });
 
-        return redirect()->back()->with('success', 'Document has been successfully archived.');
+        // Not back(): that's the archived document's view page when archived from there.
+        return redirect()->route('document.forms.index')->with('success', 'Document has been successfully archived.');
     }
 
     private function isEditable(Form $doc): bool

@@ -239,4 +239,38 @@ class FormWorkflowTest extends TestCase
             ->assertOk()
             ->assertSee('FRM-PUR-01');
     }
+
+    public function test_view_page_shows_each_role_only_its_actions(): void
+    {
+        $form = $this->makeForm(['status' => 'For Approval']);
+        $decide = route('document.forms.approveOrNot', $form);
+
+        $this->actingAs($this->approver)->get(route('document.forms.view', $form))
+            ->assertOk()
+            ->assertSee($decide, false)
+            ->assertSee('Not Approve')
+            ->assertDontSee('name="reason"', false);
+
+        $this->actingAs($this->owner)->get(route('document.forms.view', $form))
+            ->assertOk()
+            ->assertDontSee($decide, false)
+            ->assertDontSee(route('document.forms.edit', $form), false);
+
+        $form->update(['status' => 'Active']);
+
+        $this->actingAs($this->owner)->get(route('document.forms.view', $form))
+            ->assertOk()
+            ->assertSee(route('document.forms.edit', $form), false)
+            ->assertSee('Revise');
+    }
+
+    public function test_archiving_returns_to_the_list_not_the_archived_form(): void
+    {
+        $form = $this->makeForm();
+
+        $this->actingAs($this->owner)
+            ->from(route('document.forms.view', $form))
+            ->delete(route('document.forms.destroy', $form), ['delete_justification' => 'Merged into FRM-PUR-02'])
+            ->assertRedirect(route('document.forms.index'));
+    }
 }

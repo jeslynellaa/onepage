@@ -294,4 +294,59 @@ class SystemProcedureWorkflowTest extends TestCase
             ->put(route('document.system_procedures.approveOrNot', $doc), ['decision' => 'pass'])
             ->assertForbidden();
     }
+
+    public function test_view_page_shows_each_role_only_its_actions(): void
+    {
+        $doc = $this->makeDoc('Draft');
+        $send = route('document.system_procedures.forReview', $doc);
+        $decide = route('document.system_procedures.reviewPassOrFail', $doc);
+
+        $this->actingAs($this->owner)->get(route('document.system_procedures.view_pdf', $doc))
+            ->assertOk()
+            ->assertSee($send, false)
+            ->assertSee(route('document.system_procedures.edit', $doc), false)
+            ->assertDontSee($decide, false);
+
+        $this->actingAs($this->reviewer)->get(route('document.system_procedures.view_pdf', $doc))
+            ->assertOk()
+            ->assertDontSee($send, false)
+            ->assertDontSee(route('document.system_procedures.edit', $doc), false);
+
+        $doc->update(['status' => 'For Review']);
+
+        $this->actingAs($this->reviewer)->get(route('document.system_procedures.view_pdf', $doc))
+            ->assertOk()
+            ->assertSee($decide, false)
+            ->assertSee('Pass Review')
+            ->assertSee('Fail Review')
+            ->assertSee(route('document.system_procedures.showComment', $doc), false);
+
+        $this->actingAs($this->owner)->get(route('document.system_procedures.view_pdf', $doc))
+            ->assertOk()
+            ->assertDontSee($send, false)
+            ->assertDontSee($decide, false)
+            ->assertDontSee(route('document.system_procedures.edit', $doc), false);
+    }
+
+    public function test_view_page_offers_assign_code_to_document_controller(): void
+    {
+        $doc = $this->makeDoc('Pending Code');
+
+        $this->actingAs($this->controller)->get(route('document.system_procedures.view_pdf', $doc))
+            ->assertOk()
+            ->assertSee(route('document.system_procedures.assignCode', $doc), false)
+            ->assertSee('value="SP-PUR-01"', false);
+    }
+
+    public function test_archiving_returns_to_the_list_not_the_archived_document(): void
+    {
+        $doc = $this->makeDoc('Draft');
+
+        $this->actingAs($this->owner)
+            ->from(route('document.system_procedures.view_pdf', $doc))
+            ->delete(route('document.system_procedures.destroy', $doc), ['delete_justification' => 'Merged into SP-PUR-02'])
+            ->assertRedirect(route('document.system_procedures'));
+
+        $this->assertSoftDeleted($doc);
+    }
 }

@@ -190,6 +190,7 @@ class MsManualController extends Controller
             $doc->delete();
         });
 
-        return redirect()->back()->with('success', 'Document has been successfully archived.');
+        // Not back(): that's the archived document's view page when archived from there.
+        return redirect()->route('document.ms_manual.index')->with('success', 'Document has been successfully archived.');
     }
 }

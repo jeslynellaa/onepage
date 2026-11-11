@@ -747,7 +747,8 @@ class DocumentController extends Controller
             $doc->delete();
         });
 
-        return redirect()->back()->with('success', 'Document has been successfully archived.');
+        // Not back(): that's the archived document's view page when archived from there.
+        return redirect()->route('document.system_procedures')->with('success', 'Document has been successfully archived.');
     }
 
     public function getSectionDocuments(Request $request)
@@ -877,9 +878,11 @@ class DocumentController extends Controller
     {
         $pdf = $pdfService->generate($doc);
 
+        $filename = preg_replace('/[^A-Za-z0-9\- ]+/', '', $doc->title) . '.pdf';
+
         return response($pdf->output(), 200)
             ->header('Content-Type', 'application/pdf')
-            ->header('Content-Disposition', 'inline; filename="invoice.pdf"');
+            ->header('Content-Disposition', 'inline; filename="' . $filename . '"');
     }
 
     public function sp_pdf_view(Document $doc, DocumentPdfService $pdfService)
