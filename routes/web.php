@@ -8,6 +8,7 @@ use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ConsultantController;
 use App\Http\Controllers\DemoAdminController;
 use App\Http\Controllers\DemoController;
+use App\Http\Controllers\DocumentCodeCheckController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\FormsManualController;
 use App\Http\Controllers\HomeController;
@@ -117,6 +118,7 @@ Route::middleware(['auth', 'nocache', 'client-context', 'demo-guard'])->group(fu
 
     Route::get('/documents/support-documents', [SupportDocumentController::class, 'index'])->name('document.support_document.index');
     Route::get('/documents/support-documents/create', [SupportDocumentController::class, 'create'])->name('document.support_document.create');
+    Route::get('/documents/support-documents/check-code', [DocumentCodeCheckController::class, 'supportDocuments'])->name('document.support_document.checkCode');
     Route::post('/documents/support-documents', [SupportDocumentController::class, 'store'])->name('document.support_document.store');
     Route::get('/documents/support-documents/{doc}', [SupportDocumentController::class, 'view'])->name('document.support_document.view');
     Route::get('/documents/support-documents/{doc}/edit', [SupportDocumentController::class, 'edit'])->name('document.support_document.edit');
@@ -132,6 +134,7 @@ Route::middleware(['auth', 'nocache', 'client-context', 'demo-guard'])->group(fu
 
     Route::get('/documents/forms', [FormsManualController::class, 'index'])->name('document.forms.index');
     Route::get('/documents/forms/create', [FormsManualController::class, 'create'])->name('document.forms.create');
+    Route::get('/documents/forms/check-code', [DocumentCodeCheckController::class, 'forms'])->name('document.forms.checkCode');
     Route::post('/documents/forms', [FormsManualController::class, 'store'])->name('document.forms.store');
     Route::get('/documents/forms/{doc}', [FormsManualController::class, 'view'])->name('document.forms.view');
     Route::get('/documents/forms/{doc}/edit', [FormsManualController::class, 'edit'])->name('document.forms.edit');

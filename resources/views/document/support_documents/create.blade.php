@@ -1,7 +1,9 @@
 <x-layout>
     @php
-        function selected($value, $old) {
-            return $value == $old ? 'selected' : '';
+        if (! function_exists('selected')) {
+            function selected($value, $old) {
+                return $value == $old ? 'selected' : '';
+            }
         }
     @endphp
     <div class="mx-auto w-full px-5 py-1">
@@ -10,8 +12,20 @@
         </h1>
 
         <div class="shadow-md rounded-lg bg-white p-5 mt-2">
-            <form id="documentForm" method="POST" action="{{ route('document.support_document.store') }}" enctype="multipart/form-data" class="space-y-6">
+            <form id="documentForm" method="POST" action="{{ route('document.support_document.store') }}" enctype="multipart/form-data" class="space-y-6"
+                data-pdf-autofill="support_document" data-pdf-autofill-mode="create" data-check-url="{{ route('document.support_document.checkCode') }}">
                 @csrf
+                <div>
+                    <label for="file" class="block text-xs font-bold uppercase mb-1">PDF Copy</label>
+                    <p class="text-xs text-gray-500 mb-2">Upload the PDF first; the code, title, pages, objective and scope are read from it for you to check.</p>
+                    <input required type="file" id="file" name="file" accept="application/pdf" class="block w-full text-sm text-gray-700
+                            file:mr-4 file:py-2 file:px-4
+                            file:rounded file:border-0
+                            file:text-sm file:font-semibold
+                            file:bg-gray-200 file:text-gray-700
+                            hover:file:bg-gray-300" />
+                </div>
+
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
                     <div class="md:col-span-6">
                         <label for="title" class="block text-xs font-bold uppercase mb-1">Title</label>
@@ -24,7 +38,7 @@
                         <select name="section_id" id="section_id" value="{{ old('section_id') }}" class="w-full rounded-md border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm p-2">
                             <option disabled selected>-- Select --</option>
                             @foreach($process_names as $process)
-                                <option value="{{$process->id}}" {{ selected($process->id, old('section_id')) }}>{{$process->section_number}} {{$process->title}}</option>
+                                <option value="{{$process->id}}" {{ selected($process->id, old('section_id')) }} data-acronym="{{ $process->description }}">{{$process->section_number}} {{$process->title}}</option>
                             @endforeach
                         </select>
                     </div>
@@ -37,7 +51,7 @@
 
                     <div class="md:col-span-2">
                         <label for="pages" class="block text-xs font-bold uppercase mb-1">Pages</label>
-                        <input type="text" id="pages" name="pages" value="{{ old('pages') }}"
+                        <input type="number" min="1" id="pages" name="pages" value="{{ old('pages') }}"
                             class="w-full rounded-md border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm p-2" />
                     </div>
                 </div>
@@ -61,18 +75,6 @@
                         <label for="scope" class="block text-xs font-bold uppercase mb-1">Scope</label>
                         <textarea id="scope" name="scope" rows="5"
                             class="w-full rounded-md border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm p-2">{{ old('scope') }}</textarea>
-                    </div>
-                    
-
-                    <div class="col-span-full">
-                        <label for="file" class="block text-xs font-bold uppercase mb-1">PDF Copy</label>
-                        <input required type="file" id="file" name="file" value="{{ old('file') }}" accept="application/pdf" class="block w-full text-sm text-gray-700
-                                file:mr-4 file:py-2 file:px-4
-                                file:rounded file:border-0
-                                file:text-sm file:font-semibold
-                                file:bg-gray-200 file:text-gray-700
-                                hover:file:bg-gray-300"
-                            required />
                     </div>
                 </div>
             </form>

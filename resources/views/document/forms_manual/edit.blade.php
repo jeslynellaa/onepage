@@ -15,9 +15,26 @@
         @endif
 
         <div class="shadow-md rounded-lg bg-white p-5 mt-2">
-            <form id="documentForm" method="POST" action="{{ route('document.forms.update', $doc->id) }}" enctype="multipart/form-data" class="space-y-6">
+            <form id="documentForm" method="POST" action="{{ route('document.forms.update', $doc->id) }}" enctype="multipart/form-data" class="space-y-6"
+                data-pdf-autofill="form" data-pdf-autofill-mode="{{ $isNewRevision ? 'revision' : 'edit' }}" data-check-url="{{ route('document.forms.checkCode') }}"
+                data-doc-code="{{ $doc->code }}" data-exclude-id="{{ $isNewRevision ? '' : $doc->id }}">
                 @csrf
                 @method('PUT')
+                <div>
+                    <label for="file" class="block text-xs font-bold uppercase mb-1">PDF Copy</label>
+                    <p class="text-xs text-gray-500 mb-2">
+                        Current file:
+                        <a href="{{ asset('storage/'.$doc->file_path) }}" target="_blank" class="text-sky-700 hover:underline">view PDF</a>.
+                        Leave empty to keep it.
+                    </p>
+                    <input type="file" id="file" name="file" accept="application/pdf" class="block w-full text-sm text-gray-700
+                            file:mr-4 file:py-2 file:px-4
+                            file:rounded file:border-0
+                            file:text-sm file:font-semibold
+                            file:bg-gray-200 file:text-gray-700
+                            hover:file:bg-gray-300" />
+                </div>
+
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
                     <div class="md:col-span-6">
                         <label for="title" class="block text-xs font-bold uppercase mb-1">Title</label>
@@ -29,7 +46,7 @@
                         <label for="section_id" class="block text-xs font-bold uppercase mb-1">Section No.</label>
                         <select name="section_id" id="section_id" class="w-full rounded-md border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm p-2">
                             @foreach($process_names as $process)
-                                <option value="{{$process->id}}" {{ $process->id == $currentSection ? 'selected' : '' }}>{{$process->section_number}} {{$process->title}}</option>
+                                <option value="{{$process->id}}" {{ $process->id == $currentSection ? 'selected' : '' }} data-acronym="{{ $process->description }}">{{$process->section_number}} {{$process->title}}</option>
                             @endforeach
                         </select>
                     </div>
@@ -42,7 +59,7 @@
 
                     <div class="md:col-span-2">
                         <label for="pages" class="block text-xs font-bold uppercase mb-1">Pages</label>
-                        <input type="text" id="pages" name="pages" value="{{ old('pages', $doc->pages) }}"
+                        <input type="number" min="1" id="pages" name="pages" value="{{ old('pages', $doc->pages) }}"
                             class="w-full rounded-md border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm p-2" />
                     </div>
                 </div>
@@ -51,25 +68,6 @@
                     <label for="justification" class="block text-xs font-bold uppercase mb-1">Justification/ Objective</label>
                     <input required type="text" id="justification" name="justification" placeholder="Explain why document is created or modified" value="{{ old('justification', $isNewRevision ? '' : $doc->justification) }}"
                         class="w-full rounded-md border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm p-2" />
-                </div>
-
-                <hr class="border-gray-300">
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="col-span-full">
-                        <label for="file" class="block text-xs font-bold uppercase mb-1">PDF Copy</label>
-                        <p class="text-xs text-gray-500 mb-2">
-                            Current file:
-                            <a href="{{ asset('storage/'.$doc->file_path) }}" target="_blank" class="text-sky-700 hover:underline">view PDF</a>.
-                            Leave empty to keep it.
-                        </p>
-                        <input type="file" id="file" name="file" accept="application/pdf" class="block w-full text-sm text-gray-700
-                                file:mr-4 file:py-2 file:px-4
-                                file:rounded file:border-0
-                                file:text-sm file:font-semibold
-                                file:bg-gray-200 file:text-gray-700
-                                hover:file:bg-gray-300" />
-                    </div>
                 </div>
             </form>
 

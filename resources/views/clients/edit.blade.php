@@ -1,7 +1,9 @@
 <x-layout>
     @php
-        function selected($value, $old) {
-            return $value == $old ? 'selected' : '';
+        if (! function_exists('selected')) {
+            function selected($value, $old) {
+                return $value == $old ? 'selected' : '';
+            }
         }
     @endphp
     
