@@ -19,6 +19,7 @@ use App\Models\User;
 use App\Models\DocumentDistribution;
 use App\Services\DocumentPdfService;
 use App\Services\DocumentWordService;
+use App\Services\DocumentWorkflowNotifier;
 use App\Support\CompanyContext;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -497,7 +498,7 @@ class DocumentController extends Controller
         }
     }
 
-    public function sp_forReview(Document $doc) {
+    public function sp_forReview(Document $doc, DocumentWorkflowNotifier $notifier) {
         if (!($doc->status == 'Draft' || $doc->status == 'For Revision')) {
             return back()->withErrors([
                 'error' => 'Only draft and for revision documents can be sent for review.'
@@ -520,14 +521,16 @@ class DocumentController extends Controller
             ]);
 
             DB::commit();
-            return redirect()->back()->with('success', 'Document sent for review.');
+            $notifier->sentForReview($doc);
+
+            return $notifier->warnIfUnsent(redirect()->back()->with('success', 'Document sent for review.'));
         } catch (\Throwable $e) {
             DB::rollBack();
             return back()->withErrors(['error' => 'Something went wrong. Failed to send document for review. '. $e->getMessage()]);
         }
     }
 
-    public function sp_reviewPassOrFail(Request $request, Document $doc) {
+    public function sp_reviewPassOrFail(Request $request, Document $doc, DocumentWorkflowNotifier $notifier) {
         if ($doc->status !== 'For Review') {
             return back()->withErrors([
                 'error' => 'Invalid document status. Cannot proceed.'
@@ -569,16 +572,18 @@ class DocumentController extends Controller
             ]);
 
             DB::commit();
-            return redirect()->back()->with('success', $validated['decision'] === 'pass'
+            $notifier->reviewed($doc, $validated['decision'] === 'pass', $validated['reason'] ?? null);
+
+            return $notifier->warnIfUnsent(redirect()->back()->with('success', $validated['decision'] === 'pass'
                 ? 'Document passed review and was sent for approval.'
-                : 'Document failed review.');
+                : 'Document failed review.'));
         } catch (\Throwable $e) {
             DB::rollBack();
             return back()->withErrors(['error' => 'Something went wrong. '. $e->getMessage()]);
         }
     }
 
-    public function sp_approveOrNot(Request $request, Document $doc) {
+    public function sp_approveOrNot(Request $request, Document $doc, DocumentWorkflowNotifier $notifier) {
         if ($doc->status !== 'For Approval') {
             return back()->withErrors([
                 'error' => 'Invalid document status. Cannot proceed.'
@@ -655,7 +660,9 @@ class DocumentController extends Controller
                 'user_id' => auth()->id()
             ]);
             DB::commit();
-            return redirect()->back()->with('success', $successMessage);
+            $notifier->approvalDecided($doc, $validated['decision'] === 'pass', $validated['reason'] ?? null);
+
+            return $notifier->warnIfUnsent(redirect()->back()->with('success', $successMessage));
 
         } catch (\Throwable $e) {
             DB::rollBack();
@@ -906,7 +913,7 @@ class DocumentController extends Controller
         return $pdf->stream();
     }
 
-    public function storeComment(Request $request, Document $doc)
+    public function storeComment(Request $request, Document $doc, DocumentWorkflowNotifier $notifier)
     {
         $stage = $this->authorizeCommentStage($doc);
         $commenter = $stage === 'approval' ? 'Approver' : 'Reviewer';
@@ -992,7 +999,9 @@ class DocumentController extends Controller
 
         // The comment form is closed once the document leaves review/approval, so don't go back to it.
         if ($request->action === 'send_back') {
-            return redirect()->route('document.system_procedures')->with('success','Comments saved and document sent back.');
+            $notifier->sentBack($doc, $stage);
+
+            return $notifier->warnIfUnsent(redirect()->route('document.system_procedures')->with('success','Comments saved and document sent back.'));
         }
 
         return redirect()->back()->with('success','Comments saved.');

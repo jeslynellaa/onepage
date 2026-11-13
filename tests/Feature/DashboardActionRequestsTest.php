@@ -2,12 +2,14 @@
 
 namespace Tests\Feature;
 
+use App\Mail\DocumentWorkflowMail;
 use App\Models\Company;
 use App\Models\Document;
 use App\Models\Form;
 use App\Models\Section;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
 class DashboardActionRequestsTest extends TestCase
@@ -82,6 +84,35 @@ class DashboardActionRequestsTest extends TestCase
             ->assertOk()
             ->assertSee('Needs Your Review')
             ->assertSee('Supplier Evaluation')
+            ->assertSee(route('document.system_procedures.view_pdf', $doc), false);
+    }
+
+    public function test_a_reviewer_who_is_also_the_approver_isnt_emailed_but_sees_it_awaiting_their_approval(): void
+    {
+        Mail::fake();
+        $this->section->update(['approver_id' => $this->reviewer->id]);
+
+        $this->actingAs($this->owner);
+        $doc = Document::create([
+            'type' => 'System Procedure',
+            'title' => 'Supplier Evaluation',
+            'code' => 'SP-PUR-01',
+            'section_id' => $this->section->id,
+            'revision_number' => '0',
+            'objective' => 'Objective',
+            'scope' => 'Scope',
+            'status' => 'For Review',
+        ]);
+
+        $this->actingAs($this->reviewer)
+            ->put(route('document.system_procedures.reviewPassOrFail', $doc), ['decision' => 'pass'])
+            ->assertSessionHasNoErrors();
+
+        Mail::assertNotSent(DocumentWorkflowMail::class, fn (DocumentWorkflowMail $mail) => $mail->hasTo($this->reviewer->email));
+
+        $this->actingAs($this->reviewer)->get(route('dashboard'))
+            ->assertOk()
+            ->assertSee('Needs Your Approval')
             ->assertSee(route('document.system_procedures.view_pdf', $doc), false);
     }
 }

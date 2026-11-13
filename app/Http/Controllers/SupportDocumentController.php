@@ -6,6 +6,7 @@ use App\Models\ActivityLog;
 use App\Models\Section;
 use App\Models\SupportDocument;
 use App\Models\User;
+use App\Services\DocumentWorkflowNotifier;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -290,7 +291,7 @@ class SupportDocumentController extends Controller
         }
     }
 
-    public function forReview(SupportDocument $doc)
+    public function forReview(SupportDocument $doc, DocumentWorkflowNotifier $notifier)
     {
         if (!($doc->status == 'Draft' || $doc->status == 'For Revision')) {
             return back()->withErrors([
@@ -317,14 +318,16 @@ class SupportDocumentController extends Controller
             ]);
 
             DB::commit();
-            return redirect()->back()->with('success', 'Document sent for review.');
+            $notifier->sentForReview($doc);
+
+            return $notifier->warnIfUnsent(redirect()->back()->with('success', 'Document sent for review.'));
         } catch (\Throwable $e) {
             DB::rollBack();
             return back()->withErrors(['error' => 'Something went wrong. Failed to send document for review. '. $e->getMessage()]);
         }
     }
 
-    public function reviewPassOrFail(Request $request, SupportDocument $doc)
+    public function reviewPassOrFail(Request $request, SupportDocument $doc, DocumentWorkflowNotifier $notifier)
     {
         if ($doc->status !== 'For Review') {
             return back()->withErrors([
@@ -360,16 +363,18 @@ class SupportDocumentController extends Controller
             ]);
 
             DB::commit();
-            return redirect()->back()->with('success', $validated['decision'] === 'pass'
+            $notifier->reviewed($doc, $validated['decision'] === 'pass');
+
+            return $notifier->warnIfUnsent(redirect()->back()->with('success', $validated['decision'] === 'pass'
                 ? 'Document passed review and was sent for approval.'
-                : 'Document failed review.');
+                : 'Document failed review.'));
         } catch (\Throwable $e) {
             DB::rollBack();
             return back()->withErrors(['error' => 'Something went wrong. '. $e->getMessage()]);
         }
     }
 
-    public function approveOrNot(Request $request, SupportDocument $doc)
+    public function approveOrNot(Request $request, SupportDocument $doc, DocumentWorkflowNotifier $notifier)
     {
         if ($doc->status !== 'For Approval') {
             return back()->withErrors([
@@ -440,7 +445,9 @@ class SupportDocumentController extends Controller
             ]);
 
             DB::commit();
-            return redirect()->back()->with('success', $successMessage);
+            $notifier->approvalDecided($doc, $validated['decision'] === 'pass');
+
+            return $notifier->warnIfUnsent(redirect()->back()->with('success', $successMessage));
         } catch (\Throwable $e) {
             DB::rollBack();
             return back()->withErrors(['error' => 'Something went wrong. '. $e->getMessage()]);
