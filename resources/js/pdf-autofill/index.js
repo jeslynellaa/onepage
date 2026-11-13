@@ -22,6 +22,9 @@ function loadPdfJs() {
     ]).then(([lib, worker]) => {
         lib.GlobalWorkerOptions.workerSrc = worker.default;
         return lib;
+    }).catch(err => {
+        pdfjsPromise = undefined; // let the next pick retry instead of failing forever
+        throw err;
     });
     return pdfjsPromise;
 }
@@ -251,7 +254,8 @@ function setup(form) {
             } finally {
                 doc.destroy();
             }
-        } catch {
+        } catch (err) {
+            console.error('PDF auto-fill failed:', err);
             if (thisRun === run) setStatus("Couldn't read this PDF. Please fill in the details manually.", 'error');
             return;
         }

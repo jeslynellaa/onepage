@@ -10,4 +10,16 @@ export default defineConfig({
         }),
         tailwindcss(),
     ],
+    build: {
+        rollupOptions: {
+            output: {
+                // pdfjs-dist's worker ships as .mjs. Servers without an .mjs MIME mapping
+                // (common on nginx/Apache) send it as application/octet-stream, and the
+                // browser refuses to start it as a module worker. Emit it as .js instead.
+                assetFileNames: ({ names }) => names?.some(n => n.endsWith('.mjs'))
+                    ? 'assets/[name]-[hash].js'
+                    : 'assets/[name]-[hash][extname]',
+            },
+        },
+    },
 });
